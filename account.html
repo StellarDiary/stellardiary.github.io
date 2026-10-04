@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#171329" />
+  <title>云端账号 · 星辰日记</title>
+  <style>
+    :root{
+      color-scheme:dark;
+      font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","PingFang TC","Noto Sans CJK SC","Microsoft YaHei","Segoe UI",sans-serif;
+      --ink:#fff9ef; --muted:#c9bed2; --gold:#e8c98f; --gold2:#f4ddb3;
+      --panel:rgba(20,15,34,.82); --line:rgba(232,201,143,.28); --purple:#8f7bb6;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh; color:var(--ink); overflow-x:hidden;
+      background:
+        radial-gradient(circle at 76% 2%,rgba(120,100,194,.38),transparent 31%),
+        radial-gradient(circle at 8% 75%,rgba(232,184,211,.14),transparent 28%),
+        linear-gradient(145deg,#120f20,#211735 58%,#151126);
+    }
+    body:before{
+      content:""; position:fixed; inset:0; pointer-events:none; opacity:.38;
+      background-image:radial-gradient(circle,rgba(255,244,214,.78) 0 1px,transparent 1.2px);
+      background-size:54px 54px; mask-image:linear-gradient(to bottom,rgba(0,0,0,.75),transparent 70%);
+    }
+    .page{position:relative;width:min(860px,calc(100% - 28px));margin:0 auto;padding:max(28px,env(safe-area-inset-top)) 0 calc(58px + env(safe-area-inset-bottom))}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:30px}
+    .brand{display:inline-flex;align-items:center;gap:9px;color:#fffaf2;text-decoration:none;font-weight:720;letter-spacing:.08em;font-size:20px}
+    .brand-star{color:var(--gold);font-size:17px;filter:drop-shadow(0 0 10px rgba(232,201,143,.5))}
+    .home-link{color:#e6d8c3;text-decoration:none;border-bottom:1px dotted rgba(232,201,143,.5);font-size:13px}
+    .eyebrow{color:var(--gold2);letter-spacing:.18em;font-size:11px;font-weight:680;text-transform:uppercase}
+    h1{margin:8px 0 10px;font-size:clamp(34px,7vw,52px);letter-spacing:-.035em;line-height:1.1}
+    .lead{margin:0 0 25px;color:#d9cfdf;line-height:1.85;max-width:720px}
+
+    .member-card{
+      position:relative;overflow:hidden;padding:28px;border:1px solid rgba(238,207,151,.5);border-radius:28px;
+      background:
+        radial-gradient(circle at 78% 30%,rgba(243,207,147,.17),transparent 22%),
+        radial-gradient(circle at 25% 0%,rgba(153,129,214,.3),transparent 42%),
+        linear-gradient(135deg,rgba(37,28,61,.98),rgba(24,18,41,.98));
+      box-shadow:0 24px 74px rgba(0,0,0,.31),inset 0 1px rgba(255,255,255,.05);
+    }
+    .member-card:before{content:"";position:absolute;width:280px;height:280px;right:-82px;top:-82px;border:1px solid rgba(234,203,149,.22);border-radius:50%;box-shadow:0 0 0 28px rgba(234,203,149,.055),0 0 0 62px rgba(234,203,149,.028)}
+    .member-card:after{content:"✦";position:absolute;right:54px;top:40px;color:rgba(250,220,165,.35);font-size:72px;line-height:1;filter:drop-shadow(0 0 20px rgba(236,203,144,.22))}
+    .member-status{position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;border:1px solid rgba(238,207,151,.35);background:rgba(250,236,211,.07);color:#f1d7a8;font-size:12px;font-weight:700;letter-spacing:.06em}
+    .member-status:before{content:"";width:7px;height:7px;border-radius:50%;background:#e8c98f;box-shadow:0 0 10px rgba(232,201,143,.8)}
+    .member-name{position:relative;z-index:1;display:flex;align-items:center;gap:9px;margin:17px 0 7px;font-size:30px;font-weight:760;letter-spacing:.02em}
+    .member-email{position:relative;z-index:1;color:#cfc3d8;overflow-wrap:anywhere}
+    .member-sync{position:relative;z-index:1;margin-top:22px;display:flex;align-items:center;gap:9px;color:#ddf4e8;font-size:13px}
+    .sync-dot{width:8px;height:8px;border-radius:50%;background:#8fd4af;box-shadow:0 0 12px rgba(143,212,175,.7)}
+    .member-card.is-guest .member-status{color:#e9cf9e}
+    .member-card.is-guest .member-sync{color:#eedfc7}.member-card.is-guest .sync-dot{background:#d9b76e}
+
+    .content-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);gap:16px;margin-top:16px}
+    .panel{padding:22px;border:1px solid var(--line);border-radius:23px;background:var(--panel);box-shadow:0 20px 54px rgba(0,0,0,.17);backdrop-filter:blur(10px)}
+    .panel-title{margin:0 0 6px;font-size:18px;color:#fff9ef}.panel-desc{margin:0 0 17px;color:#bfb3c8;font-size:13px;line-height:1.75}
+    .action-list{display:grid;gap:10px}
+    .action-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 17px;border:1px solid rgba(255,255,255,.08);border-radius:17px;background:rgba(255,255,255,.035);color:#fff9ef;text-align:left;font:inherit;cursor:pointer;transition:.2s}
+    .action-row:hover{transform:translateY(-1px);border-color:rgba(232,201,143,.42);background:rgba(244,222,182,.07)}
+    .action-row strong{display:block;font-size:15px}.action-row small{display:block;margin-top:5px;color:#ad9fb8;line-height:1.5}.action-arrow{color:#e6c991;font-size:24px;line-height:1}
+    .action-row.upcoming{cursor:default;opacity:.58}.action-row.upcoming:hover{transform:none;border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.035)}
+    .action-row.danger{border-color:rgba(226,145,160,.16)}.action-row.danger strong{color:#f5ced5}.action-row.danger .action-arrow{color:#dca7b1}.action-row.danger:hover{border-color:rgba(226,145,160,.36);background:rgba(205,103,126,.07)}
+    .soon{font-size:11px;padding:5px 8px;border:1px solid rgba(232,201,143,.3);border-radius:999px;color:#e5ca9a;white-space:nowrap}
+
+    .sync-overview{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0 17px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .sync-overview strong{font-size:15px}.sync-overview small{display:block;color:#ad9fb8;margin-top:4px}
+    .sync-btn,.primary-btn,.secondary-btn{appearance:none;border:1px solid rgba(232,201,143,.48);border-radius:999px;padding:11px 17px;font:700 13px/1 inherit;cursor:pointer;transition:.2s}
+    .sync-btn,.primary-btn{background:linear-gradient(180deg,#f5e9d7,#ead4b2);color:#2b2038;box-shadow:0 7px 18px rgba(0,0,0,.13)}
+    .secondary-btn{background:transparent;color:#f4e6d3}.sync-btn:hover,.primary-btn:hover,.secondary-btn:hover{transform:translateY(-1px)}
+    button:disabled{opacity:.5;cursor:wait;transform:none!important}
+    .last-sync{margin:13px 0 0;color:#a99bb5;font-size:12px}
+
+    .data-section{margin-top:16px}.data-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .data-tile{min-height:103px;padding:15px 13px;border-radius:18px;border:1px solid rgba(232,201,143,.18);background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.025));display:flex;flex-direction:column;justify-content:space-between}
+    .data-icon{color:#e6c991;font-size:16px}.data-count{font-size:28px;font-weight:760;color:#fff9ef;line-height:1}.data-label{margin-top:8px;color:#c8bbcF;font-size:12px}
+
+    .bind-panel{margin-top:16px;padding:20px;border-radius:21px;border:1px solid rgba(232,201,143,.29);background:rgba(15,11,25,.72)}
+    .bind-panel[hidden]{display:none!important}.bind-head{display:flex;align-items:start;justify-content:space-between;gap:16px;margin-bottom:14px}.bind-head h2{margin:0;font-size:18px}.bind-head p{margin:5px 0 0;color:#ad9fb8;font-size:13px;line-height:1.65}
+    .close-bind{appearance:none;border:0;background:transparent;color:#cdbed7;font-size:24px;cursor:pointer;padding:0 4px}
+    label.field{display:block;margin-top:14px;color:#e5ca9a;font-size:13px;font-weight:650}.field input{display:block;width:100%;min-height:50px;margin-top:8px;padding:13px 14px;color:#fff;background:#0f0b18;border:1px solid rgba(232,201,143,.28);border-radius:14px;font:inherit;outline:none}.field input:focus{border-color:rgba(232,201,143,.68);box-shadow:0 0 0 3px rgba(232,201,143,.08)}
+    .bind-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}.pending{margin-top:15px;padding:13px 15px;border:1px dashed rgba(232,201,143,.34);border-radius:15px;background:rgba(245,228,210,.035);color:#d6c9db}.pending small{display:block;margin-top:6px;color:#a99bb5;line-height:1.65}
+    .otp-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-top:4px}.otp-row .primary-btn{min-height:50px;margin-bottom:0}
+
+
+    .verify-choice{margin-top:17px;padding:16px;border-radius:19px;border:1px solid rgba(232,201,143,.25);background:rgba(255,255,255,.025)}
+    .verify-choice[hidden]{display:none!important}.verify-title{margin:0 0 11px;color:#f6e8d1;font-size:15px}.verify-methods{display:grid;grid-template-columns:1fr 38px 1fr;gap:10px;align-items:stretch}.verify-method{padding:15px;border:1px solid rgba(232,201,143,.18);border-radius:16px;background:rgba(11,8,20,.48)}.verify-method h3{margin:0 0 7px;font-size:14px;color:#fff8ee}.verify-method p{margin:0 0 12px;color:#a99bb5;font-size:12px;line-height:1.65}.verify-icon{display:inline-grid;place-items:center;width:31px;height:31px;border-radius:50%;margin-bottom:10px;background:rgba(232,201,143,.12);color:#e8c98f}.verify-or{align-self:center;text-align:center;color:#8f819a;font-size:12px;position:relative}.verify-or:before,.verify-or:after{content:"";position:absolute;left:50%;width:1px;height:35%;background:rgba(232,201,143,.16)}.verify-or:before{bottom:58%}.verify-or:after{top:58%}
+    .mail-check-btn{width:100%;justify-content:center}.otp-boxes{display:flex;gap:5px;justify-content:space-between;margin:10px 0 12px}.otp-box{width:38px;height:49px;border-radius:12px;border:1px solid rgba(232,201,143,.28);background:#0f0b18;color:#fff;text-align:center;font:700 20px/1 inherit;outline:none}.otp-box:focus{border-color:rgba(232,201,143,.78);box-shadow:0 0 0 3px rgba(232,201,143,.08)}
+    .logout-confirm{margin-top:10px;padding:15px 16px;border:1px solid rgba(226,145,160,.24);border-radius:16px;background:rgba(100,41,58,.12)}.logout-confirm[hidden]{display:none!important}.logout-confirm h3{margin:0 0 7px;font-size:14px;color:#ffe9ed}.logout-confirm p{margin:0;color:#baaab4;font-size:12px;line-height:1.65}.logout-confirm-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.danger-btn{appearance:none;border:1px solid rgba(226,145,160,.42);border-radius:999px;padding:11px 17px;background:rgba(175,70,94,.18);color:#ffe8ed;font:700 13px/1 inherit;cursor:pointer}.danger-btn:hover{background:rgba(175,70,94,.28)}
+    .login-panel{margin-top:16px;padding:20px;border-radius:21px;border:1px solid rgba(232,201,143,.29);background:rgba(15,11,25,.72)}.login-panel[hidden]{display:none!important}
+    .restore-panel{margin-top:16px;padding:22px;border-radius:22px;border:1px solid rgba(232,201,143,.34);background:linear-gradient(145deg,rgba(78,58,116,.42),rgba(15,11,25,.83))}.restore-panel[hidden]{display:none!important}.restore-panel h2{margin:0 0 8px;font-size:19px}.restore-panel p{margin:0;color:#c9bed2;line-height:1.75;font-size:13px}.restore-source{margin-top:17px;padding:14px;border-radius:17px;border:1px solid rgba(232,201,143,.12);background:rgba(255,255,255,.026)}.restore-source.cloud{background:linear-gradient(145deg,rgba(232,201,143,.055),rgba(255,255,255,.018));border-color:rgba(232,201,143,.2)}.restore-source-title{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:13px;color:#f2dfbd;font-weight:720}.restore-source-title:before{content:"✦";font-size:11px;color:#e8c98f}.restore-counts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.restore-count{padding:10px;border-radius:13px;background:rgba(255,255,255,.045);border:1px solid rgba(232,201,143,.12);text-align:center}.restore-count b{display:block;font-size:20px;color:#fff8ef}.restore-count span{font-size:11px;color:#a99bb5}.restore-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:17px}.restore-actions button{flex:1 1 220px}
+
+    .account-message{margin:16px 0 0;padding:14px 16px;border-radius:15px;line-height:1.65;background:rgba(255,255,255,.045)}
+    .account-message.ok{border:1px solid rgba(143,212,175,.4);color:#dbf5e8}.account-message.bad{border:1px solid rgba(239,157,174,.45);color:#ffdce4}
+
+    .tech{margin-top:16px;border:1px solid rgba(255,255,255,.08);border-radius:19px;background:rgba(10,8,17,.38);overflow:hidden}.tech summary{padding:16px 18px;cursor:pointer;color:#cbbdd4;font-weight:650;list-style:none}.tech summary::-webkit-details-marker{display:none}.tech summary:after{content:"⌄";float:right;color:#d6bb89}.tech[open] summary:after{content:"⌃"}.tech-body{padding:0 18px 17px}.tech-row{display:grid;grid-template-columns:135px minmax(0,1fr);gap:12px;padding:10px 0;border-top:1px solid rgba(255,255,255,.06);font-size:13px}.tech-label{color:#9e91aa}.tech-value{color:#d6cbdc;overflow-wrap:anywhere}.uuid-line{display:flex;align-items:center;gap:9px;min-width:0}.uuid-line code{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.copy-btn{appearance:none;border:1px solid rgba(232,201,143,.28);background:transparent;color:#e7c991;border-radius:999px;padding:6px 9px;font-size:11px;cursor:pointer}
+    .footer-actions{display:flex;justify-content:center;margin-top:18px}.back-btn{display:inline-flex;text-decoration:none}
+
+    @media(max-width:720px){.content-grid{grid-template-columns:1fr}.data-grid{grid-template-columns:repeat(2,1fr)}.member-card{padding:23px}.member-card:after{font-size:58px;right:31px}.member-name{font-size:27px}}
+    @media(max-width:480px){.page{width:min(100% - 18px,860px)}.topbar{margin-bottom:23px}.brand{font-size:18px}h1{font-size:36px}.lead{font-size:14px}.member-card{border-radius:24px}.panel{padding:18px;border-radius:20px}.action-row{padding:14px}.sync-overview{align-items:flex-start;flex-direction:column}.sync-btn{width:100%}.otp-row{grid-template-columns:1fr}.otp-row .primary-btn{width:100%}.verify-methods{grid-template-columns:1fr}.verify-or{padding:4px 0}.verify-or:before,.verify-or:after{display:none}.otp-box{width:calc((100% - 35px)/8);max-width:40px;min-width:0}.restore-counts{grid-template-columns:repeat(2,1fr)}.tech-row{grid-template-columns:1fr;gap:5px}.data-tile{min-height:94px}.member-card:after{opacity:.7}}
+
+    /* V0.15.1 — official site UI icon atlas */
+    .account-ui-icon{display:inline-block;flex:0 0 auto;width:28px;height:28px;background-image:url("images/ui/stellar-ui-icon-sheet-02.png?v=0.19.2");background-size:600% 400%;background-position:var(--account-icon-x,0%) var(--account-icon-y,0%);background-repeat:no-repeat;filter:drop-shadow(0 1px 2px rgba(0,0,0,.16))}
+    .account-ui-icon[data-account-icon="mail"]{--account-icon-x:80%;--account-icon-y:0%}.account-ui-icon[data-account-icon="home"]{--account-icon-x:100%;--account-icon-y:0%}.account-ui-icon[data-account-icon="right"]{--account-icon-x:60%;--account-icon-y:33.333333%}.account-ui-icon[data-account-icon="close"]{--account-icon-x:80%;--account-icon-y:33.333333%}.account-ui-icon[data-account-icon="account"]{--account-icon-x:0%;--account-icon-y:100%}.account-ui-icon[data-account-icon="logout"]{--account-icon-x:20%;--account-icon-y:100%}.account-ui-icon[data-account-icon="link"]{--account-icon-x:40%;--account-icon-y:100%}.account-ui-icon[data-account-icon="security"]{--account-icon-x:100%;--account-icon-y:100%}
+    .account-icon-before-home{display:inline-flex;align-items:center;justify-content:center;gap:0}.account-icon-before-home:before{content:none!important;display:none!important}
+    .back-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px}.back-btn:before{content:"";display:inline-block;width:19px;height:19px;background-image:url("images/ui/stellar-ui-icon-sheet-02.png?v=0.19.2");background-size:600% 400%;background-position:40% 33.333333%;background-repeat:no-repeat}
+    .action-row .account-leading-icon{width:34px;height:34px;margin-right:2px}.action-row>span.action-copy{flex:1;min-width:0}.action-row .action-arrow.account-ui-icon{width:24px;height:24px;font-size:0;color:transparent}.close-bind{display:grid;place-items:center;width:36px;height:36px;padding:0}.close-bind .account-ui-icon{width:26px;height:26px}.verify-icon.account-ui-icon{display:inline-block;width:34px;height:34px;margin-bottom:10px;border-radius:0;background-color:transparent}.sync-btn{display:inline-flex;align-items:center;gap:6px}.sync-btn:before{content:"";width:19px;height:19px;display:inline-block;background-image:url("images/farm/farm-ui-icon-sheet-01.png?v=0.19.2");background-size:800% 600%;background-position:28.571429% 0%;background-repeat:no-repeat}
+  </style>
+  <link rel="stylesheet" href="css/mailbox.css?v=0.19.2" />
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <a class="brand" href="index.html"><span class="brand-star">✦</span><span id="brandText">星辰日记</span></a>
+      <a class="home-link account-icon-before-home" href="index.html" id="topHome">返回首页</a>
+    </div>
+
+    <div class="eyebrow" id="eyebrow">STELLAR ACCOUNT · CLOUD SYNC</div>
+    <h1 id="title">云端账号</h1>
+    <p class="lead" id="lead"></p>
+
+    <section class="member-card is-guest" id="memberCard">
+      <span class="member-status" id="memberStatus">游客</span>
+      <div class="member-name"><span id="memberName">星辰旅人</span><span id="memberGender"></span></div>
+      <div class="member-email" id="memberEmail">临时云端身份</div>
+      <div class="member-sync"><span class="sync-dot"></span><span id="memberSyncText">准备云端身份…</span></div>
+    </section>
+
+    <div class="content-grid">
+      <section class="panel">
+        <h2 class="panel-title" id="securityTitle">账号与安全</h2>
+        <p class="panel-desc" id="securityDesc"></p>
+        <div class="action-list">
+          <button class="action-row" id="emailAction" type="button">
+            <span class="account-ui-icon account-leading-icon" data-account-icon="mail" aria-hidden="true"></span><span class="action-copy"><strong id="emailActionTitle"></strong><small id="emailActionDesc"></small></span>
+            <span class="action-arrow account-ui-icon" data-account-icon="right" aria-hidden="true"></span>
+          </button>
+          <button class="action-row" id="loginAction" type="button">
+            <span class="account-ui-icon account-leading-icon" data-account-icon="account" aria-hidden="true"></span><span class="action-copy"><strong id="restoreTitle"></strong><small id="restoreDesc"></small></span>
+            <span class="action-arrow account-ui-icon" data-account-icon="right" aria-hidden="true"></span>
+          </button>
+          <button class="action-row danger" id="logoutAction" type="button" hidden>
+            <span class="account-ui-icon account-leading-icon" data-account-icon="logout" aria-hidden="true"></span><span class="action-copy"><strong id="logoutTitle"></strong><small id="logoutDesc"></small></span>
+            <span class="action-arrow account-ui-icon" data-account-icon="right" aria-hidden="true"></span>
+          </button>
+          <div class="logout-confirm" id="logoutConfirmBox" hidden>
+            <h3 id="logoutConfirmTitle"></h3>
+            <p id="logoutConfirmDesc"></p>
+            <div class="logout-confirm-actions">
+              <button class="secondary-btn" id="logoutCancelBtn" type="button"></button>
+              <button class="danger-btn" id="logoutConfirmBtn" type="button"></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title" id="syncTitle">云端同步</h2>
+        <p class="panel-desc" id="syncDesc"></p>
+        <div class="sync-overview">
+          <div><strong id="syncState">—</strong><small id="syncHint"></small></div>
+          <button class="sync-btn" id="syncBtn" type="button"></button>
+        </div>
+        <p class="last-sync"><span id="lastSyncLabel"></span> <span id="lastSyncValue">—</span></p>
+      </section>
+    </div>
+
+    <section class="panel data-section">
+      <h2 class="panel-title" id="dataTitle">云端资料</h2>
+      <p class="panel-desc" id="dataDesc"></p>
+      <div class="data-grid">
+        <div class="data-tile"><span class="data-icon">✦</span><div><div class="data-count" id="fortuneCount">0</div><div class="data-label" id="fortuneLabel"></div></div></div>
+        <div class="data-tile"><span class="data-icon">☾</span><div><div class="data-count" id="tarotCount">0</div><div class="data-label" id="tarotLabel"></div></div></div>
+        <div class="data-tile"><span class="data-icon">◎</span><div><div class="data-count" id="natalCount">0</div><div class="data-label" id="natalLabel"></div></div></div>
+        <div class="data-tile"><span class="data-icon">∞</span><div><div class="data-count" id="synastryCount">0</div><div class="data-label" id="synastryLabel"></div></div></div>
+      </div>
+    </section>
+
+    <section class="bind-panel" id="bindPanel" hidden>
+      <div class="bind-head">
+        <div><h2 id="bindTitle"></h2><p id="supportText"></p></div>
+        <button class="close-bind" id="closeBind" type="button" aria-label="Close"><span class="account-ui-icon" data-account-icon="close" aria-hidden="true"></span></button>
+      </div>
+      <label class="field"><span id="emailLabel"></span><input id="emailInput" type="email" inputmode="email" autocomplete="email" /></label>
+      <div class="bind-actions">
+        <button id="sendBtn" type="button" class="primary-btn"></button>
+        <button id="resendBtn" type="button" class="secondary-btn"></button>
+      </div>
+      <div class="pending" id="pendingRow" hidden><strong><span id="pendingTitle"></span>：<span id="pendingValue">—</span></strong><small id="pendingHint"></small></div>
+      <section class="verify-choice" id="bindVerifyChoice" hidden>
+        <h3 class="verify-title" id="bindVerifyTitle"></h3>
+        <div class="verify-methods">
+          <div class="verify-method">
+            <span class="verify-icon account-ui-icon" data-account-icon="mail" aria-hidden="true"></span>
+            <h3 id="bindMailTitle"></h3><p id="bindMailDesc"></p>
+            <button id="bindCheckLinkBtn" type="button" class="secondary-btn mail-check-btn"></button>
+          </div>
+          <div class="verify-or" id="bindOr"></div>
+          <div class="verify-method">
+            <span class="verify-icon account-ui-icon" data-account-icon="security" aria-hidden="true"></span>
+            <h3 id="bindOtpTitle"></h3><p id="bindOtpDesc"></p>
+            <div class="otp-boxes" id="bindOtpBoxes" aria-label="OTP"></div>
+            <button id="verifyBtn" type="button" class="primary-btn mail-check-btn"></button>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="login-panel" id="loginPanel" hidden>
+      <div class="bind-head">
+        <div><h2 id="loginTitle"></h2><p id="loginSupport"></p></div>
+        <button class="close-bind" id="closeLogin" type="button" aria-label="Close"><span class="account-ui-icon" data-account-icon="close" aria-hidden="true"></span></button>
+      </div>
+      <label class="field"><span id="loginEmailLabel"></span><input id="loginEmailInput" type="email" inputmode="email" autocomplete="email" /></label>
+      <div class="bind-actions">
+        <button id="loginSendBtn" type="button" class="primary-btn"></button>
+        <button id="loginResendBtn" type="button" class="secondary-btn"></button>
+      </div>
+      <div class="pending" id="loginPendingRow" hidden><strong><span id="loginPendingTitle"></span>：<span id="loginPendingValue">—</span></strong><small id="loginPendingHint"></small></div>
+      <section class="verify-choice" id="loginVerifyChoice" hidden>
+        <h3 class="verify-title" id="loginVerifyTitle"></h3>
+        <div class="verify-methods">
+          <div class="verify-method">
+            <span class="verify-icon account-ui-icon" data-account-icon="mail" aria-hidden="true"></span>
+            <h3 id="loginMailTitle"></h3><p id="loginMailDesc"></p>
+            <button id="loginCheckLinkBtn" type="button" class="secondary-btn mail-check-btn"></button>
+          </div>
+          <div class="verify-or" id="loginOr"></div>
+          <div class="verify-method">
+            <span class="verify-icon account-ui-icon" data-account-icon="security" aria-hidden="true"></span>
+            <h3 id="loginOtpTitle"></h3><p id="loginOtpDesc"></p>
+            <div class="otp-boxes" id="loginOtpBoxes" aria-label="OTP"></div>
+            <button id="loginVerifyBtn" type="button" class="primary-btn mail-check-btn"></button>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="restore-panel" id="restorePanel" hidden>
+      <h2 id="restoreChoiceTitle"></h2>
+      <p id="restoreChoiceDesc"></p>
+
+      <div class="restore-source guest">
+        <h3 class="restore-source-title" id="guestDataTitle"></h3>
+        <div class="restore-counts">
+          <div class="restore-count"><b id="restoreFortune">0</b><span id="restoreFortuneLabel"></span></div>
+          <div class="restore-count"><b id="restoreTarot">0</b><span id="restoreTarotLabel"></span></div>
+          <div class="restore-count"><b id="restoreNatal">0</b><span id="restoreNatalLabel"></span></div>
+          <div class="restore-count"><b id="restoreSynastry">0</b><span id="restoreSynastryLabel"></span></div>
+        </div>
+      </div>
+
+      <div class="restore-source cloud">
+        <h3 class="restore-source-title" id="cloudDataTitle"></h3>
+        <div class="restore-counts">
+          <div class="restore-count"><b id="cloudFortune">—</b><span id="cloudFortuneLabel"></span></div>
+          <div class="restore-count"><b id="cloudTarot">—</b><span id="cloudTarotLabel"></span></div>
+          <div class="restore-count"><b id="cloudNatal">—</b><span id="cloudNatalLabel"></span></div>
+          <div class="restore-count"><b id="cloudSynastry">—</b><span id="cloudSynastryLabel"></span></div>
+        </div>
+      </div>
+
+      <div class="restore-actions">
+        <button id="restoreCloudBtn" type="button" class="primary-btn"></button>
+        <button id="restoreMergeBtn" type="button" class="secondary-btn"></button>
+      </div>
+    </section>
+
+    <div id="message" class="account-message" hidden></div>
+
+    <details class="tech">
+      <summary id="techTitle">账号信息</summary>
+      <div class="tech-body">
+        <div class="tech-row"><span class="tech-label" id="identityLabel"></span><span class="tech-value" id="identityValue">—</span></div>
+        <div class="tech-row"><span class="tech-label" id="emailStatusLabel"></span><span class="tech-value" id="emailValue">—</span></div>
+        <div class="tech-row"><span class="tech-label" id="uuidLabel"></span><span class="tech-value uuid-line"><code id="uuidValue">—</code><button class="copy-btn" id="copyUuid" type="button"></button></span></div>
+        <div class="tech-row"><span class="tech-label" id="techLastSyncLabel"></span><span class="tech-value" id="techLastSyncValue">—</span></div>
+      </div>
+    </details>
+
+    <div class="footer-actions"><a class="secondary-btn back-btn" href="index.html" id="backBtn"></a></div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-public-config.js?v=0.19.2"></script>
+  <script src="js/supabase-config.js?v=0.19.2"></script>
+  <script src="js/supabase-client.js?v=0.19.2"></script>
+  <script src="js/supabase-auth.js?v=0.19.2"></script>
+  <script src="js/account-binding.js?v=0.19.2"></script>
+  <script src="js/account-login.js?v=0.19.2"></script>
+  <script src="js/cloud-sync.js?v=0.19.2"></script>
+  <script src="js/account-page.js?v=0.19.2"></script>
+  <script src="js/mailbox.js?v=0.19.2"></script>
+</body>
+</html>

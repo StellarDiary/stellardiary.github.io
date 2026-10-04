@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#24284f" />
+  <meta name="description" content="星辰日记：每日运势、塔罗牌、本命星盘、两人合盘与星辰农场。" />
+  <title>星辰日记</title>
+  <link rel="stylesheet" href="css/style.css?v=0.19.2" />
+  <link rel="stylesheet" href="css/mailbox.css?v=0.19.2" />
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header" id="top">
+      <a class="brand" href="#top" aria-label="星辰日记首页">
+        <span class="brand-title" data-i18n="siteName">星辰日记</span>
+        <span class="brand-subtitle">Your Stars, Your Story</span>
+      </a>
+
+      <div class="header-tools">
+        <button class="player-profile-badge" type="button" data-player-profile hidden></button>
+        <nav class="language-switcher" aria-label="切换语言">
+          <button class="lang-btn active" type="button" data-lang="zh-CN">简体</button>
+          <span class="lang-separator" aria-hidden="true">|</span>
+          <button class="lang-btn" type="button" data-lang="zh-TW">繁體</button>
+          <span class="lang-separator" aria-hidden="true">|</span>
+          <button class="lang-btn" type="button" data-lang="en">EN</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="home-main">
+      <section class="home-panel panel-daily" id="daily">
+        <div class="panel-art" aria-hidden="true"></div>
+        <div class="panel-content">
+          <p class="panel-number">01</p>
+          <h1 data-i18n="dailyTitle">每日运势</h1>
+          <p class="panel-en">DAILY FORTUNE</p>
+          <p class="panel-desc" data-i18n="dailyDesc">抽取属于今天的指引，看看星辰想对你说什么。</p>
+          <a class="primary-btn" href="pages/fortune.html" data-profile-required>
+            <span data-i18n="dailyButton">立即抽取</span>
+          </a>
+        </div>
+        <p class="panel-quote" data-i18n="dailyQuote">每一天，都值得被温柔以待。</p>
+      </section>
+
+      <section class="home-panel panel-tarot" id="tarot">
+        <div class="panel-art" aria-hidden="true"></div>
+        <div class="panel-content">
+          <p class="panel-number">02</p>
+          <h2 data-i18n="tarotTitle">塔罗牌</h2>
+          <p class="panel-en">TAROT</p>
+          <p class="panel-desc" data-i18n="tarotDesc">让塔罗牌，为你指引下一步的方向。</p>
+          <a class="primary-btn" href="pages/tarot.html" data-profile-required>
+            <span data-i18n="tarotButton">开始占卜</span>
+          </a>
+        </div>
+        <p class="panel-quote" data-i18n="tarotQuote">答案，一直在你心里。</p>
+      </section>
+
+      <section class="home-panel panel-astrology" id="astrology">
+        <div class="panel-art" aria-hidden="true"></div>
+        <div class="panel-content">
+          <p class="panel-number">03</p>
+          <h2 data-i18n="astrologyTitle">本命星盘</h2>
+          <p class="panel-en">NATAL CHART</p>
+          <p class="panel-desc" data-i18n="astrologyDesc">更了解自己，发现属于你的星辰密码。</p>
+          <a class="primary-btn" href="pages/astrology.html" data-profile-required>
+            <span data-i18n="astrologyButton">开始测算</span>
+          </a>
+        </div>
+        <p class="panel-quote" data-i18n="astrologyQuote">认识自己，是最浪漫的旅程。</p>
+      </section>
+
+      <section class="home-panel panel-synastry" id="synastry">
+        <div class="panel-art" aria-hidden="true"></div>
+        <div class="panel-content">
+          <p class="panel-number">04</p>
+          <h2 data-i18n="synastryTitle">两人合盘</h2>
+          <p class="panel-en">SYNASTRY</p>
+          <p class="panel-desc" data-i18n="synastryDesc">当两张星图相遇，看看彼此之间的吸引与课题。</p>
+          <a class="primary-btn" href="pages/synastry.html" data-profile-required>
+            <span data-i18n="synastryButton">开始合盘</span>
+          </a>
+        </div>
+        <p class="panel-quote" data-i18n="synastryQuote">两个灵魂相遇，是宇宙写下的浪漫。</p>
+      </section>
+
+      <section class="home-panel panel-farm" id="farm">
+        <div class="panel-art" aria-hidden="true"></div>
+        <div class="panel-content">
+          <p class="panel-number">05</p>
+          <h2 data-i18n="farmTitle">星辰农场</h2>
+          <p class="panel-en">STELLAR FARM</p>
+          <p class="panel-desc" data-i18n="farmDesc">在属于你的星光农场里，种下每一份小小的期待。</p>
+          <a class="primary-btn" href="pages/farm.html?v=0.19.2">
+            <span data-i18n="farmButton">进入农场</span>
+          </a>
+        </div>
+        <p class="panel-quote" data-i18n="farmQuote">种下星光，收获快乐。</p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p data-i18n="footer">与星辰同行，遇见更好的自己 ♡</p>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-public-config.js?v=0.19.2"></script>
+  <script src="js/supabase-config.js?v=0.19.2"></script>
+  <script src="js/supabase-client.js?v=0.19.2"></script>
+  <script src="js/supabase-auth.js?v=0.19.2"></script>
+  <script src="js/cloud-sync.js?v=0.19.2"></script>
+  <script src="js/player-profile.js?v=0.19.2"></script>
+  <script src="js/i18n.js?v=0.19.2"></script>
+  <script src="js/main.js?v=0.19.2"></script>
+  <script src="js/shooting-stars.js?v=0.19.2"></script>
+  <script src="js/home-interactions.js?v=0.19.2"></script>
+  <script src="js/mailbox.js?v=0.19.2"></script>
+</body>
+</html>
