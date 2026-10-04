@@ -7,8 +7,8 @@
 //
 // Public browser configuration is enabled for production deployment.
 window.STELLAR_DIARY_SUPABASE_CONFIG = {
-  projectUrl: 'https://zbiiasduaypykhwvuxye.supabase.co',
-  publishableKey: 'sb_publishable_nKj9QPPKTVfsBsSoSwHVVw_yC_8i6Tu',
+  projectUrl: 'https://micrlquhvorlxhcgjsmu.supabase.co',
+  publishableKey: 'sb_publishable_zncO6RxXXlVgiJ34X-D7Cg_HCuZw7Dj',
   schema: 'public',
   auth: {
     persistSession: true,

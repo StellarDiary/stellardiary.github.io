@@ -68,10 +68,9 @@ revoke all on table public.system_mail from public, anon, authenticated;
 revoke all on table public.player_mail_state from public, anon, authenticated;
 revoke all on table public.gm_audit_log from public, anon, authenticated;
 
--- The first account selected by the site owner is the only initial super admin.
-insert into public.admin_users(user_id, role, display_name)
-values ('e6eb4bcd-4e0f-43cb-ba02-44161794ac27'::uuid, 'super_admin', 'Stellar Diary GM')
-on conflict (user_id) do update set role = excluded.role, display_name = excluded.display_name;
+-- Fresh-install note: no initial GM is hard-coded here.
+-- After creating/signing in with the site-owner account, run
+-- supabase/SET_FIRST_GM.sql with that account's Auth user UUID.
 
 create or replace function private.is_stellar_gm(p_uid uuid)
 returns boolean

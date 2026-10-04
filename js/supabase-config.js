@@ -7,7 +7,7 @@
   // NEVER put sb_secret_ / service_role / DB password in public frontend files.
   const DEFAULTS = {
     appVersion: '0.19.2',
-    projectUrl: 'https://zbiiasduaypykhwvuxye.supabase.co',
+    projectUrl: 'https://micrlquhvorlxhcgjsmu.supabase.co',
     publishableKey: '',
     schema: 'public',
     auth: {

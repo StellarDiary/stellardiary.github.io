@@ -1,0 +1,4 @@
+IMPORTANT
+The Supabase Secret Key is server-only and must never be shared in chat, committed to GitHub, or placed in browser JavaScript.
+If a Secret Key has been exposed, create a replacement in Supabase Settings -> API Keys, update any server-side users of it, then delete/retire the exposed key.
+The website package uses only the Publishable Key.

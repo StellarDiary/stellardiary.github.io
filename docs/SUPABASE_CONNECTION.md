@@ -4,7 +4,7 @@
 This version adds the browser-side Supabase connection layer only. It does **not** sync user records yet and does **not** write data automatically.
 
 ## Project
-- Project URL: `https://zbiiasduaypykhwvuxye.supabase.co`
+- Project URL: `https://micrlquhvorlxhcgjsmu.supabase.co`
 - Browser SDK: `@supabase/supabase-js@2` via jsDelivr
 - Public schema: `public`
 
