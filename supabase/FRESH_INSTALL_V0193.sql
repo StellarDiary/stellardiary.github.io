@@ -1,4 +1,4 @@
--- Stellar Diary V0.19.3.1 — FRESH INSTALL for a brand-new Supabase project
+-- Stellar Diary V0.19.3.2 — FRESH INSTALL for a brand-new Supabase project
 -- Generated from migrations 001..033 in filename order.
 -- This script intentionally creates NO players, NO system mail, and NO initial GM.
 -- Run once in the SQL Editor of an EMPTY project.
@@ -7839,7 +7839,7 @@ commit;
 -- END 20260930_033_pet_collection_v2.sql
 
 -- BEGIN 20261004_034_pet_roster_refresh.sql
--- Stellar Diary V0.19.3.1 — Pet roster refresh / #7001–#7005
+-- Stellar Diary V0.19.3.2 — Pet roster refresh / #7001–#7005
 -- Run AFTER 20260930_033_pet_collection_v2.sql.
 -- Replaces #7001 牙牙 with 奶兔兔, replaces #7002 小柴犬 with 哈士奇,
 -- keeps #7003 橘猫 / #7004 月桂兔, and adds #7005 奶油小羊.
