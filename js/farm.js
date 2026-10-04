@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const FARM_BUILD = '0.19.2';
+  const FARM_BUILD = '0.19.3';
   const STORAGE_KEY = 'xingchen-farm-v1';
   const VERSION = 1;
   const PLOT_COUNT = 20;
@@ -25,10 +25,11 @@
     OUTFIT_MID_AUTUMN:5002,
     OUTFIT_HALLOWEEN:5003,
     OUTFIT_CHRISTMAS:5004,
-    PET_YA_YA:7001,
-    PET_SHIBA:7002,
+    PET_MILK_BUNNY:7001,
+    PET_HUSKY:7002,
     PET_ORANGE_CAT:7003,
     PET_MOON_RABBIT:7004,
+    PET_CREAM_SHEEP:7005,
     DECOR_MID_LANTERN:6001,
     DECOR_MID_RABBIT:6002,
     DECOR_MID_OSMANTHUS:6003,
@@ -49,13 +50,14 @@
     Object.freeze({id:'christmas', itemId:FARM_ITEM_IDS.OUTFIT_CHRISTMAS, name:'圣诞造型', note:'圣诞红冬装／红色毛绒斗篷的节日限定造型。', icon:'🎄', released:true, male:true, female:true, maleAsset:'christmas-male.png', femaleAsset:'christmas-female.png', maleFrames:6, femaleFrames:8})
   ]);
 
-  // V0.19.2 — direct-unlock pet collection. Ownership is permanent under
+  // V0.19.3 — refreshed direct-unlock pet roster. Ownership is permanent under
   // state.pets.owned; state.pets.active stores only the currently following pet.
   const PETS = Object.freeze([
-    Object.freeze({id:'ya_ya', itemId:FARM_ITEM_IDS.PET_YA_YA, name:'牙牙', note:'圆滚滚的奶白牙齿娃娃精灵，喜欢安静地陪在农场主人身边。', released:true, asset:'ya-ya.png', iconAsset:'ya-ya-icon.png', frames:6}),
-    Object.freeze({id:'shiba', itemId:FARM_ITEM_IDS.PET_SHIBA, name:'小柴犬', note:'活泼亲人的小柴犬，戴着绿色农场领巾，总喜欢跟着主人巡田。', released:true, asset:'shiba.png', iconAsset:'shiba-icon.png', frames:6}),
+    Object.freeze({id:'milk_bunny', itemId:FARM_ITEM_IDS.PET_MILK_BUNNY, name:'奶兔兔', note:'黑发与粉色蝴蝶结造型的甜美奶兔兔，安静地陪着主人经营农场。', released:true, asset:'milk-bunny.png', iconAsset:'milk-bunny-icon.png', frames:6}),
+    Object.freeze({id:'husky', itemId:FARM_ITEM_IDS.PET_HUSKY, name:'哈士奇', note:'戴着星星领巾的灰白哈士奇，异色瞳活泼又亲人。', released:true, asset:'husky.png', iconAsset:'husky-icon.png', frames:6}),
     Object.freeze({id:'orange_cat', itemId:FARM_ITEM_IDS.PET_ORANGE_CAT, name:'橘猫', note:'暖橘色的小猫咪，脖子上的小铃铛会陪着它一起在农场散步。', released:true, asset:'orange-cat.png', iconAsset:'orange-cat-icon.png', frames:6}),
-    Object.freeze({id:'moon_rabbit', itemId:FARM_ITEM_IDS.PET_MOON_RABBIT, name:'月桂兔', note:'带着桂花与弯月饰品的中秋小白兔，安静又温柔。', released:true, asset:'moon-rabbit.png', iconAsset:'moon-rabbit-icon.png', frames:6})
+    Object.freeze({id:'moon_rabbit', itemId:FARM_ITEM_IDS.PET_MOON_RABBIT, name:'月桂兔', note:'带着桂花与弯月饰品的中秋小白兔，安静又温柔。', released:true, asset:'moon-rabbit.png', iconAsset:'moon-rabbit-icon.png', frames:6}),
+    Object.freeze({id:'cream_sheep', itemId:FARM_ITEM_IDS.PET_CREAM_SHEEP, name:'奶油小羊', note:'蓬松柔软的奶油色小羊，戴着绿色领巾与金色铃铛。', released:true, asset:'cream-sheep.png', iconAsset:'cream-sheep-icon.png', frames:6})
   ]);
 
   const CROPS = [
@@ -556,11 +558,11 @@
     const pet = petById(state.pets?.active || '');
     return pet && pet.released && petOwned(pet.id) ? pet : null;
   }
-  function petSpriteUrl(petId='ya_ya') {
+  function petSpriteUrl(petId='milk_bunny') {
     const pet = petById(petId) || PETS[0];
     return `../images/farm/pet/${pet.asset}?v=${FARM_BUILD}`;
   }
-  function petSpriteMarkup(extraClass='', label='', petId='ya_ya') {
+  function petSpriteMarkup(extraClass='', label='', petId='milk_bunny') {
     const pet = petById(petId) || PETS[0];
     return `<span class="farm-pet-sprite ${extraClass}" data-pet-id="${escapeHtml(pet.id)}" data-pet-frames="${Number(pet.frames) || 6}" style="--pet-sprite-image:url('${petSpriteUrl(pet.id)}')" ${label ? `role="img" aria-label="${escapeHtml(label)}"` : 'aria-hidden="true"'}></span>`;
   }
@@ -1656,7 +1658,7 @@
     return `<span class="farm-ui-icon ${escapeHtml(className)}" data-ui-icon="${safeKey}"${aria}></span>`;
   }
   function trainIconMarkup(className='') {
-    return `<img class="farm-inline-train-icon ${escapeHtml(className)}" src="../images/farm/train-engine.png?v=0.19.2" alt="" aria-hidden="true">`;
+    return `<img class="farm-inline-train-icon ${escapeHtml(className)}" src="../images/farm/train-engine.png?v=0.19.3" alt="" aria-hidden="true">`;
   }
   function uiTextMarkup(value) {
     let text = escapeHtml(value ?? '');
@@ -2025,7 +2027,17 @@
     Object.entries(petOwnedRaw).forEach(([id,value]) => {
       if (/^[a-z0-9][a-z0-9_-]{0,63}$/i.test(id) && value === true) ownedPets[id] = true;
     });
-    const requestedPet = petById(petsRaw.active);
+    // V0.19.3 legacy pet migration: #7001 牙牙 → 奶兔兔, #7002 小柴犬 → 哈士奇.
+    // This also protects players who still have an older localStorage snapshot
+    // before the server-side 034 migration is pulled down.
+    if (ownedPets.ya_ya === true) ownedPets.milk_bunny = true;
+    if (ownedPets.shiba === true) ownedPets.husky = true;
+    delete ownedPets.ya_ya;
+    delete ownedPets.shiba;
+    const requestedPetId = petsRaw.active === 'ya_ya' ? 'milk_bunny'
+      : petsRaw.active === 'shiba' ? 'husky'
+      : petsRaw.active;
+    const requestedPet = petById(requestedPetId);
     const normalizedPet = requestedPet && requestedPet.released && ownedPets[requestedPet.id] === true ? requestedPet.id : null;
     merged.pets = {owned:ownedPets, active:normalizedPet};
 
@@ -5380,14 +5392,14 @@
         if (slot.status === 'cooldown') {
           return `<section class="farm-train-slot is-cooldown" data-train-slot="${slot.index}">
             <header class="farm-train-slot-head"><div><small>第 ${slot.index + 1} 月台</small><b>${uiIconMarkup('cooldown','is-heading-ui')} 列车返程中</b></div><span>约 <strong data-train-cooldown-until="${slot.availableAt}">${formatTrainWait(slot.availableAt - Date.now())}</strong> 后抵达</span></header>
-            <div class="farm-train-empty-station"><img src="../images/farm/train-station.png?v=0.19.2" alt="星辰车站"></div>
+            <div class="farm-train-empty-station"><img src="../images/farm/train-station.png?v=0.19.3" alt="星辰车站"></div>
             <p class="farm-train-slot-note">奖励已在上一班发车时立即入账。返程后这里会自动出现一班全新的订单。</p>
           </section>`;
         }
         if (slot.status === 'done') {
           return `<section class="farm-train-slot is-done" data-train-slot="${slot.index}">
             <header class="farm-train-slot-head"><div><small>第 ${slot.index + 1} 月台</small><b>${uiIconMarkup('success','is-heading-ui')} 今日加班班次已满</b></div><span>00:00 统一刷新</span></header>
-            <div class="farm-train-empty-station"><img src="../images/farm/train-station.png?v=0.19.2" alt="星辰车站"></div>
+            <div class="farm-train-empty-station"><img src="../images/farm/train-station.png?v=0.19.3" alt="星辰车站"></div>
           </section>`;
         }
         const train = slot.train;
@@ -5402,7 +5414,7 @@
           const owned = Math.max(0, Number(state.produce[car.cropId]) || 0);
           const remaining = Math.max(0, car.required - car.loaded);
           return `<button type="button" class="farm-train-car is-${car.style} ${done ? 'is-complete' : ''} ${!done && owned <= 0 ? 'is-empty-bag' : ''}" data-train-slot-index="${slot.index}" data-train-load-index="${index}" ${done ? 'disabled' : ''} aria-label="${done ? `${crop.name}车厢已装满` : `查看${crop.name}装箱需求，还差${remaining}个，背包${owned}个`}">
-            <img src="../images/farm/train-car-${car.style}.png?v=0.19.2" alt="" aria-hidden="true">
+            <img src="../images/farm/train-car-${car.style}.png?v=0.19.3" alt="" aria-hidden="true">
             <span class="farm-train-car-ui"><i>${done ? uiIconMarkup('success','is-train-check-ui') : produceIconMarkup(crop,'is-train-produce-ui')}</i><b>${escapeHtml(crop.name)}</b><strong>${car.loaded} / ${car.required}</strong><small>${done ? '装载完成' : `背包 ${owned}`}</small></span>
           </button>`;
         }).join('');
@@ -5414,10 +5426,10 @@
             <div class="farm-train-reset"><small>火车重置券</small><b>${uiIconMarkup('refresh','is-inline-ui')} ×${Math.max(0,Math.floor(Number(state.supplies?.[TRAIN_RESET_TICKET_ID])||0))}</b></div>
           </div>
           <div class="farm-train-yard">
-            <img class="farm-train-yard-station" src="../images/farm/train-station.png?v=0.19.2" alt="" aria-hidden="true">
+            <img class="farm-train-yard-station" src="../images/farm/train-station.png?v=0.19.3" alt="" aria-hidden="true">
             <div class="farm-train-consist ${complete ? 'is-ready' : ''}" data-train-slot-index="${slot.index}">
               ${cars}
-              <div class="farm-train-engine is-${train.tier}"><img src="../images/farm/train-engine.png?v=0.19.2" alt="" aria-hidden="true"><span class="farm-train-engine-rate">×${train.multiplier.toFixed(1)}</span><span class="farm-train-smoke" aria-hidden="true"></span></div>
+              <div class="farm-train-engine is-${train.tier}"><img src="../images/farm/train-engine.png?v=0.19.3" alt="" aria-hidden="true"><span class="farm-train-engine-rate">×${train.multiplier.toFixed(1)}</span><span class="farm-train-smoke" aria-hidden="true"></span></div>
             </div>
           </div>
           <div class="farm-train-progress"><span><b>${loadedCars}</b> / ${train.cars.length} 节车厢已完成</span><div><i style="width:${Math.round((loadedCars/train.cars.length)*100)}%"></i></div></div>
@@ -5866,7 +5878,7 @@
     const modalIcon = $('farmModalIcon');
     if (modalIcon) {
       if (iconHtml) modalIcon.innerHTML = iconHtml;
-      else if (icon === 'train') modalIcon.innerHTML = '<img class="farm-modal-asset-icon" src="../images/farm/train-engine.png?v=0.19.2" alt="">';
+      else if (icon === 'train') modalIcon.innerHTML = '<img class="farm-modal-asset-icon" src="../images/farm/train-engine.png?v=0.19.3" alt="">';
       else {
         const mapped = UI_ICON_INDEX[icon] ? icon : (UI_EMOJI_ICON[icon] || (icon === '🌱' ? 'newbie-farmer' : ''));
         modalIcon.innerHTML = mapped ? uiIconMarkup(mapped,'is-modal-ui') : escapeHtml(icon || '');

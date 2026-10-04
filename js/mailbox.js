@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const BUILD = '0.19.2';
+  const BUILD = '0.19.3';
   const MAX_MAIL = 60;
   const POLL_MS = 90 * 1000;
   let mailRows = [];
@@ -119,15 +119,21 @@
     const index=Math.max(1,Number(cell)||1), col=(index-1)%4,row=Math.floor((index-1)/4);
     return `<span class="mail-farm-catalog-icon ${className}" style="--mail-catalog-x:${(col/3)*100}%;--mail-catalog-y:${(row/3)*100}%" aria-hidden="true"></span>`;
   }
-  function farmPetIcon(key='ya_ya',className='') {
-    const files={ya_ya:'ya-ya-icon.png',shiba:'shiba-icon.png',orange_cat:'orange-cat-icon.png',moon_rabbit:'moon-rabbit-icon.png'};
-    const file=files[key] || files.ya_ya;
-    return `<span class="mail-farm-pet-icon ${className}" style="--mail-pet-image:url('../images/farm/pet/${file}?v=0.19.2')" aria-hidden="true"></span>`;
+  function farmPetIcon(key='milk_bunny',className='') {
+    const files={
+      milk_bunny:'milk-bunny-icon.png',
+      husky:'husky-icon.png',
+      orange_cat:'orange-cat-icon.png',
+      moon_rabbit:'moon-rabbit-icon.png',
+      cream_sheep:'cream-sheep-icon.png'
+    };
+    const file=files[key] || files.milk_bunny;
+    return `<span class="mail-farm-pet-icon ${className}" style="--mail-pet-image:url('../images/farm/pet/${file}?v=0.19.3')" aria-hidden="true"></span>`;
   }
   function catalogIcon(item,className='') {
     if (!item) return farmIcon('reward-box',className);
     if (item.icon_source==='farm_catalog' && Number(item.icon_cell)>0) return farmCatalogIcon(item.icon_cell,className);
-    if (item.icon_source==='farm_pet') return farmPetIcon(item.icon_key || 'ya_ya',className);
+    if (item.icon_source==='farm_pet') return farmPetIcon(item.icon_key || 'milk_bunny',className);
     if (item.icon_source==='farm_item' && Number(item.icon_cell)>0) return farmItemIcon(item.icon_cell,className);
     if (item.icon_source==='site' && Number(item.icon_cell)>0) return siteIcon(item.icon_cell,className);
     return farmIcon(item.icon_key || 'reward-box',className);
