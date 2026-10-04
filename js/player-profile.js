@@ -313,8 +313,18 @@
     modal().hidden = false;
     document.body.classList.add('profile-modal-open');
     requestAnimationFrame(() => {
-      document.getElementById('profileName')?.focus();
-      document.getElementById('profileName')?.select();
+      const coarsePointer = window.matchMedia?.('(pointer: coarse)')?.matches;
+      const nameInput = document.getElementById('profileName');
+      const dialog = document.querySelector('.player-profile-dialog');
+      // Desktop keeps the convenient autofocus. On Android/iOS, forcing the
+      // software keyboard open can shrink the visual viewport before the
+      // modal has settled and strand the lower cloud/account controls.
+      if (!coarsePointer) {
+        nameInput?.focus();
+        nameInput?.select();
+      } else if (dialog) {
+        dialog.scrollTop = 0;
+      }
     });
   }
 

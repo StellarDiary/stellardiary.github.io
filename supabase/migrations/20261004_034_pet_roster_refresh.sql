@@ -1,4 +1,4 @@
--- Stellar Diary V0.19.3 — Pet roster refresh / #7001–#7005
+-- Stellar Diary V0.19.3.1 — Pet roster refresh / #7001–#7005
 -- Run AFTER 20260930_033_pet_collection_v2.sql.
 -- Replaces #7001 牙牙 with 奶兔兔, replaces #7002 小柴犬 with 哈士奇,
 -- keeps #7003 橘猫 / #7004 月桂兔, and adds #7005 奶油小羊.
