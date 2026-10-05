@@ -28,6 +28,7 @@ const I18N = {
 
     localStorage.setItem(this.storageKey, lang);
     try { window.XingchenPlayer?.render?.(); } catch (_) {}
+    try { window.dispatchEvent(new CustomEvent("stellar:language-changed", { detail:{ lang } })); } catch (_) {}
   },
 
   getInitialLanguage() {

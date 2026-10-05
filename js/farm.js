@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const FARM_BUILD = '0.19.4.1';
+  const FARM_BUILD = '0.19.5.0';
   const STORAGE_KEY = 'xingchen-farm-v1';
   const VERSION = 1;
   const PLOT_COUNT = 20;
@@ -141,7 +141,7 @@
   // disappear from that player's rare pool after the first unlock.
   const BLIND_BOX_PRICE = 49;
   const BLIND_BOXES = Object.freeze([
-    Object.freeze({id:'halloween', name:'万圣节盲盒', subtitle:'万圣限定', seasonText:'10/1～11/30', outfitId:'halloween', closedState:'closed', openState:'open', decorIds:['halloween_pumpkin','halloween_ghost','halloween_candle']}),
+    Object.freeze({id:'halloween', name:'万圣节盲盒', subtitle:'万圣限定', seasonText:'10/1～11/30', outfitId:'halloween', petPrizeId:'husky', petPrizeName:'哈士奇', closedState:'closed', openState:'open', decorIds:['halloween_pumpkin','halloween_ghost','halloween_candle']}),
     Object.freeze({id:'christmas', name:'圣诞节盲盒', subtitle:'圣诞限定', seasonText:'12/1～1/15', outfitId:'christmas', closedState:'closed', openState:'open', decorIds:['christmas_tree','christmas_gifts','christmas_snowman','christmas_lamp']})
   ]);
 
@@ -1721,7 +1721,7 @@
     return `<span class="farm-ui-icon ${escapeHtml(className)}" data-ui-icon="${safeKey}"${aria}></span>`;
   }
   function trainIconMarkup(className='') {
-    return `<img class="farm-inline-train-icon ${escapeHtml(className)}" src="../images/farm/train-engine.png?v=0.19.4.1" alt="" aria-hidden="true">`;
+    return `<img class="farm-inline-train-icon ${escapeHtml(className)}" src="../images/farm/train-engine.png?v=0.19.5.0" alt="" aria-hidden="true">`;
   }
   function uiTextMarkup(value) {
     let text = escapeHtml(value ?? '');
@@ -5673,14 +5673,14 @@
         if (slot.status === 'cooldown') {
           return `<section class="farm-train-slot is-cooldown" data-train-slot="${slot.index}">
             <header class="farm-train-slot-head"><div><small>第 ${slot.index + 1} 月台</small><b>${uiIconMarkup('cooldown','is-heading-ui')} 列车返程中</b></div><span>约 <strong data-train-cooldown-until="${slot.availableAt}">${formatTrainWait(slot.availableAt - Date.now())}</strong> 后抵达</span></header>
-            <div class="farm-train-empty-station"><img src="../images/farm/train-station.png?v=0.19.4.1" alt="星辰车站"></div>
+            <div class="farm-train-empty-station"><img src="../images/farm/train-station.png?v=0.19.5.0" alt="星辰车站"></div>
             <p class="farm-train-slot-note">奖励已在上一班发车时立即入账。返程后这里会自动出现一班全新的订单。</p>
           </section>`;
         }
         if (slot.status === 'done') {
           return `<section class="farm-train-slot is-done" data-train-slot="${slot.index}">
             <header class="farm-train-slot-head"><div><small>第 ${slot.index + 1} 月台</small><b>${uiIconMarkup('success','is-heading-ui')} 今日加班班次已满</b></div><span>00:00 统一刷新</span></header>
-            <div class="farm-train-empty-station"><img src="../images/farm/train-station.png?v=0.19.4.1" alt="星辰车站"></div>
+            <div class="farm-train-empty-station"><img src="../images/farm/train-station.png?v=0.19.5.0" alt="星辰车站"></div>
           </section>`;
         }
         const train = slot.train;
@@ -5695,7 +5695,7 @@
           const owned = Math.max(0, Number(state.produce[car.cropId]) || 0);
           const remaining = Math.max(0, car.required - car.loaded);
           return `<button type="button" class="farm-train-car is-${car.style} ${done ? 'is-complete' : ''} ${!done && owned <= 0 ? 'is-empty-bag' : ''}" data-train-slot-index="${slot.index}" data-train-load-index="${index}" ${done ? 'disabled' : ''} aria-label="${done ? `${crop.name}车厢已装满` : `查看${crop.name}装箱需求，还差${remaining}个，背包${owned}个`}">
-            <img src="../images/farm/train-car-${car.style}.png?v=0.19.4.1" alt="" aria-hidden="true">
+            <img src="../images/farm/train-car-${car.style}.png?v=0.19.5.0" alt="" aria-hidden="true">
             <span class="farm-train-car-ui"><i>${done ? uiIconMarkup('success','is-train-check-ui') : produceIconMarkup(crop,'is-train-produce-ui')}</i><b>${escapeHtml(crop.name)}</b><strong>${car.loaded} / ${car.required}</strong><small>${done ? '装载完成' : `背包 ${owned}`}</small></span>
           </button>`;
         }).join('');
@@ -5707,10 +5707,10 @@
             <div class="farm-train-reset"><small>火车重置券</small><b>${uiIconMarkup('refresh','is-inline-ui')} ×${Math.max(0,Math.floor(Number(state.supplies?.[TRAIN_RESET_TICKET_ID])||0))}</b></div>
           </div>
           <div class="farm-train-yard">
-            <img class="farm-train-yard-station" src="../images/farm/train-station.png?v=0.19.4.1" alt="" aria-hidden="true">
+            <img class="farm-train-yard-station" src="../images/farm/train-station.png?v=0.19.5.0" alt="" aria-hidden="true">
             <div class="farm-train-consist ${complete ? 'is-ready' : ''}" data-train-slot-index="${slot.index}">
               ${cars}
-              <div class="farm-train-engine is-${train.tier}"><img src="../images/farm/train-engine.png?v=0.19.4.1" alt="" aria-hidden="true"><span class="farm-train-engine-rate">×${train.multiplier.toFixed(1)}</span><span class="farm-train-smoke" aria-hidden="true"></span></div>
+              <div class="farm-train-engine is-${train.tier}"><img src="../images/farm/train-engine.png?v=0.19.5.0" alt="" aria-hidden="true"><span class="farm-train-engine-rate">×${train.multiplier.toFixed(1)}</span><span class="farm-train-smoke" aria-hidden="true"></span></div>
             </div>
           </div>
           <div class="farm-train-progress"><span><b>${loadedCars}</b> / ${train.cars.length} 节车厢已完成</span><div><i style="width:${Math.round((loadedCars/train.cars.length)*100)}%"></i></div></div>
@@ -5752,7 +5752,7 @@
           const cost10 = BLIND_BOX_PRICE * 10;
           return `<article class="farm-blindbox-shop-card ${active ? 'is-active-season' : 'is-closed-season'}">
             <div class="farm-blindbox-shop-art">${blindBoxSpriteMarkup(box.id,'closed','is-shop-blindbox',box.name)}</div>
-            <div class="farm-blindbox-shop-copy"><small>${escapeHtml(box.subtitle)} · ${escapeHtml(box.seasonText)}</small><b>${escapeHtml(box.name)}</b><p>每盒 ${BLIND_BOX_PRICE} 金币。限定服装 1%／宠物 1%；已经拥有的服装或宠物不会重复抽到，其他奖励包含种子、当期装饰、肥料与再来一盒。</p></div>
+            <div class="farm-blindbox-shop-copy"><small>${escapeHtml(box.subtitle)} · ${escapeHtml(box.seasonText)}</small><b>${escapeHtml(box.name)}</b><p>每盒 ${BLIND_BOX_PRICE} 金币。限定服装 1%／${box.petPrizeName ? `${escapeHtml(box.petPrizeName)} 1%` : '宠物 1%'}；已经拥有的服装或宠物不会重复抽到，其他奖励包含种子、当期装饰、肥料与再来一盒。</p></div>
             <div class="farm-blindbox-shop-meta"><span>${uiIconMarkup('coin','is-meta-ui')} ${BLIND_BOX_PRICE} / 盒</span><span>背包 ×${owned}</span>${active ? '<em>本期开放</em>' : '<em class="is-closed">尚未开放</em>'}</div>
             <div class="farm-blindbox-shop-actions"><button type="button" data-buy-blindbox="${box.id}" data-qty="1" ${active && !blindBoxBusy ? '' : 'disabled'}>购买 1 盒</button><button type="button" data-buy-blindbox="${box.id}" data-qty="10" ${active && !blindBoxBusy ? '' : 'disabled'}>购买 10 盒 · ${cost10}</button></div>
           </article>`;
@@ -5779,7 +5779,7 @@
       const blindBoxTotal = BLIND_BOXES.reduce((sum,box) => sum + blindBoxCount(box.id), 0);
       const blindBoxRows = BLIND_BOXES.filter(box => blindBoxCount(box.id) > 0).map(box => {
         const qty = blindBoxCount(box.id);
-        return `<div class="farm-bag-row farm-blindbox-bag-row"><span class="farm-bag-icon">${blindBoxSpriteMarkup(box.id,'closed','is-bag-blindbox',box.name)}</span><div><b>${escapeHtml(box.name)}</b><small>可直接开盒 · 已拥有的服装与宠物不会重复抽到</small></div><em>×${qty}</em><div class="farm-blindbox-open-actions"><button type="button" data-open-blindbox="${box.id}" data-count="1" ${blindBoxBusy || qty < 1 ? 'disabled' : ''}>单抽</button><button type="button" data-open-blindbox="${box.id}" data-count="10" ${blindBoxBusy || qty < 10 ? 'disabled' : ''}>十连抽</button></div></div>`;
+        return `<div class="farm-bag-row farm-blindbox-bag-row"><span class="farm-bag-icon">${blindBoxSpriteMarkup(box.id,'closed','is-bag-blindbox',box.name)}</span><div><b>${escapeHtml(box.name)}</b><small>可直接开盒${box.petPrizeName ? ` · 稀有宠物：${escapeHtml(box.petPrizeName)}` : ''} · 已拥有的服装与宠物不会重复抽到</small></div><em>×${qty}</em><div class="farm-blindbox-open-actions"><button type="button" data-open-blindbox="${box.id}" data-count="1" ${blindBoxBusy || qty < 1 ? 'disabled' : ''}>单抽</button><button type="button" data-open-blindbox="${box.id}" data-count="10" ${blindBoxBusy || qty < 10 ? 'disabled' : ''}>十连抽</button></div></div>`;
       }).join('');
       const seedItemsInBag = seedItems().filter(c => (state.seeds[c.id] || 0) > 0);
       const produceItems = CROPS.filter(c => (state.produce[c.id] || 0) > 0);
@@ -6184,7 +6184,7 @@
     const modalIcon = $('farmModalIcon');
     if (modalIcon) {
       if (iconHtml) modalIcon.innerHTML = iconHtml;
-      else if (icon === 'train') modalIcon.innerHTML = '<img class="farm-modal-asset-icon" src="../images/farm/train-engine.png?v=0.19.4.1" alt="">';
+      else if (icon === 'train') modalIcon.innerHTML = '<img class="farm-modal-asset-icon" src="../images/farm/train-engine.png?v=0.19.5.0" alt="">';
       else {
         const mapped = UI_ICON_INDEX[icon] ? icon : (UI_EMOJI_ICON[icon] || (icon === '🌱' ? 'newbie-farmer' : ''));
         modalIcon.innerHTML = mapped ? uiIconMarkup(mapped,'is-modal-ui') : escapeHtml(icon || '');

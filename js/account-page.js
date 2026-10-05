@@ -144,7 +144,24 @@
   }
   function closeLogin(){loginOpen=false;$('loginPanel').hidden=true;setMessage('')}
 
-  async function waitAuth(){const state=await window.XingchenAuth?.init?.();render(state||window.XingchenAuth?.status?.()||{}); await handleReturnFromEmail()}
+  async function waitAuth(){
+    const state=await window.XingchenAuth?.init?.();
+    const current=state||window.XingchenAuth?.status?.()||{};
+    render(current);
+    await handleReturnFromEmail();
+    const q=new URLSearchParams(location.search);
+    const guide=q.get('guide');
+    if(guide==='bind'&&current.signedIn&&current.isAnonymous){
+      openBind();
+    }else if(guide==='login'){
+      openLogin();
+    }
+    if(guide){
+      q.delete('guide');
+      const next=q.toString();
+      history.replaceState({},document.title,location.pathname+(next?'?'+next:''));
+    }
+  }
 
   async function sendBinding(){const email=$('emailInput').value.trim();setBusy(true);setMessage(t('testing'));const result=await window.XingchenAccountBinding.start(email);setBusy(false);if(!result.ok){setMessage(result.error,'bad');return}$('pendingRow').hidden=false;$('pendingValue').textContent=result.email;$('bindVerifyChoice').hidden=false;setMessage(t('sent'),'ok');bindOpen=true;render()}
   async function resendBinding(){const email=$('emailInput').value.trim()||window.XingchenAccountBinding.readPendingEmail();setBusy(true);setMessage(t('testing'));const result=await window.XingchenAccountBinding.resend(email);setBusy(false);if(result.ok){$('bindVerifyChoice').hidden=false;setMessage(t('sent'),'ok')}else setMessage(result.error,'bad')}
