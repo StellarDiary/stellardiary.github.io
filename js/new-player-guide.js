@@ -98,7 +98,6 @@
                 <img data-guide-image alt="" draggable="false" />
                 <span data-guide-image-hint></span>
               </button>
-              <div class="new-player-guide-star-card" data-guide-star-card aria-hidden="true"><span>✦</span><i></i><b>STELLAR DIARY</b></div>
             </div>
             <div class="new-player-guide-copy">
               <span class="new-player-guide-step" data-guide-step></span>
@@ -157,7 +156,8 @@
     const page=pages[index];
     const imageBtn=modal.querySelector('[data-guide-image-button]');
     const image=modal.querySelector('[data-guide-image]');
-    const star=modal.querySelector('[data-guide-star-card]');
+    const visual=modal.querySelector('[data-guide-visual]');
+    const body=modal.querySelector('.new-player-guide-body');
     const tip=modal.querySelector('[data-guide-tip]');
     const loginBtn=modal.querySelector('[data-guide-login]');
     const prevBtn=modal.querySelector('[data-guide-prev]');
@@ -173,9 +173,12 @@
     modal.querySelector('[data-guide-image-hint]').textContent=c.tapImage;
     modal.querySelector('.new-player-guide-close').setAttribute('aria-label',c.close);
 
-    tip.hidden=true; loginBtn.hidden=true; imageBtn.hidden=true; star.hidden=true;
+    tip.hidden=true; loginBtn.hidden=true; imageBtn.hidden=true;
+    const hasScreenshot=page.kind==='step';
+    visual.hidden=!hasScreenshot;
+    body.classList.toggle('is-text-only',!hasScreenshot);
+    activeImageSrc='';
     if(page.kind==='intro'){
-      star.hidden=false;
       modal.querySelector('[data-guide-step]').textContent='WELCOME';
       modal.querySelector('[data-guide-page-title]').textContent=c.introTitle;
       modal.querySelector('[data-guide-page-body]').textContent=c.introBody;
@@ -192,7 +195,6 @@
       modal.querySelector('[data-guide-page-body]').textContent=c.steps[page.step-1][1];
       nextBtn.textContent=c.next;
     }else{
-      star.hidden=false;
       modal.querySelector('[data-guide-step]').textContent='READY';
       modal.querySelector('[data-guide-page-title]').textContent=c.doneTitle;
       modal.querySelector('[data-guide-page-body]').textContent=c.doneBody;

@@ -6,7 +6,7 @@
   // manually pasting a key. localStorage remains as a developer fallback.
   // NEVER put sb_secret_ / service_role / DB password in public frontend files.
   const DEFAULTS = {
-    appVersion: '0.19.5.0',
+    appVersion: '0.19.5.1',
     projectUrl: 'https://micrlquhvorlxhcgjsmu.supabase.co',
     publishableKey: '',
     schema: 'public',
