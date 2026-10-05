@@ -1,4 +1,4 @@
-# StellarDiary new Supabase project setup (V0.19.3.2)
+# StellarDiary new Supabase project setup (V0.19.4.0)
 
 1. Authentication -> URL Configuration
    - Site URL: `https://stellardiary.github.io/`

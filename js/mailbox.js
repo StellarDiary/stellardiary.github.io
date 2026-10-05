@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const BUILD = '0.19.3.2';
+  const BUILD = '0.19.4.0';
   const MAX_MAIL = 60;
   const POLL_MS = 90 * 1000;
   let mailRows = [];
@@ -128,7 +128,7 @@
       cream_sheep:'cream-sheep-icon.png'
     };
     const file=files[key] || files.milk_bunny;
-    return `<span class="mail-farm-pet-icon ${className}" style="--mail-pet-image:url('../images/farm/pet/${file}?v=0.19.3.2')" aria-hidden="true"></span>`;
+    return `<span class="mail-farm-pet-icon ${className}" style="--mail-pet-image:url('../images/farm/pet/${file}?v=0.19.4.0')" aria-hidden="true"></span>`;
   }
   function catalogIcon(item,className='') {
     if (!item) return farmIcon('reward-box',className);

@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const FARM_BUILD = '0.19.3.2';
+  const FARM_BUILD = '0.19.4.0';
   const STORAGE_KEY = 'xingchen-farm-v1';
   const VERSION = 1;
   const PLOT_COUNT = 20;
@@ -50,7 +50,7 @@
     Object.freeze({id:'christmas', itemId:FARM_ITEM_IDS.OUTFIT_CHRISTMAS, name:'圣诞造型', note:'圣诞红冬装／红色毛绒斗篷的节日限定造型。', icon:'🎄', released:true, male:true, female:true, maleAsset:'christmas-male.png', femaleAsset:'christmas-female.png', maleFrames:6, femaleFrames:8})
   ]);
 
-  // V0.19.3.2 — refreshed direct-unlock pet roster. Ownership is permanent under
+  // V0.19.4.0 — refreshed direct-unlock pet roster. Ownership is permanent under
   // state.pets.owned; state.pets.active stores only the currently following pet.
   const PETS = Object.freeze([
     Object.freeze({id:'milk_bunny', itemId:FARM_ITEM_IDS.PET_MILK_BUNNY, name:'奶兔兔', note:'黑发与粉色蝴蝶结造型的甜美奶兔兔，安静地陪着主人经营农场。', released:true, asset:'milk-bunny.png', iconAsset:'milk-bunny-icon.png', frames:6}),
@@ -134,6 +134,35 @@
     Object.freeze({id:'christmas_snowman', itemId:FARM_ITEM_IDS.DECOR_CHRISTMAS_SNOWMAN, name:'雪人', decorCell:11, itemIconCell:15, price:1000, unlockLevel:1, scale:1.04, seasonal:'christmas', shopVisible:false, note:'戴着围巾与冬帽的温暖雪人。'}),
     Object.freeze({id:'christmas_lamp', itemId:FARM_ITEM_IDS.DECOR_CHRISTMAS_LAMP, name:'圣诞路灯', decorCell:12, itemIconCell:16, price:1050, unlockLevel:1, scale:.96, seasonal:'christmas', shopVisible:false, note:'冬青、蝴蝶结与金铃点缀的节日路灯。'})
   ]);
+
+
+  // V0.19.4.0 — Seasonal blind boxes. Buying/opening is server-authoritative;
+  // the client only renders inventory and results. Permanent outfit/pet prizes
+  // disappear from that player's rare pool after the first unlock.
+  const BLIND_BOX_PRICE = 49;
+  const BLIND_BOXES = Object.freeze([
+    Object.freeze({id:'halloween', name:'万圣节盲盒', subtitle:'万圣限定', seasonText:'10/1～11/30', outfitId:'halloween', closedState:'closed', openState:'open', decorIds:['halloween_pumpkin','halloween_ghost','halloween_candle']}),
+    Object.freeze({id:'christmas', name:'圣诞节盲盒', subtitle:'圣诞限定', seasonText:'12/1～1/15', outfitId:'christmas', closedState:'closed', openState:'open', decorIds:['christmas_tree','christmas_gifts','christmas_snowman','christmas_lamp']})
+  ]);
+
+  function blindBoxById(id) { return BLIND_BOXES.find(item => item.id === id) || null; }
+  function taipeiMonthDay(date = new Date()) {
+    try {
+      const parts = new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',month:'2-digit',day:'2-digit'}).formatToParts(date);
+      const month = Number(parts.find(part => part.type === 'month')?.value || 0);
+      const day = Number(parts.find(part => part.type === 'day')?.value || 0);
+      return month * 100 + day;
+    } catch (_) {
+      return (date.getMonth() + 1) * 100 + date.getDate();
+    }
+  }
+  function blindBoxSeasonOpen(id, date = new Date()) {
+    const md = taipeiMonthDay(date);
+    if (id === 'halloween') return md >= 1001 && md <= 1130;
+    if (id === 'christmas') return md >= 1201 || md <= 115;
+    return false;
+  }
+  function blindBoxCount(id) { return Math.max(0, Math.floor(Number(state?.blindBoxes?.[id]) || 0)); }
 
   // V0.14.2 — lightweight NPC farmers. NPC farms are lazily simulated from
   // the current clock, so they do not need background browser sessions, cron
@@ -465,6 +494,8 @@
   let currentPatrolNpc = false;
   let friendPatrolBusy = false;
   let decorationMode = false;
+  let blindBoxBusy = false;
+  let blindBoxResultSession = null;
   let levelUpQueue = [];
   let levelUpPlaying = false;
   // Persist the horizontal achievement-category position across rerenders.
@@ -648,6 +679,38 @@
     if (!item) return '';
     if (item.itemIconCell) return catalogSpriteMarkup(item.itemIconCell, extraClass, label || item.name);
     return eventSpriteMarkup(item.eventCell, extraClass, label || item.name);
+  }
+
+  function blindBoxSpriteMarkup(boxId, stateName = 'closed', extraClass = '', label = '') {
+    const box = blindBoxById(boxId) || BLIND_BOXES[0];
+    const safeState = stateName === 'open' ? 'open' : 'closed';
+    return `<span class="farm-blindbox-sprite is-${escapeHtml(box.id)} is-${safeState} ${extraClass}" ${label ? `role="img" aria-label="${escapeHtml(label)}"` : 'aria-hidden="true"'}></span>`;
+  }
+
+  function blindBoxRewardIconMarkup(result, extraClass = '') {
+    if (!result || typeof result !== 'object') return '';
+    if (result.kind === 'outfit') {
+      const cell = result.id === 'halloween' ? 4 : result.id === 'christmas' ? 5 : result.id === 'mid_autumn' ? 3 : 2;
+      return catalogSpriteMarkup(cell, `is-blindbox-reward ${extraClass}`, result.name || '服装');
+    }
+    if (result.kind === 'pet') {
+      const pet = petById(result.id);
+      return pet ? `<img class="farm-blindbox-pet-icon ${extraClass}" src="../images/farm/pet/${escapeHtml(pet.iconAsset)}?v=${FARM_BUILD}" alt="">` : '<span class="farm-blindbox-reward-fallback">🐾</span>';
+    }
+    if (result.kind === 'decoration') {
+      const item = decorationById(result.id);
+      return item ? decorationIconMarkup(item, `is-blindbox-reward ${extraClass}`, item.name) : '<span class="farm-blindbox-reward-fallback">✨</span>';
+    }
+    if (result.kind === 'seed') {
+      const crop = cropById(result.id);
+      return crop ? seedIconMarkup(crop, `is-blindbox-reward ${extraClass}`) : '<span class="farm-blindbox-reward-fallback">🌱</span>';
+    }
+    if (result.kind === 'supply') {
+      const item = FERTILIZERS.find(entry => entry.id === result.id);
+      return item ? itemSpriteMarkup(item.itemCell, `is-blindbox-reward ${extraClass}`, item.name) : '<span class="farm-blindbox-reward-fallback">🧪</span>';
+    }
+    if (result.kind === 'blindbox') return blindBoxSpriteMarkup(result.id,'closed',`is-blindbox-reward ${extraClass}`,result.name || '盲盒');
+    return '<span class="farm-blindbox-reward-fallback">✨</span>';
   }
 
 
@@ -1658,7 +1721,7 @@
     return `<span class="farm-ui-icon ${escapeHtml(className)}" data-ui-icon="${safeKey}"${aria}></span>`;
   }
   function trainIconMarkup(className='') {
-    return `<img class="farm-inline-train-icon ${escapeHtml(className)}" src="../images/farm/train-engine.png?v=0.19.3.2" alt="" aria-hidden="true">`;
+    return `<img class="farm-inline-train-icon ${escapeHtml(className)}" src="../images/farm/train-engine.png?v=0.19.4.0" alt="" aria-hidden="true">`;
   }
   function uiTextMarkup(value) {
     let text = escapeHtml(value ?? '');
@@ -1697,8 +1760,8 @@
     return `<span class="farm-produce-ui ${escapeHtml(className)}" data-crop-sheet="${sprite.sheet}" style="--produce-x:${sprite.x}%;--produce-y:${sprite.y}%;--produce-scale:${sprite.scale};--produce-shift-x:${sprite.shiftX}px;--produce-shift-y:${sprite.shiftY}px;--produce-lift:${sprite.lift}px"></span>`;
   }
 
-  function seedIconMarkup(crop) {
-    return crop?.isMystery ? itemSpriteMarkup(3, 'is-seed-icon', '蔬果盲盒') : uiIconMarkup(SEED_UI_ICON[crop?.id] || 'newbie-farmer', 'is-seed-ui', `${crop?.name || '作物'}种子`);
+  function seedIconMarkup(crop, extraClass = '') {
+    return crop?.isMystery ? itemSpriteMarkup(3, `is-seed-icon ${extraClass}`, '蔬果盲盒') : uiIconMarkup(SEED_UI_ICON[crop?.id] || 'newbie-farmer', `is-seed-ui ${extraClass}`, `${crop?.name || '作物'}种子`);
   }
   const seedItems = () => PLANTABLES;
   const titleById = (id) => TITLES.find(item => item.id === id) || TITLES[0];
@@ -1938,9 +2001,10 @@
       wardrobe: { outfits:{ default:true } },
       avatar: { gender:'male', outfit:'default' },
       pets: { owned:{}, active:null },
+      blindBoxes: { halloween:0, christmas:0 },
       npcSocial: { friends:[], activities:[], steals:[], waterHelps:[], footprints:[], lastHelpCheckAt:0, lastVisitCheckAt:0 },
       train: null,
-      stats: { visit:1, plant:0, harvest:0, sell:0, friend:0, blindBoxPlant:0, steals:0, friendVisits:0, helpWater:0, helpBug:0, maxCoins:INITIAL_COINS },
+      stats: { visit:1, plant:0, harvest:0, sell:0, friend:0, blindBoxPlant:0, blindBoxBought:0, blindBoxOpened:0, blindBoxRare:0, steals:0, friendVisits:0, helpWater:0, helpBug:0, maxCoins:INITIAL_COINS },
       claimedTasks: [],
       claimedAchievements: [],
       titles: { unlocked:['newbie'], equipped:'newbie' },
@@ -2027,7 +2091,7 @@
     Object.entries(petOwnedRaw).forEach(([id,value]) => {
       if (/^[a-z0-9][a-z0-9_-]{0,63}$/i.test(id) && value === true) ownedPets[id] = true;
     });
-    // V0.19.3.2 legacy pet migration: #7001 牙牙 → 奶兔兔, #7002 小柴犬 → 哈士奇.
+    // V0.19.4.0 legacy pet migration: #7001 牙牙 → 奶兔兔, #7002 小柴犬 → 哈士奇.
     // This also protects players who still have an older localStorage snapshot
     // before the server-side 034 migration is pulled down.
     if (ownedPets.ya_ya === true) ownedPets.milk_bunny = true;
@@ -2040,6 +2104,9 @@
     const requestedPet = petById(requestedPetId);
     const normalizedPet = requestedPet && requestedPet.released && ownedPets[requestedPet.id] === true ? requestedPet.id : null;
     merged.pets = {owned:ownedPets, active:normalizedPet};
+
+    const blindRaw = raw?.blindBoxes && typeof raw.blindBoxes === 'object' && !Array.isArray(raw.blindBoxes) ? raw.blindBoxes : {};
+    merged.blindBoxes = Object.fromEntries(BLIND_BOXES.map(box => [box.id, Math.max(0, Math.floor(Number(blindRaw[box.id]) || 0))]));
 
     const validNpcIds = new Set(NPC_FARMERS.map(item => item.id));
     const npcRaw = raw?.npcSocial && typeof raw.npcSocial === 'object' ? raw.npcSocial : {};
@@ -2104,7 +2171,7 @@
     merged.coins = Math.max(0, Number(merged.coins) || 0);
     merged.level = Math.max(1, Number(merged.level) || 1);
     merged.exp = Math.max(0, Number(merged.exp) || 0);
-    for (const key of ['visit','plant','harvest','sell','friend','blindBoxPlant','steals','friendVisits','helpWater','helpBug']) {
+    for (const key of ['visit','plant','harvest','sell','friend','blindBoxPlant','blindBoxBought','blindBoxOpened','blindBoxRare','steals','friendVisits','helpWater','helpBug']) {
       merged.stats[key] = Math.max(0, Number(merged.stats[key]) || 0);
     }
     merged.stats.maxCoins = Math.max(merged.coins, Number(merged.stats.maxCoins) || 0, INITIAL_COINS);
@@ -5295,12 +5362,227 @@
     setNoticeBadge($('farmFriendDot'), incoming + Math.max(0, farmActivityUnreadCount) + npcUnreadCount());
   }
 
+
+  function blindBoxRpcUnavailable(error) {
+    const text = String(error?.message || error || '');
+    return error?.code === 'PGRST202' || /buy_farm_blind_box_v1|open_farm_blind_box_v1|schema cache|does not exist|could not find/i.test(text);
+  }
+
+  function adoptBlindBoxServerState(payload, userId='') {
+    if (!payload?.state || typeof payload.state !== 'object') return false;
+    state = normalizeState(payload.state);
+    if (userId) state.ownerUserId = userId;
+    cloudRevision = Math.max(0, Number(payload.revision) || Number(cloudRevision) || 0);
+    cloudLastSyncedAt = Date.now();
+    cloudLastRevisionCheckAt = cloudLastSyncedAt;
+    writeLocalState();
+    markLocalClean(userId || cloudAuthUser()?.id || state.ownerUserId || '');
+    return true;
+  }
+
+  async function flushBeforeBlindBoxAction() {
+    const userId = cloudAuthUser()?.id || state.ownerUserId || '';
+    if (!userId) return false;
+
+    // Blind-box RPCs update the same farm_saves row as normal cloud sync. Before
+    // purchasing/opening, make sure every local farm mutation has reached the
+    // server so the authoritative RPC never overwrites a just-made local action.
+    // A revision conflict can replay pending operations and schedule another push,
+    // so retry a few times until the local snapshot is genuinely clean.
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      clearTimeout(cloudSyncTimer);
+      cloudSyncTimer = null;
+
+      if (cloudBusy) {
+        const idle = await new Promise(resolve => {
+          const started = Date.now();
+          const poll = () => {
+            if (!cloudBusy) return resolve(true);
+            if (Date.now() - started >= 1800) return resolve(false);
+            setTimeout(poll, 60);
+          };
+          poll();
+        });
+        if (!idle) return false;
+      }
+
+      clearTimeout(cloudSyncTimer);
+      cloudSyncTimer = null;
+      if (!hasUnsyncedLocalChanges(userId)) return true;
+
+      const result = await pushCloudState(true);
+      if (result?.ok && !hasUnsyncedLocalChanges(userId)) return true;
+      if (result?.error || result?.skipped) return false;
+
+      // Conflict/queued paths may have scheduled an immediate retry in
+      // pushCloudState(). Cancel that timer here and perform the retry in this
+      // controlled loop instead, preventing a blind-box RPC from racing it.
+      clearTimeout(cloudSyncTimer);
+      cloudSyncTimer = null;
+      await new Promise(resolve => setTimeout(resolve, 25));
+    }
+
+    return !cloudBusy && !hasUnsyncedLocalChanges(userId);
+  }
+
+  async function buySeasonalBlindBox(boxId, quantity=1) {
+    const box = blindBoxById(boxId);
+    const qty = Number(quantity) === 10 ? 10 : 1;
+    if (!box || blindBoxBusy) return;
+    if (!blindBoxSeasonOpen(box.id)) {
+      toast('🎁 还没到活动时间', `${box.name}开放期间：${box.seasonText}`);
+      return;
+    }
+    const user = cloudAuthUser();
+    const sb = cloudClient();
+    if (!user?.id || !sb) {
+      toast('☁ 无法购买盲盒','请等待云端账号连接完成后再试。');
+      return;
+    }
+    const cost = BLIND_BOX_PRICE * qty;
+    if (Math.max(0, Number(state.coins) || 0) < cost) {
+      toast('💰 金币不足', `购买 ${qty} 盒需要 ${cost} 金币。`);
+      return;
+    }
+
+    blindBoxBusy = true;
+    renderActivePanel();
+    try {
+      if (!(await flushBeforeBlindBoxAction())) throw new Error('cloud_busy');
+      const {data,error} = await sb.rpc('buy_farm_blind_box_v1',{p_box_code:box.id,p_quantity:qty});
+      if (error) throw error;
+      const payload = data && typeof data === 'object' ? data : {};
+      if (!payload.ok) {
+        if (payload.reason === 'not_enough_coins') toast('💰 金币不足',`目前只有 ${formatNumber(payload.coins || 0)} 金币，需要 ${formatNumber(payload.need || cost)} 金币。`);
+        else if (payload.reason === 'season_closed') toast('🎁 活动尚未开放',`${box.name}开放期间：${box.seasonText}`);
+        else toast('🎁 购买没有完成','请稍后重新打开商店再试。');
+        return;
+      }
+      adoptBlindBoxServerState(payload,user.id);
+      renderAll();
+      toast('🎁 购买成功', `${box.name} ×${qty} 已放入背包。`, 'harvest');
+    } catch (error) {
+      toast('🎁 购买失败', blindBoxRpcUnavailable(error) ? '盲盒云端功能尚未部署，请先执行本版数据库更新。' : '网络或云端同步暂时忙碌，请稍后再试。');
+    } finally {
+      blindBoxBusy = false;
+      if (activePanel === 'shop') renderActivePanel();
+    }
+  }
+
+  function blindBoxResultCardMarkup(result, index=0) {
+    const rareClass = result?.kind === 'outfit' ? 'is-gold-rare' : result?.kind === 'pet' ? 'is-purple-rare' : '';
+    const kindLabel = result?.kind === 'outfit' ? '限定服装' : result?.kind === 'pet' ? '永久宠物' : result?.kind === 'decoration' ? '当期装饰' : result?.kind === 'seed' ? '种子' : result?.kind === 'supply' ? '肥料' : result?.kind === 'blindbox' ? '再来一盒' : '奖励';
+    return `<article class="farm-blindbox-result-card ${rareClass}"><small>${index + 1}</small><div class="farm-blindbox-result-icon">${blindBoxRewardIconMarkup(result)}</div><div><em>${escapeHtml(kindLabel)}</em><b>${escapeHtml(result?.name || '奖励')}</b><span>×${Math.max(1,Number(result?.qty)||1)}</span></div></article>`;
+  }
+
+  function renderBlindBoxResultSession() {
+    const session = blindBoxResultSession;
+    if (!session) return;
+    const box = blindBoxById(session.boxId) || BLIND_BOXES[0];
+    const list = Array.isArray(session.results) ? session.results : [];
+    const rares = Array.isArray(session.rares) ? session.rares : [];
+    const drawCount = session.drawCount === 10 ? 10 : 1;
+    let body = '';
+    let subtitle = '本次开盒奖励已经结算完成。';
+
+    if (session.stage === 'rare' && rares.length) {
+      const rareIndex = Math.max(0, Math.min(rares.length - 1, Number(session.rareIndex) || 0));
+      const reward = rares[rareIndex];
+      const effect = reward.effect === 'purple' || reward.kind === 'pet' ? 'purple' : 'gold';
+      const nextLabel = rareIndex < rares.length - 1 ? `下一个大奖 · ${rareIndex + 2}/${rares.length}` : (drawCount === 10 ? '查看十连结果' : '查看开盒结果');
+      subtitle = rares.length > 1 ? `本次共有 ${rares.length} 个永久收藏大奖，将依序为你展示。` : '恭喜抽到永久收藏大奖！';
+      body = `<section class="farm-blindbox-jackpot is-${effect}">
+        <div class="farm-blindbox-effect is-${effect}" aria-hidden="true"></div>
+        <div class="farm-blindbox-jackpot-icon">${blindBoxRewardIconMarkup(reward,'is-jackpot-reward')}</div>
+        <small>✦ 稀有大奖 · ${rareIndex + 1}/${rares.length} ✦</small>
+        <b>${escapeHtml(reward.name || '稀有奖励')}</b>
+        <p>${reward.kind === 'pet' ? '永久宠物已解锁，之后不会从盲盒重复抽到这只宠物。' : '限定服装已永久解锁，之后不会从这个盲盒重复抽到这套服装。'}</p>
+        ${rares.length > 1 ? `<em>还有 ${Math.max(0, rares.length - rareIndex - 1)} 个大奖等待展示</em>` : ''}
+      </section><div class="farm-blindbox-result-actions"><button type="button" data-blindbox-next-rare>${escapeHtml(nextLabel)}</button></div>`;
+    } else {
+      body = `<section class="farm-blindbox-opened-head">${blindBoxSpriteMarkup(box.id,'open','is-result-open-box',box.name)}<div><small>${drawCount === 10 ? '十连抽完成' : '开盒完成'}</small><b>${escapeHtml(box.name)}</b><p>奖励已经直接放入背包／收藏。</p></div></section>
+        <div class="farm-blindbox-result-grid ${drawCount === 1 ? 'is-single' : ''}">${list.map(blindBoxResultCardMarkup).join('')}</div>
+        <div class="farm-blindbox-result-actions"><button type="button" data-blindbox-return-bag>返回背包</button></div>`;
+      subtitle = rares.length ? `本次获得 ${rares.length} 个永久收藏大奖，全部奖励如下。` : '本次开盒奖励已经结算完成。';
+    }
+
+    openModal({
+      iconHtml:blindBoxSpriteMarkup(box.id,'open','is-modal-blindbox',box.name),
+      eyebrow:'STELLAR BLIND BOX',
+      title:session.stage === 'rare' ? '稀有大奖！' : (drawCount === 10 ? '十连抽结果' : '盲盒结果'),
+      subtitle,
+      body
+    });
+    activePanel = 'blindbox-result';
+  }
+
+  function showBlindBoxResults(boxId, results, drawCount=1) {
+    const list = Array.isArray(results) ? results : [];
+    const rares = list.filter(item => item?.kind === 'outfit' || item?.kind === 'pet');
+    blindBoxResultSession = {
+      boxId,
+      results:list,
+      rares,
+      drawCount:Number(drawCount) === 10 ? 10 : 1,
+      rareIndex:0,
+      stage:rares.length ? 'rare' : 'summary'
+    };
+    renderBlindBoxResultSession();
+  }
+
+  function advanceBlindBoxRareResult() {
+    const session = blindBoxResultSession;
+    if (!session || session.stage !== 'rare') return;
+    if (session.rareIndex < session.rares.length - 1) session.rareIndex += 1;
+    else session.stage = 'summary';
+    renderBlindBoxResultSession();
+  }
+
+  async function openSeasonalBlindBox(boxId, count=1) {
+    const box = blindBoxById(boxId);
+    const draws = Number(count) === 10 ? 10 : 1;
+    if (!box || blindBoxBusy) return;
+    const have = blindBoxCount(box.id);
+    if (have < draws) {
+      toast('🎁 盲盒数量不足', draws === 10 ? `十连抽需要 10 盒，目前只有 ${have} 盒。` : '背包里已经没有这个盲盒了。');
+      return;
+    }
+    const user = cloudAuthUser();
+    const sb = cloudClient();
+    if (!user?.id || !sb) {
+      toast('☁ 无法开启盲盒','请等待云端账号连接完成后再试。');
+      return;
+    }
+
+    blindBoxBusy = true;
+    renderActivePanel();
+    try {
+      if (!(await flushBeforeBlindBoxAction())) throw new Error('cloud_busy');
+      const {data,error} = await sb.rpc('open_farm_blind_box_v1',{p_box_code:box.id,p_count:draws});
+      if (error) throw error;
+      const payload = data && typeof data === 'object' ? data : {};
+      if (!payload.ok) {
+        if (payload.reason === 'not_enough_boxes') toast('🎁 盲盒数量不足',`目前只有 ${Number(payload.have)||0} 盒。`);
+        else toast('🎁 开盒没有完成','请重新打开背包后再试。');
+        return;
+      }
+      adoptBlindBoxServerState(payload,user.id);
+      renderAll();
+      showBlindBoxResults(box.id,payload.results,draws);
+    } catch (error) {
+      toast('🎁 开盒失败', blindBoxRpcUnavailable(error) ? '盲盒云端功能尚未部署，请先执行本版数据库更新。' : '网络或云端同步暂时忙碌，请稍后再试。');
+    } finally {
+      blindBoxBusy = false;
+      if (activePanel === 'bag') renderActivePanel();
+    }
+  }
+
   function openPanel(panel, options = {}) {
     activePanel = panel;
     if (panel === 'character') { previewOutfitId = ''; previewPetId = ''; }
     const meta = {
-      shop:{icon:'shop', eyebrow:'FARM SHOP', title:'农场商店', subtitle:'购买种子、农资与装饰品，让农场越来越有自己的样子。'},
-      bag:{icon:'bag', eyebrow:'INVENTORY', title:'我的背包', subtitle:'管理种子、肥料、装饰与收成蔬果；也可以从这里进入农场布置模式。'},
+      shop:{icon:'shop', eyebrow:'FARM SHOP', title:'农场商店', subtitle:'购买种子、农资、装饰与季节盲盒，让农场越来越有自己的样子。'},
+      bag:{icon:'bag', eyebrow:'INVENTORY', title:'我的背包', subtitle:'管理种子、肥料、盲盒、装饰与收成蔬果；季节盲盒可在这里单抽或十连抽。'},
       tasks:{icon:'task', eyebrow:'FARM QUEST', title:'任务与成就', subtitle:'完成每日农务、新手任务与长期成就，领取奖励并解锁专属称号。'},
       ranking:{icon:'ranking', eyebrow:'RANKING', title:'农场排行榜', subtitle:'查看真实云端玩家的等级榜与金币榜，也可以直接发送好友申请。'},
       friends:{icon:'friends', eyebrow:'FRIENDS', title:'农场好友', subtitle:'真人好友与 NPC 农友都在这里；NPC 不参加排行榜、不会偷你的菜，但你可以限量偷 NPC 的成熟作物。'},
@@ -5311,7 +5593,7 @@
     if (panel === 'train') ensureTrainState(farmDay, {persist:true});
     $('farmModal')?.classList.toggle('is-train-modal', panel === 'train');
     if (panel === 'friends') activeFriendTab = ['activity','friends','requests'].includes(options.friendTab) ? options.friendTab : 'activity';
-    if (panel === 'shop' && !['seeds','care','decor'].includes(activeShopTab)) activeShopTab = 'seeds';
+    if (panel === 'shop' && !['seeds','care','decor','blindbox'].includes(activeShopTab)) activeShopTab = 'seeds';
     openModal({...meta, body:''});
     renderActivePanel();
     if (panel === 'tasks') syncFarmDay(true).then(() => renderActivePanel()).catch(() => {});
@@ -5392,14 +5674,14 @@
         if (slot.status === 'cooldown') {
           return `<section class="farm-train-slot is-cooldown" data-train-slot="${slot.index}">
             <header class="farm-train-slot-head"><div><small>第 ${slot.index + 1} 月台</small><b>${uiIconMarkup('cooldown','is-heading-ui')} 列车返程中</b></div><span>约 <strong data-train-cooldown-until="${slot.availableAt}">${formatTrainWait(slot.availableAt - Date.now())}</strong> 后抵达</span></header>
-            <div class="farm-train-empty-station"><img src="../images/farm/train-station.png?v=0.19.3.2" alt="星辰车站"></div>
+            <div class="farm-train-empty-station"><img src="../images/farm/train-station.png?v=0.19.4.0" alt="星辰车站"></div>
             <p class="farm-train-slot-note">奖励已在上一班发车时立即入账。返程后这里会自动出现一班全新的订单。</p>
           </section>`;
         }
         if (slot.status === 'done') {
           return `<section class="farm-train-slot is-done" data-train-slot="${slot.index}">
             <header class="farm-train-slot-head"><div><small>第 ${slot.index + 1} 月台</small><b>${uiIconMarkup('success','is-heading-ui')} 今日加班班次已满</b></div><span>00:00 统一刷新</span></header>
-            <div class="farm-train-empty-station"><img src="../images/farm/train-station.png?v=0.19.3.2" alt="星辰车站"></div>
+            <div class="farm-train-empty-station"><img src="../images/farm/train-station.png?v=0.19.4.0" alt="星辰车站"></div>
           </section>`;
         }
         const train = slot.train;
@@ -5414,7 +5696,7 @@
           const owned = Math.max(0, Number(state.produce[car.cropId]) || 0);
           const remaining = Math.max(0, car.required - car.loaded);
           return `<button type="button" class="farm-train-car is-${car.style} ${done ? 'is-complete' : ''} ${!done && owned <= 0 ? 'is-empty-bag' : ''}" data-train-slot-index="${slot.index}" data-train-load-index="${index}" ${done ? 'disabled' : ''} aria-label="${done ? `${crop.name}车厢已装满` : `查看${crop.name}装箱需求，还差${remaining}个，背包${owned}个`}">
-            <img src="../images/farm/train-car-${car.style}.png?v=0.19.3.2" alt="" aria-hidden="true">
+            <img src="../images/farm/train-car-${car.style}.png?v=0.19.4.0" alt="" aria-hidden="true">
             <span class="farm-train-car-ui"><i>${done ? uiIconMarkup('success','is-train-check-ui') : produceIconMarkup(crop,'is-train-produce-ui')}</i><b>${escapeHtml(crop.name)}</b><strong>${car.loaded} / ${car.required}</strong><small>${done ? '装载完成' : `背包 ${owned}`}</small></span>
           </button>`;
         }).join('');
@@ -5426,10 +5708,10 @@
             <div class="farm-train-reset"><small>火车重置券</small><b>${uiIconMarkup('refresh','is-inline-ui')} ×${Math.max(0,Math.floor(Number(state.supplies?.[TRAIN_RESET_TICKET_ID])||0))}</b></div>
           </div>
           <div class="farm-train-yard">
-            <img class="farm-train-yard-station" src="../images/farm/train-station.png?v=0.19.3.2" alt="" aria-hidden="true">
+            <img class="farm-train-yard-station" src="../images/farm/train-station.png?v=0.19.4.0" alt="" aria-hidden="true">
             <div class="farm-train-consist ${complete ? 'is-ready' : ''}" data-train-slot-index="${slot.index}">
               ${cars}
-              <div class="farm-train-engine is-${train.tier}"><img src="../images/farm/train-engine.png?v=0.19.3.2" alt="" aria-hidden="true"><span class="farm-train-engine-rate">×${train.multiplier.toFixed(1)}</span><span class="farm-train-smoke" aria-hidden="true"></span></div>
+              <div class="farm-train-engine is-${train.tier}"><img src="../images/farm/train-engine.png?v=0.19.4.0" alt="" aria-hidden="true"><span class="farm-train-engine-rate">×${train.multiplier.toFixed(1)}</span><span class="farm-train-smoke" aria-hidden="true"></span></div>
             </div>
           </div>
           <div class="farm-train-progress"><span><b>${loadedCars}</b> / ${train.cars.length} 节车厢已完成</span><div><i style="width:${Math.round((loadedCars/train.cars.length)*100)}%"></i></div></div>
@@ -5445,6 +5727,7 @@
         <button type="button" data-shop-tab="seeds" class="${activeShopTab === 'seeds' ? 'is-active' : ''}">${uiIconMarkup('newbie-farmer','is-tab-ui')} 种子</button>
         <button type="button" data-shop-tab="care" class="${activeShopTab === 'care' ? 'is-active' : ''}">${uiIconMarkup('harvest-expert','is-tab-ui')} 农资</button>
         <button type="button" data-shop-tab="decor" class="${activeShopTab === 'decor' ? 'is-active' : ''}">${uiIconMarkup('farm-expert','is-tab-ui')} 装饰</button>
+        <button type="button" data-shop-tab="blindbox" class="${activeShopTab === 'blindbox' ? 'is-active' : ''}">${blindBoxSpriteMarkup('halloween','closed','is-tab-blindbox','盲盒')} 盲盒</button>
       </div>`;
       if (activeShopTab === 'seeds') {
         const seedShop = `<div class="farm-shop-grid">${seedItems().map(crop => {
@@ -5463,6 +5746,21 @@
         body.innerHTML = shopTabs + `<section class="farm-shop-care is-tab-body"><header><div><b>${uiIconMarkup('harvest-expert','is-heading-ui')} 农田照料</b><small>每株每轮最多使用一包肥料；浇水免费。</small></div>${itemSpriteMarkup(2, 'is-shop-header-item')}</header><div class="farm-fertilizer-grid">${FERTILIZERS.map(item => `<article class="farm-fertilizer-card">${itemSpriteMarkup(item.itemCell, 'is-fertilizer-art')}<div class="farm-fertilizer-copy"><b>${item.name}</b><p>${item.note}</p></div><div class="farm-shop-meta farm-fertilizer-meta"><span>${uiIconMarkup('coin','is-meta-ui')} ${item.price} / 包</span><span>背包 ×${state.supplies[item.id] || 0}</span></div><div class="farm-shop-buy"><button type="button" data-buy-supply="${item.id}" data-qty="1">买 1</button><button type="button" data-buy-supply="${item.id}" data-qty="5">买 5</button></div></article>`).join('')}</div></section>`;
         return;
       }
+      if (activeShopTab === 'blindbox') {
+        const cards = BLIND_BOXES.map(box => {
+          const active = blindBoxSeasonOpen(box.id);
+          const owned = blindBoxCount(box.id);
+          const cost10 = BLIND_BOX_PRICE * 10;
+          return `<article class="farm-blindbox-shop-card ${active ? 'is-active-season' : 'is-closed-season'}">
+            <div class="farm-blindbox-shop-art">${blindBoxSpriteMarkup(box.id,'closed','is-shop-blindbox',box.name)}</div>
+            <div class="farm-blindbox-shop-copy"><small>${escapeHtml(box.subtitle)} · ${escapeHtml(box.seasonText)}</small><b>${escapeHtml(box.name)}</b><p>每盒 ${BLIND_BOX_PRICE} 金币。服装 1%／宠物 1%；永久收藏取得后不会重复，普通奖包含种子、当期装饰、肥料与再来一盒。</p></div>
+            <div class="farm-blindbox-shop-meta"><span>${uiIconMarkup('coin','is-meta-ui')} ${BLIND_BOX_PRICE} / 盒</span><span>背包 ×${owned}</span>${active ? '<em>本期开放</em>' : '<em class="is-closed">尚未开放</em>'}</div>
+            <div class="farm-blindbox-shop-actions"><button type="button" data-buy-blindbox="${box.id}" data-qty="1" ${active && !blindBoxBusy ? '' : 'disabled'}>购买 1 盒</button><button type="button" data-buy-blindbox="${box.id}" data-qty="10" ${active && !blindBoxBusy ? '' : 'disabled'}>购买 10 盒 · ${cost10}</button></div>
+          </article>`;
+        }).join('');
+        body.innerHTML = shopTabs + `<section class="farm-blindbox-shop-head"><div><b>✦ 星辰季节盲盒</b><small>购买后放入背包；开盒由云端即时结算，单抽与十连抽都不会重复取得已经拥有的永久服装／宠物。</small></div><span>1 盒 = ${uiIconMarkup('coin','is-meta-ui')} ${BLIND_BOX_PRICE}</span></section><div class="farm-blindbox-shop-grid">${cards}</div>`;
+        return;
+      }
       const decorCards = DECORATIONS.filter(item => item.shopVisible !== false).map(item => {
         const locked = state.level < item.unlockLevel;
         const owned = Number(state.decorations?.owned?.[item.id]) || 0;
@@ -5479,6 +5777,11 @@
     }
 
     if (activePanel === 'bag') {
+      const blindBoxTotal = BLIND_BOXES.reduce((sum,box) => sum + blindBoxCount(box.id), 0);
+      const blindBoxRows = BLIND_BOXES.filter(box => blindBoxCount(box.id) > 0).map(box => {
+        const qty = blindBoxCount(box.id);
+        return `<div class="farm-bag-row farm-blindbox-bag-row"><span class="farm-bag-icon">${blindBoxSpriteMarkup(box.id,'closed','is-bag-blindbox',box.name)}</span><div><b>${escapeHtml(box.name)}</b><small>可直接开盒 · 服装／宠物永久去重</small></div><em>×${qty}</em><div class="farm-blindbox-open-actions"><button type="button" data-open-blindbox="${box.id}" data-count="1" ${blindBoxBusy || qty < 1 ? 'disabled' : ''}>单抽</button><button type="button" data-open-blindbox="${box.id}" data-count="10" ${blindBoxBusy || qty < 10 ? 'disabled' : ''}>十连抽</button></div></div>`;
+      }).join('');
       const seedItemsInBag = seedItems().filter(c => (state.seeds[c.id] || 0) > 0);
       const produceItems = CROPS.filter(c => (state.produce[c.id] || 0) > 0);
       const decorOwnedTotal = DECORATIONS.reduce((sum,item)=>sum+(state.decorations?.owned?.[item.id]||0),0);
@@ -5489,6 +5792,10 @@
         return `<div class="farm-bag-row farm-decor-bag-row">${decorationIconMarkup(item, 'is-bag-decor', item.name)}<div><b>${escapeHtml(item.name)}</b><small>${escapeHtml(item.note)} · 可用 ${available} / ${owned}</small></div><em>×${owned}</em></div>`;
       }).join('');
       body.innerHTML = `
+        <section class="farm-bag-section farm-blindbox-bag-section">
+          <header><b>${blindBoxSpriteMarkup('halloween','closed','is-heading-blindbox','季节盲盒')} 季节盲盒</b><span>${blindBoxTotal} 盒</span></header>
+          <div class="farm-bag-list">${blindBoxRows || '<p class="farm-empty-state">目前没有季节盲盒，可到商店的「盲盒」分页购买。</p>'}</div>
+        </section>
         <section class="farm-bag-section">
           <header><b>${uiIconMarkup('newbie-farmer','is-heading-ui')} 种子</b><span>${seedItemsInBag.reduce((s,c)=>s+(state.seeds[c.id]||0),0)} 包</span></header>
           <div class="farm-bag-list">${seedItemsInBag.length ? seedItemsInBag.map(c => {
@@ -5878,7 +6185,7 @@
     const modalIcon = $('farmModalIcon');
     if (modalIcon) {
       if (iconHtml) modalIcon.innerHTML = iconHtml;
-      else if (icon === 'train') modalIcon.innerHTML = '<img class="farm-modal-asset-icon" src="../images/farm/train-engine.png?v=0.19.3.2" alt="">';
+      else if (icon === 'train') modalIcon.innerHTML = '<img class="farm-modal-asset-icon" src="../images/farm/train-engine.png?v=0.19.4.0" alt="">';
       else {
         const mapped = UI_ICON_INDEX[icon] ? icon : (UI_EMOJI_ICON[icon] || (icon === '🌱' ? 'newbie-farmer' : ''));
         modalIcon.innerHTML = mapped ? uiIconMarkup(mapped,'is-modal-ui') : escapeHtml(icon || '');
@@ -5897,6 +6204,7 @@
     $('farmModal').hidden = true;
     document.body.classList.remove('farm-modal-open');
     activePanel = null;
+    blindBoxResultSession = null;
     previewOutfitId = '';
     previewPetId = '';
     $('farmModal')?.classList.remove('is-train-modal');
@@ -6171,7 +6479,7 @@
 
     const shopTab = event.target.closest('[data-shop-tab]');
     if (shopTab) {
-      activeShopTab = ['seeds','care','decor'].includes(shopTab.dataset.shopTab) ? shopTab.dataset.shopTab : 'seeds';
+      activeShopTab = ['seeds','care','decor','blindbox'].includes(shopTab.dataset.shopTab) ? shopTab.dataset.shopTab : 'seeds';
       renderActivePanel();
       return;
     }
@@ -6346,6 +6654,22 @@
       return;
     }
 
+    const buyBlindBox = event.target.closest('[data-buy-blindbox]');
+    if (buyBlindBox) {
+      buySeasonalBlindBox(buyBlindBox.dataset.buyBlindbox, Number(buyBlindBox.dataset.qty) || 1);
+      return;
+    }
+
+    const openBlindBox = event.target.closest('[data-open-blindbox]');
+    if (openBlindBox) {
+      openSeasonalBlindBox(openBlindBox.dataset.openBlindbox, Number(openBlindBox.dataset.count) || 1);
+      return;
+    }
+
+    if (event.target.closest('[data-blindbox-next-rare]')) { advanceBlindBoxRareResult(); return; }
+
+    if (event.target.closest('[data-blindbox-return-bag]')) { blindBoxResultSession = null; openPanel('bag'); return; }
+
     const buySupplyBtn = event.target.closest('[data-buy-supply]');
     if (buySupplyBtn) {
       buySupply(buySupplyBtn.dataset.buySupply, buySupplyBtn.dataset.qty);
@@ -6508,4 +6832,12 @@
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, {once:true});
   else init();
+
+  // Mobile safeguard: the blind-box controls are rapid-tap actions. Prevent a
+  // double-tap gesture from becoming browser zoom while keeping normal page
+  // pinch-zoom and scrolling available everywhere else.
+  document.addEventListener('dblclick', event => {
+    if (event.target.closest('[data-buy-blindbox],[data-open-blindbox],[data-blindbox-next-rare],[data-blindbox-return-bag]')) event.preventDefault();
+  }, {passive:false});
+
 })();
