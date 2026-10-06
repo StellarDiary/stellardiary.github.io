@@ -115,7 +115,7 @@
       try { values[key] = localStorage.getItem(key); } catch (_) { values[key] = null; }
     });
     writeJson(GUEST_BACKUP_KEY, {
-      version: '0.19.5.1',
+      version: '0.19.6.0',
       createdAt: new Date().toISOString(),
       fromUserId: fromUserId || '',
       counts: countLocal(),
@@ -166,7 +166,7 @@
 
   function beginPending(email, fromUserId) {
     const pending = {
-      version: '0.19.5.1',
+      version: '0.19.6.0',
       mode: 'existing-login',
       email: normalizeEmail(email),
       fromUserId: fromUserId || '',
@@ -239,12 +239,11 @@
       toUserId: user.id,
       toEmail: user.email || pending.email || '',
       authenticatedAt: new Date().toISOString(),
-      stage: 'restore-choice'
+      stage: 'auto-restore'
     };
     saveRestorePending(next);
     savePendingLogin({...next});
     try { window.dispatchEvent(new CustomEvent('stellar:account-restore-pending',{detail:next})); } catch (_) {}
-    setTimeout(() => hydrateRemoteCounts(user).catch(() => {}), 0);
     return next;
   }
 
@@ -264,7 +263,14 @@
       if (!user?.id) throw new Error('登录成功但未取得账号资料。');
       markAuthenticated(user);
       await auth()?.refreshUser?.();
-      return {ok:true, user, data, restore:readRestorePending()};
+      const restoreResult = await autoRestoreRecommended();
+      return {
+        ok:true,
+        user,
+        data,
+        restoreResult,
+        restoreError:restoreResult?.ok ? '' : String(restoreResult?.error || '')
+      };
     } catch (error) {
       return {ok:false, error:friendly(error), raw:error};
     }
@@ -275,8 +281,14 @@
     const state = auth()?.status?.() || {};
     const pending = readRestorePending() || readPendingLogin();
     if (state.signedIn && !state.isAnonymous && pending?.fromUserId && pending.fromUserId !== state.userId) {
-      const restore = markAuthenticated(auth()?.getUser?.());
-      return {ok:true, state, restore};
+      markAuthenticated(auth()?.getUser?.());
+      const restoreResult = await autoRestoreRecommended();
+      return {
+        ok:true,
+        state:auth()?.status?.() || state,
+        restoreResult,
+        restoreError:restoreResult?.ok ? '' : String(restoreResult?.error || '')
+      };
     }
     return {ok:false, state, error:'尚未检测到登录完成。请确认已经点击邮件中的登录按钮，或改用验证码。'};
   }
@@ -308,6 +320,19 @@
     }
   }
 
+  async function autoRestoreRecommended() {
+    const pending = readRestorePending();
+    const state = auth()?.status?.() || {};
+    if (!pending) return {ok:true, skipped:'no-pending'};
+    if (!state.signedIn || state.isAnonymous || !state.userId) {
+      return {ok:false, error:'正式账号尚未准备完成，请稍后重试。'};
+    }
+    if (!pending.fromUserId || pending.fromUserId === state.userId) {
+      return {ok:false, error:'没有需要恢复的跨设备账号资料。'};
+    }
+    return finishRestore('cloud');
+  }
+
   function clearPending() {
     savePendingLogin(null);
     saveRestorePending(null);
@@ -319,6 +344,7 @@
     verify,
     checkLinkResult,
     finishRestore,
+    autoRestoreRecommended,
     markAuthenticated,
     validEmail,
     normalizeEmail,

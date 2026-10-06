@@ -12,6 +12,9 @@
     optionB: '',
     nextRevealIndex: 0,
     currentDrawId: '',
+    autoRevealTimers: [],
+    autoRevealToken: 0,
+    isAutoRevealing: false,
     history: []
   };
 
@@ -31,14 +34,14 @@
       spreadHeading: '选择类型',
       spreadHint: '单张看核心；本周、本月、关系与二选一会读取更多牌面结构。',
       draw: '开始抽盘',
-      drawHint: '在心里确认问题，默念三次，然后点击牌堆',
+      drawHint: '在心里确认问题，默念三次，然后点击牌堆；系统会自动依序揭晓牌面',
       redraw: '重新抽盘',
       resultTitle: '你的牌阵',
       questionPrefix: '你问的是',
-      revealGuideTitle: '依序翻开牌面',
-      revealGuideText: '从第一张开始点击牌背。全部翻开后，才会显示完整的组合解读。',
-      revealNext: '点击翻开',
-      waiting: '请先翻开前一张',
+      revealGuideTitle: '系统正在依序揭晓牌面',
+      revealGuideText: '请稍候，无需点击牌面。系统会按照牌位顺序自动翻牌，全部揭晓后显示完整组合解读。',
+      revealNext: '正在揭晓',
+      waiting: '等待揭晓',
       combinationLabel: '整体组合解读',
       combinationTitle: '把牌连起来看',
       directAnswerHeading: '先给你一句话答案',
@@ -68,7 +71,7 @@
       placeholderStudy: '例如：这次考试／学习计划该怎么调整？',
       historyButton:'历史记录', historyTitle:'最近的塔罗记录',
       historyHint:'结果保存在当前浏览器，最多保留最近 10 则。',
-      historyEmpty:'还没有完成的塔罗记录。全部牌翻开后，会自动保存在这里。',
+      historyEmpty:'还没有完成的塔罗记录。完整牌阵自动揭晓后，会保存在这里。',
       historyClear:'清空记录', historyClearConfirm:'确定要清空这台浏览器里的塔罗历史记录吗？',
       historyGeneral:'一般指引', historyCards:'牌面', historyAnswer:'直接回答', historyStory:'牌面故事',
       historyStructure:'结构重点', historyAdvice:'最终建议'
@@ -86,14 +89,14 @@
       spreadHeading: '選擇類型',
       spreadHint: '單張看核心；本週、本月、關係與二選一會讀取更多牌面結構。',
       draw: '開始抽盤',
-      drawHint: '在心裡確認問題，默念三次，然後點擊牌堆',
+      drawHint: '在心裡確認問題，默念三次，然後點擊牌堆；系統會自動依序揭曉牌面',
       redraw: '重新抽盤',
       resultTitle: '你的牌陣',
       questionPrefix: '你問的是',
-      revealGuideTitle: '依序翻開牌面',
-      revealGuideText: '從第一張開始點擊牌背。全部翻開後，才會顯示完整的組合解讀。',
-      revealNext: '點擊翻開',
-      waiting: '請先翻開前一張',
+      revealGuideTitle: '系統正在依序揭曉牌面',
+      revealGuideText: '請稍候，不需要點擊牌面。系統會依照牌位順序自動翻牌，全部揭曉後顯示完整組合解讀。',
+      revealNext: '正在揭曉',
+      waiting: '等待揭曉',
       combinationLabel: '整體組合解讀',
       combinationTitle: '把牌連起來看',
       directAnswerHeading: '先給你一句話答案',
@@ -123,7 +126,7 @@
       placeholderStudy: '例如：這次考試／學習計畫該怎麼調整？',
       historyButton:'歷史紀錄', historyTitle:'最近的塔羅紀錄',
       historyHint:'結果保存在目前瀏覽器，最多保留最近 10 則。',
-      historyEmpty:'還沒有完成的塔羅紀錄。全部牌翻開後，會自動保存在這裡。',
+      historyEmpty:'還沒有完成的塔羅紀錄。完整牌陣自動揭曉後，會保存在這裡。',
       historyClear:'清空紀錄', historyClearConfirm:'確定要清空這台瀏覽器裡的塔羅歷史紀錄嗎？',
       historyGeneral:'一般指引', historyCards:'牌面', historyAnswer:'直接回答', historyStory:'牌面故事',
       historyStructure:'結構重點', historyAdvice:'最終建議'
@@ -141,14 +144,14 @@
       spreadHeading: 'Choose a reading type',
       spreadHint: 'One card for the core; weekly, monthly, relationship and two-path readings use more structural signals.',
       draw: 'Start reading',
-      drawHint: 'Confirm your question in your mind, repeat it three times, then click the deck',
+      drawHint: 'Confirm your question, repeat it three times, then click the deck. The cards will reveal automatically.',
       redraw: 'Draw again',
       resultTitle: 'Your spread',
       questionPrefix: 'Your question',
-      revealGuideTitle: 'Reveal the cards in order',
-      revealGuideText: 'Start with the first card. The combined interpretation appears after every card has been revealed.',
-      revealNext: 'Tap to reveal',
-      waiting: 'Reveal the previous card first',
+      revealGuideTitle: 'The cards are revealing automatically',
+      revealGuideText: 'No tapping is needed. The system reveals each position in order, then shows the complete combined interpretation.',
+      revealNext: 'Revealing',
+      waiting: 'Waiting to reveal',
       combinationLabel: 'Combined reading',
       combinationTitle: 'Read the cards as one story',
       directAnswerHeading: 'Direct answer',
@@ -173,7 +176,7 @@
       bottomHome: 'Back home',
       historyButton:'History', historyTitle:'Recent tarot readings',
       historyHint:'Saved in this browser, up to the latest 10 readings.',
-      historyEmpty:'No completed tarot readings yet. A reading is saved after every card is revealed.',
+      historyEmpty:'No completed tarot readings yet. A reading is saved after the full spread is revealed automatically.',
       historyClear:'Clear history', historyClearConfirm:'Clear tarot history stored in this browser?',
       historyGeneral:'General guidance', historyCards:'Cards', historyAnswer:'Direct answer', historyStory:'Narrative',
       historyStructure:'Structural signals', historyAdvice:'Final advice',
@@ -592,6 +595,7 @@
       window.XingchenPlayer?.ensure?.(() => draw());
       return;
     }
+    cancelAutoReveal();
     readInputs();
     const spread = selectedSpread();
     if (!spread || !state.cards.length) return;
@@ -628,8 +632,6 @@
     const {card, reversed, meaning, position} = item;
     const name = cardName(card);
     const pos = positionName(position);
-    const isFirst = index === 0;
-
     return `
       <article class="tarot-spread-card tarot-reveal-item" data-card-index="${index}">
         <div class="tarot-position-badge">
@@ -637,15 +639,16 @@
           <strong>${escapeHtml(pos)}</strong>
         </div>
 
-        <button class="tarot-flip-card ${isFirst ? 'is-ready' : 'is-waiting'}"
+        <button class="tarot-flip-card is-waiting"
                 type="button"
                 data-reveal-index="${index}"
-                ${isFirst ? '' : 'disabled'}
-                aria-label="${escapeHtml(pos)} · ${ui('revealNext')}">
+                disabled
+                tabindex="-1"
+                aria-label="${escapeHtml(pos)} · ${ui('waiting')}">
           <span class="tarot-flip-inner">
             <span class="tarot-flip-face tarot-flip-back">
               <img src="../images/tarot/cards/CardBacks.webp" alt="" />
-              <span class="tarot-flip-prompt">${isFirst ? ui('revealNext') : ui('waiting')}</span>
+              <span class="tarot-flip-prompt">${ui('waiting')}</span>
             </span>
             <span class="tarot-flip-face tarot-flip-front ${reversed ? 'is-reversed' : ''}">
               <img src="${imageFromRoot(card.image)}" alt="${escapeHtml(name)} · ${orientationText(reversed)}" />
@@ -706,47 +709,100 @@
     byId('revealGuideText').textContent = ui('revealGuideText');
     byId('tarotResult').hidden = false;
 
-    document.querySelectorAll('[data-reveal-index]').forEach(btn => {
-      btn.addEventListener('click', handleReveal);
-    });
-
     requestAnimationFrame(() => {
       byId('tarotResult').scrollIntoView({behavior:'smooth', block:'start'});
+      startAutoReveal();
     });
   }
 
-  function handleReveal(event) {
-    const button = event.currentTarget;
-    const index = Number(button.dataset.revealIndex);
-    if (index !== state.nextRevealIndex || state.currentDraw[index]?.revealed) return;
+  function revealDelays() {
+    const reduced = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+    return reduced
+      ? {initial:120, ready:0, settle:90, gap:70}
+      : {initial:650, ready:260, settle:650, gap:180};
+  }
 
-    state.currentDraw[index].revealed = true;
-    button.classList.remove('is-ready');
-    button.classList.add('is-flipped');
-    button.disabled = true;
+  function setDrawLocked(locked) {
+    const main = byId('drawTarotBtn');
+    const again = byId('drawTarotAgainBtn');
+    if (main) main.disabled = locked;
+    if (again) again.disabled = locked;
+  }
 
-    const article = button.closest('.tarot-reveal-item');
-    const caption = article.querySelector('.tarot-card-reveal-caption');
-    const reading = article.querySelector('.tarot-spread-card-reading');
+  function cancelAutoReveal() {
+    state.autoRevealTimers.forEach(id => window.clearTimeout(id));
+    state.autoRevealTimers = [];
+    state.autoRevealToken += 1;
+    state.isAutoRevealing = false;
+  }
 
-    window.setTimeout(() => {
-      caption.hidden = false;
-      reading.hidden = false;
-      article.classList.add('is-revealed');
+  function queueAutoReveal(callback, delay, token) {
+    const id = window.setTimeout(() => {
+      state.autoRevealTimers = state.autoRevealTimers.filter(x => x !== id);
+      if (token !== state.autoRevealToken) return;
+      callback();
+    }, Math.max(0, delay));
+    state.autoRevealTimers.push(id);
+  }
 
-      state.nextRevealIndex += 1;
+  function startAutoReveal() {
+    cancelAutoReveal();
+    const token = state.autoRevealToken;
+    const delays = revealDelays();
+    state.nextRevealIndex = 0;
+    state.isAutoRevealing = true;
+    setDrawLocked(true);
 
-      if (state.nextRevealIndex < state.currentDraw.length) {
-        const next = document.querySelector(`[data-reveal-index="${state.nextRevealIndex}"]`);
-        next.disabled = false;
-        next.classList.remove('is-waiting');
-        next.classList.add('is-ready');
-        const prompt = next.querySelector('.tarot-flip-prompt');
-        if (prompt) prompt.textContent = ui('revealNext');
-      } else {
-        revealCombination();
-      }
-    }, 440);
+    if (!state.currentDraw.length) {
+      state.isAutoRevealing = false;
+      setDrawLocked(false);
+      return;
+    }
+    queueAutoReveal(() => autoRevealCard(0, token, delays), delays.initial, token);
+  }
+
+  function autoRevealCard(index, token, delays) {
+    if (token !== state.autoRevealToken || index !== state.nextRevealIndex) return;
+    const item = state.currentDraw[index];
+    const button = document.querySelector(`[data-reveal-index="${index}"]`);
+    if (!item || !button || item.revealed) return;
+
+    button.classList.remove('is-waiting');
+    button.classList.add('is-ready');
+    const prompt = button.querySelector('.tarot-flip-prompt');
+    if (prompt) prompt.textContent = ui('revealNext');
+    button.setAttribute('aria-label', `${positionName(item.position)} · ${ui('revealNext')}`);
+
+    queueAutoReveal(() => {
+      if (token !== state.autoRevealToken) return;
+      item.revealed = true;
+      button.classList.remove('is-ready');
+      button.classList.add('is-flipped');
+
+      const article = button.closest('.tarot-reveal-item');
+      const caption = article?.querySelector('.tarot-card-reveal-caption');
+      const reading = article?.querySelector('.tarot-spread-card-reading');
+
+      queueAutoReveal(() => {
+        if (token !== state.autoRevealToken) return;
+        if (caption) caption.hidden = false;
+        if (reading) reading.hidden = false;
+        article?.classList.add('is-revealed');
+        state.nextRevealIndex += 1;
+
+        if (state.nextRevealIndex < state.currentDraw.length) {
+          queueAutoReveal(
+            () => autoRevealCard(state.nextRevealIndex, token, delays),
+            delays.gap,
+            token
+          );
+        } else {
+          state.isAutoRevealing = false;
+          setDrawLocked(false);
+          revealCombination();
+        }
+      }, delays.settle, token);
+    }, delays.ready, token);
   }
 
   function truncateUtf8(text, maxBytes) {

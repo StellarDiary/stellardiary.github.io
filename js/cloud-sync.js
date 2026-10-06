@@ -1,5 +1,5 @@
 (() => {
-  const VERSION = '0.19.5.1';
+  const VERSION = '0.19.6.0';
   const META_KEY = 'stellar-diary-cloud-sync-meta-v1';
   const RESTORE_PENDING_KEY = 'stellar-diary-account-restore-pending-v1';
   const PROFILE_KEY = 'xingchen-player-profile-v1';
@@ -510,7 +510,7 @@
         return setState('waiting-auth','尚未建立云端身份。');
       }
       if (restoreGuardActive() && !/^restore-(merge|cloud)/.test(reason)) {
-        return setState('restore-choice','等待选择如何处理这台设备的游客资料。');
+        return setState('restore-choice','正在准备恢复原账号云端资料。');
       }
       if (typeof navigator !== 'undefined' && navigator.onLine === false) {
         return setState('offline','目前离线；本机资料已保留，恢复网络后会自动重试。');
@@ -597,7 +597,7 @@
   function bindEvents() {
     window.addEventListener('stellar:auth-state', event => {
       if (event.detail?.signedIn) {
-        if (restoreGuardActive()) setState('restore-choice','等待选择如何处理这台设备的游客资料。');
+        if (restoreGuardActive()) setState('restore-choice','正在准备恢复原账号云端资料。');
         else setTimeout(() => syncAll('auth-ready'),250);
       } else if (event.detail?.phase === 'signed-out') {
         setState('waiting-auth','');
@@ -627,7 +627,7 @@
     bindEvents();
     const auth = window.XingchenAuth?.status?.() || {};
     if (auth.signedIn) {
-      if (restoreGuardActive()) setState('restore-choice','等待选择如何处理这台设备的游客资料。');
+      if (restoreGuardActive()) setState('restore-choice','正在准备恢复原账号云端资料。');
       else setTimeout(() => syncAll('startup'),180);
     } else setState(auth.phase === 'local-only' ? 'local-only' : 'waiting-auth','');
     return snapshot();
