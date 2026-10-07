@@ -1,5 +1,5 @@
 {
-  "version": "0.7",
+  "version": "0.8",
   "topics": [
     {
       "key": "general",
@@ -305,21 +305,27 @@
   "interpretationModel": {
     "base": "Rider-Waite-Smith traditional symbolism",
     "rules": [
-      "question context",
+      "question context and multi-intent decomposition",
+      "scenario detection for practical question types",
       "position meaning",
       "upright/reversed meaning",
-      "question topic lens",
+      "card-specific Major Arcana archetype",
+      "card-specific Minor Arcana suit + rank development",
+      "topic and question-intent lens",
+      "position-specific contextual reading",
+      "evidence-anchored direct answer",
+      "adjacent-card and elemental interaction",
       "major arcana concentration",
       "upright/reversed balance",
       "suit and element concentration",
       "court-card concentration",
       "multiple aces or tens",
-      "repeated numbers",
-      "consecutive number sequences",
-      "adjacent Major Arcana runs",
+      "repeated numbers and consecutive sequences",
       "orientation flow across the spread",
-      "spread-specific relationship / choice logic"
+      "spread-specific relationship / choice narrative",
+      "practical reality checkpoints for high-uncertainty questions",
+      "deterministic phrasing variation to reduce template repetition"
     ],
-    "note": "牌义与组合文案由本项目重新编写；引擎以 RWS 传统象征为骨架，不复制单一网站的现成占卜结果。"
+    "note": "塔罗解读 2.0：以 RWS 传统象征为骨架，由本项目重新编写牌义与组合逻辑；优先针对用户实际问题、牌位和牌与牌之间的关系形成完整叙事，不复制单一网站的现成占卜结果。"
   }
 }
