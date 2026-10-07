@@ -1,5 +1,5 @@
 {
-  "version": "0.8",
+  "version": "0.9",
   "topics": [
     {
       "key": "general",
@@ -308,24 +308,27 @@
       "question context and multi-intent decomposition",
       "scenario detection for practical question types",
       "position meaning",
-      "upright/reversed meaning",
+      "upright/reversed meaning with orientation nuance",
       "card-specific Major Arcana archetype",
       "card-specific Minor Arcana suit + rank development",
       "topic and question-intent lens",
       "position-specific contextual reading",
       "evidence-anchored direct answer",
+      "answer-depth layer that separates current tendency, cause and changeable conditions",
       "adjacent-card and elemental interaction",
+      "deep per-position narrative for every card in the spread",
       "major arcana concentration",
-      "upright/reversed balance",
+      "upright/reversed balance and orientation flow",
       "suit and element concentration",
       "court-card concentration",
       "multiple aces or tens",
       "repeated numbers and consecutive sequences",
-      "orientation flow across the spread",
       "spread-specific relationship / choice narrative",
+      "reality translation from symbolic meaning to observable behavior",
       "practical reality checkpoints for high-uncertainty questions",
+      "action and observation plan after the reading",
       "deterministic phrasing variation to reduce template repetition"
     ],
-    "note": "塔罗解读 2.0：以 RWS 传统象征为骨架，由本项目重新编写牌义与组合逻辑；优先针对用户实际问题、牌位和牌与牌之间的关系形成完整叙事，不复制单一网站的现成占卜结果。"
+    "note": "塔罗深度解读 3.0：延续 RWS 传统象征与 V0.19.7.0 的问题导向组合逻辑，进一步拉高每个牌位、牌组关系、现实映射与行动建议的深度；优先像真人读牌一样解释“为什么这样判断、什么条件会改变答案”，避免只增加字数或堆叠固定句。"
   }
 }

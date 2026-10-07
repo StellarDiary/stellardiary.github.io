@@ -1075,6 +1075,385 @@
     return [lead,blockerLine,next,checkpoint].filter(Boolean).join('\n\n') + questionFraming();
   }
 
+  // V0.19.8.0 · Deep interpretation layer 3.0.
+  // This layer deliberately expands depth without changing the UI or card-draw
+  // mechanics. It stays deterministic and local, but writes more like a human
+  // reader: answer first, then explain why, read each position in context,
+  // connect contradictions, and end with observable real-world checkpoints.
+
+  function orientationDepth(item) {
+    const themes = keyThemes([item],2).join(currentLanguage() === 'en' ? ' and ' : '、') || cardName(item.card);
+    if (item.reversed) return pickLocalized(`${state.currentDrawId}|orientation-depth|${item.card.key}|${item.position?.key}`,
+      [
+        `这里的逆位不一定等于“坏”，更像是「${themes}」没有顺畅地往外走：可能卡在心里、被延迟、表达失衡，或已经用力过头。`,
+        `逆位把「${themes}」往内收。真正要分辨的是：这是暂时没准备好，还是同一种模式已经反复太久，开始消耗这件事。`,
+        `我不会只因为逆位就下负面结论；它更像在说「${themes}」目前有折损，所以后续要看有没有现实动作把这股能量重新拉回正轨。`
+      ],
+      [
+        `這裡的逆位不一定等於「壞」，更像是「${themes}」沒有順暢地往外走：可能卡在心裡、被延遲、表達失衡，或已經用力過頭。`,
+        `逆位把「${themes}」往內收。真正要分辨的是：這是暫時沒準備好，還是同一種模式已經反覆太久，開始消耗這件事。`,
+        `我不會只因為逆位就下負面結論；它更像在說「${themes}」目前有折損，所以後續要看有沒有現實動作把這股能量重新拉回正軌。`
+      ],
+      [
+        `Reversed does not automatically mean “bad.” It suggests that ${themes} is not moving outward cleanly: it may be internalized, delayed, distorted or overused.`,
+        `The reversal turns ${themes} inward. The key distinction is whether this is temporary unreadiness or a pattern that has repeated long enough to become draining.`,
+        `I would not call this negative simply because it is reversed. It shows reduced access to ${themes}, so the next question is whether real behavior restores that energy.`
+      ]);
+    return pickLocalized(`${state.currentDrawId}|orientation-depth|${item.card.key}|${item.position?.key}`,
+      [
+        `正位让「${themes}」比较容易被看见和执行，但“能量顺”不代表事情会自动成功；还要看它在这个牌位承担的是推动、承接还是修正。`,
+        `这张是正位，所以「${themes}」比较直接。它的优势是讯号清楚，但也要避免把顺势误读成结果已经确定。`,
+        `正位说明这股力量比较能被现实使用。接下来真正重要的是，它有没有被周围牌接住，而不是只因为正位就把它判成好牌。`
+      ],
+      [
+        `正位讓「${themes}」比較容易被看見和執行，但「能量順」不代表事情會自動成功；還要看它在這個牌位承擔的是推動、承接還是修正。`,
+        `這張是正位，所以「${themes}」比較直接。它的優勢是訊號清楚，但也要避免把順勢誤讀成結果已經確定。`,
+        `正位說明這股力量比較能被現實使用。接下來真正重要的是，它有沒有被周圍牌接住，而不是只因為正位就把它判成好牌。`
+      ],
+      [
+        `Upright makes ${themes} easier to express and use, but smooth energy is not the same as a guaranteed outcome; its role still depends on the position.`,
+        `Because this card is upright, ${themes} is relatively direct. The signal is clearer, but clarity should not be mistaken for a result that is already secured.`,
+        `Upright means this energy is more available in practice. What matters next is whether the surrounding cards support it, not whether it is simply labelled a “good” card.`
+      ]);
+  }
+
+  function cardRealityTranslation(item, profile, index = 0) {
+    const themes = keyThemes([item],2);
+    const theme = themes.join(currentLanguage() === 'en' ? ' and ' : '、') || cardName(item.card);
+    const position = positionName(item.position);
+    const seed = `${state.currentDrawId}|reality-translation|${item.card.key}|${item.position?.key}|${profile.intent}|${profile.scenario}|${index}`;
+
+    const specific = {
+      communication:[
+        `如果把它翻成现实行为，「${theme}」要看在联络频率、回应内容、主动开启话题或是否愿意把互动继续下去。`,
+        `這張若落到現實，最容易從聯絡品質看出來：不是有沒有回而已，而是「${theme}」有沒有出現在主動性、內容與延續性裡。`,
+        `In real behavior, ${theme} should show up in communication quality: initiation, substance and whether the exchange continues naturally.`
+      ],
+      commitment:[
+        `如果问题牵涉承诺，「${theme}」最终要落实在稳定出现、愿意安排时间、公开程度与承担责任，而不是只停在情绪表达。`,
+        `如果問題牽涉承諾，「${theme}」最後要落實在穩定出現、願意安排時間、公開程度與承擔責任，而不是只停在情緒表達。`,
+        `If commitment is involved, ${theme} needs to become consistency, time allocation, visibility and responsibility rather than remaining only emotional language.`
+      ],
+      job_change:[
+        `放到工作选择里，「${theme}」最好对应到具体条件：职位内容、成长空间、主管与团队、工时、薪资和稳定度。`,
+        `放到工作選擇裡，「${theme}」最好對應到具體條件：職位內容、成長空間、主管與團隊、工時、薪資和穩定度。`,
+        `For a job decision, translate ${theme} into concrete terms: role scope, growth, manager/team, hours, pay and stability.`
+      ],
+      interview:[
+        `面试题里，「${theme}」更适合对应你的准备度、表达方式、临场反应与对方实际反馈，而不是直接当成录取结果。`,
+        `面試題裡，「${theme}」更適合對應你的準備度、表達方式、臨場反應與對方實際回饋，而不是直接當成錄取結果。`,
+        `For interviews, ${theme} is better read through preparation, communication, composure and actual feedback than as a direct acceptance prediction.`
+      ],
+      investment:[
+        `投资问题里，「${theme}」要落回数字：仓位、最大损失、时间周期、退出条件与资讯来源，不能只靠牌面的情绪强弱。`,
+        `投資問題裡，「${theme}」要落回數字：部位、最大損失、時間週期、退出條件與資訊來源，不能只靠牌面的情緒強弱。`,
+        `For investing, translate ${theme} into numbers: position size, maximum loss, time horizon, exit conditions and information quality.`
+      ],
+      debt:[
+        `债务题里，「${theme}」最后要回到现金流、利率、还款排序与能不能持续执行；牌面只能帮你看压力模式。`,
+        `債務題裡，「${theme}」最後要回到現金流、利率、還款排序與能不能持續執行；牌面只能幫你看壓力模式。`,
+        `For debt, ${theme} ultimately has to be translated into cash flow, rates, repayment priority and a plan you can sustain.`
+      ],
+      exam:[
+        `学习／考试里，「${theme}」可以直接对应复习节奏、弱项、专注度与模拟结果；这些才是接下来能验证牌义的地方。`,
+        `學習／考試裡，「${theme}」可以直接對應複習節奏、弱項、專注度與模擬結果；這些才是接下來能驗證牌義的地方。`,
+        `For study or exams, ${theme} can be checked through revision rhythm, weak areas, focus and mock-test results.`
+      ]
+    };
+    if (specific[profile.scenario]) return specific[profile.scenario][currentLanguage() === 'en' ? 2 : (currentLanguage() === 'zh-TW' ? 1 : 0)];
+
+    return pickLocalized(seed,
+      [
+        `把它从牌义翻回现实，「${position}」真正要观察的是：围绕「${theme}」有没有出现可以被看见的行为、选择或变化。`,
+        `如果不想让解读停在抽象层面，就把「${theme}」当成一个观察指标；接下来现实里有没有对应迹象，会决定这张牌的讯号是否正在兑现。`,
+        `这张牌最值得带回生活的，不是记住关键词，而是留意「${theme}」接下来怎样具体出现在你的决定、互动或环境里。`
+      ],
+      [
+        `把它從牌義翻回現實，「${position}」真正要觀察的是：圍繞「${theme}」有沒有出現可以被看見的行為、選擇或變化。`,
+        `如果不想讓解讀停在抽象層面，就把「${theme}」當成一個觀察指標；接下來現實裡有沒有對應跡象，會決定這張牌的訊號是否正在兌現。`,
+        `這張牌最值得帶回生活的，不是記住關鍵詞，而是留意「${theme}」接下來怎樣具體出現在你的決定、互動或環境裡。`
+      ],
+      [
+        `To bring this out of symbolism and into reality, watch whether ${theme} becomes visible in behavior, choices or changing circumstances around ${position}.`,
+        `Treat ${theme} as an observable marker rather than an abstract keyword. What appears next in real life will show whether this signal is actually unfolding.`,
+        `The useful part is not memorizing the keyword; it is noticing how ${theme} concretely appears in decisions, interactions or circumstances.`
+      ]);
+  }
+
+  function contextualCardReadingV3(item, index, profile = analyseQuestion()) {
+    const base = contextualCardReading(item,index,profile);
+    const depth = orientationDepth(item);
+    const reality = cardRealityTranslation(item,profile,index);
+    return [base,depth,reality].filter(Boolean).join(' ');
+  }
+
+  function spreadBalanceInsight(draw, analysis, profile = analyseQuestion()) {
+    const score = spreadTendency(draw);
+    const positives = draw.filter(item => cardTone(item) >= .18);
+    const challenges = draw.filter(item => cardTone(item) <= -.18);
+    const mixed = positives.length && challenges.length;
+    const seed = `${state.currentDrawId}|balance|${profile.intent}|${analysis.orientationFlow}`;
+
+    if (mixed) return pickLocalized(seed,
+      [
+        `这组牌不是单一路线：一部分牌给出空间，另一部分牌又把现实阻力摆出来。所以我会把它读成“有可能，但有条件”，而不是简单的好或坏。`,
+        `牌面里同时有推动力和阻力，这通常表示事情并非没有机会，只是不同环节成熟度不一致；真正的分水岭会落在最卡的那个位置有没有被处理。`,
+        `这里最值得注意的是矛盾感：你能看到机会，也能看到为什么事情没有直接往前。这样的牌组更像在描述一个可被改变的过程，而不是已经锁死的结局。`
+      ],
+      [
+        `這組牌不是單一路線：一部分牌給出空間，另一部分牌又把現實阻力擺出來。所以我會把它讀成「有可能，但有條件」，而不是簡單的好或壞。`,
+        `牌面裡同時有推動力和阻力，這通常表示事情並非沒有機會，只是不同環節成熟度不一致；真正的分水嶺會落在最卡的那個位置有沒有被處理。`,
+        `這裡最值得注意的是矛盾感：你能看到機會，也能看到為什麼事情沒有直接往前。這樣的牌組更像在描述一個可被改變的過程，而不是已經鎖死的結局。`
+      ],
+      [
+        `This spread is not moving in one direction. Some cards create room while others show real friction, so I would read it as “possible, but conditional” rather than simply good or bad.`,
+        `Momentum and resistance coexist here. That usually means the situation has potential, but different parts are maturing at different speeds; the turning point is whether the main blockage is actually addressed.`,
+        `The contradiction matters: the cards show both why there is an opening and why progress is not automatic. This reads more like a process that can still change than a locked outcome.`
+      ]);
+
+    if (score >= .30) return pickLocalized(seed,
+      [
+        `整体牌势的确比较顺，但我不会因此直接说“事情一定会成”。更准确的说法是：目前可利用的条件比阻力多，下一步如果顺着优势去做，结果会更容易往正面发展。`,
+        `这组牌的支持度偏高，说明你不是在逆风里硬撑；不过真正有价值的地方，是把顺势变成持续行动，而不是把好牌当成保证。`
+      ],
+      [
+        `整體牌勢的確比較順，但我不會因此直接說「事情一定會成」。更準確的說法是：目前可利用的條件比阻力多，下一步如果順著優勢去做，結果會更容易往正面發展。`,
+        `這組牌的支持度偏高，說明你不是在逆風裡硬撐；不過真正有價值的地方，是把順勢變成持續行動，而不是把好牌當成保證。`
+      ],
+      [
+        `The spread is genuinely supportive, but I would not turn that into “it will definitely happen.” A better reading is that usable conditions currently outweigh resistance, so aligned action has more room to work.`,
+        `Support is relatively strong here. The value is not in treating positive cards as guarantees, but in converting the available momentum into consistent action.`
+      ]);
+
+    if (score <= -.30) return pickLocalized(seed,
+      [
+        `这组牌的阻力比较集中，所以现在最重要的不是硬把答案拉成正面，而是先看清哪里已经失衡。只要卡点还在，越急着推进越容易重复同一种问题。`,
+        `目前牌势偏紧，我会把重点放在“先减压、再决定”。这不是说事情永远不行，而是眼前的条件还不支持你用原来的方式继续推。`
+      ],
+      [
+        `這組牌的阻力比較集中，所以現在最重要的不是硬把答案拉成正面，而是先看清哪裡已經失衡。只要卡點還在，越急著推進越容易重複同一種問題。`,
+        `目前牌勢偏緊，我會把重點放在「先減壓、再決定」。這不是說事情永遠不行，而是眼前的條件還不支持你用原來的方式繼續推。`
+      ],
+      [
+        `Resistance is concentrated in this spread. The useful move is not to force a positive conclusion, but to identify what is already out of balance; pushing harder before that changes is likely to repeat the same problem.`,
+        `The spread is tight right now. I would read it as “reduce pressure, then decide,” not as a permanent no; the current conditions simply do not support pushing in the same way.`
+      ]);
+
+    return pickLocalized(seed,
+      [
+        `整体没有强到可以一句话定生死。它更像一个开放局面：有些条件已经出现，有些还没跟上，所以你接下来做什么，会比现在急着给它贴结论更重要。`,
+        `这组牌保留了不少变数。我会建议把它当成“正在形成中的答案”，而不是一个已经写好的结果。`
+      ],
+      [
+        `整體沒有強到可以一句話定生死。它更像一個開放局面：有些條件已經出現，有些還沒跟上，所以你接下來做什麼，會比現在急著給它貼結論更重要。`,
+        `這組牌保留了不少變數。我會建議把它當成「正在形成中的答案」，而不是一個已經寫好的結果。`
+      ],
+      [
+        `The spread is not strong enough for a one-line verdict. It is an open situation: some conditions are present and others are not, so what happens next matters more than forcing a conclusion now.`,
+        `There is meaningful variability here. Treat this as an answer still taking shape, not a result that has already been written.`
+      ]);
+  }
+
+  function answerQuestionDepth(draw, analysis, profile = analyseQuestion()) {
+    if (!draw?.length) return '';
+    const relevant = mostRelevantItems(draw,profile).slice(0,3);
+    const theme = keyThemes(relevant,4).join(currentLanguage() === 'en' ? ', ' : '、');
+    const guide = guidanceItem(draw);
+    const blocker = challengeItem(draw);
+    const seed = `${state.currentDrawId}|answer-depth|${profile.intent}|${profile.scenario}`;
+    const balance = spreadBalanceInsight(draw,analysis,profile);
+
+    const nuance = pickLocalized(seed,
+      [
+        `如果把这些牌当成一次真正的咨询，我不会只停在“${theme || '偏好与阻力'}”几个关键词。更重要的是看：哪些讯号已经存在、哪些只是潜力，以及哪一部分还需要现实行为来证明。`,
+        `这次解读的重点不是替你把未来说死，而是把答案拆成三层：牌面现在倾向什么、为什么会这样，以及什么条件改变后，答案也可能跟着改变。`,
+        `我会把这组牌理解成一张“当前状态地图”。它能说明现在最有力量的方向，却不能代替当事人的选择；所以后面的观察点会比一句吉凶更重要。`
+      ],
+      [
+        `如果把這些牌當成一次真正的諮詢，我不會只停在「${theme || '偏好與阻力'}」幾個關鍵詞。更重要的是看：哪些訊號已經存在、哪些只是潛力，以及哪一部分還需要現實行為來證明。`,
+        `這次解讀的重點不是替你把未來說死，而是把答案拆成三層：牌面現在傾向什麼、為什麼會這樣，以及什麼條件改變後，答案也可能跟著改變。`,
+        `我會把這組牌理解成一張「當前狀態地圖」。它能說明現在最有力量的方向，卻不能代替當事人的選擇；所以後面的觀察點會比一句吉凶更重要。`
+      ],
+      [
+        `If I read these cards as a real consultation, I would not stop at the keywords ${theme || 'momentum and resistance'}. The important distinction is what is already present, what is only potential, and what still needs real behavior to prove it.`,
+        `The point is not to freeze the future. I would separate the answer into three layers: what the spread leans toward now, why, and which changing conditions could alter that answer.`,
+        `I would treat this spread as a map of the current state. It shows the strongest direction now, but it cannot replace human choices, so the observation points matter more than a simple verdict.`
+      ]);
+
+    const axis = blocker && guide && blocker !== guide
+      ? tarotText(
+          `整组牌最关键的轴线，是「${cardName(blocker.card)}・${orientationText(blocker.reversed)}」与「${cardName(guide.card)}・${orientationText(guide.reversed)}」之间的距离：前者说明你最容易卡回哪里，后者说明如果要让事情真的改变，需要出现怎样的新回应。`,
+          `整組牌最關鍵的軸線，是「${cardName(blocker.card)}・${orientationText(blocker.reversed)}」與「${cardName(guide.card)}・${orientationText(guide.reversed)}」之間的距離：前者說明你最容易卡回哪裡，後者說明如果要讓事情真的改變，需要出現怎樣的新回應。`,
+          `The key axis is the distance between ${cardName(blocker.card)} (${orientationText(blocker.reversed)}) and ${cardName(guide.card)} (${orientationText(guide.reversed)}): the first shows the pattern that pulls the situation backward, the second the response needed for real change.`)
+      : '';
+
+    return [balance,nuance,axis].filter(Boolean).join('\n\n');
+  }
+
+  function deepPositionParagraph(item, profile, index = 0) {
+    const position = positionName(item.position);
+    const name = cardName(item.card);
+    const orient = orientationText(item.reversed);
+    const themes = keyThemes([item],3).join(currentLanguage() === 'en' ? ', ' : '、');
+    const identity = cardIdentityLens(item);
+    const intent = intentCardFocus(item,profile,index);
+    const reality = cardRealityTranslation(item,profile,index);
+    const seed = `${state.currentDrawId}|deep-position|${item.card.key}|${item.position?.key}|${index}`;
+    const lead = pickLocalized(seed,
+      [
+        `读到「${position}」这里，我会先把「${name}・${orient}」当成这个位置的主角，而不是把它拆回一张独立的牌。`,
+        `「${name}・${orient}」出现在「${position}」，它的意思会被这个位置重新定焦。`,
+        `如果是在面对面读牌，「${position}」的「${name}・${orient}」会是我停下来多看一眼的位置之一。`
+      ],
+      [
+        `讀到「${position}」這裡，我會先把「${name}・${orient}」當成這個位置的主角，而不是把它拆回一張獨立的牌。`,
+        `「${name}・${orient}」出現在「${position}」，它的意思會被這個位置重新定焦。`,
+        `如果是在面對面讀牌，「${position}」的「${name}・${orient}」會是我停下來多看一眼的位置之一。`
+      ],
+      [
+        `At ${position}, I would read ${name} (${orient}) through the job of this position rather than as an isolated card.`,
+        `${name} (${orient}) lands in ${position}, which refocuses what the card is doing here.`,
+        `In a face-to-face reading, ${name} (${orient}) at ${position} is one of the places I would pause and examine more closely.`
+      ]);
+    const body = tarotText(
+      `${identity} 这次它最明显的关键词是「${themes || name}」。${item.meaning.meaning}`,
+      `${identity} 這次它最明顯的關鍵詞是「${themes || name}」。${item.meaning.meaning}`,
+      `${identity} The clearest themes here are ${themes || name}. ${item.meaning.meaning}`
+    );
+    return [lead,body,orientationDepth(item),intent,reality].filter(Boolean).join(' ');
+  }
+
+  function buildDeepPositionNarrative(draw, profile = analyseQuestion()) {
+    if (!draw?.length) return '';
+    const intro = pickLocalized(`${state.currentDrawId}|deep-position-intro|${profile.spread}`,
+      [
+        '如果继续往里读，每个牌位还有一层更具体的意思：',
+        '把整体故事先放在一边，再逐个位置细看，会看到这些牌为什么会组合成刚才的结论：',
+        '接下来把镜头拉近到每一个牌位，能更清楚看到答案是怎么形成的：'
+      ],
+      [
+        '如果繼續往裡讀，每個牌位還有一層更具體的意思：',
+        '把整體故事先放在一邊，再逐個位置細看，會看到這些牌為什麼會組合成剛才的結論：',
+        '接下來把鏡頭拉近到每一個牌位，能更清楚看到答案是怎麼形成的：'
+      ],
+      [
+        'Reading one layer deeper, each position adds something more specific:',
+        'If we temporarily set the overall story aside and inspect each position, it becomes clearer why the spread formed the conclusion above:',
+        'Now zoom in on each position to see how the answer is built:'
+      ]);
+    const paragraphs = draw.map((item,index) => deepPositionParagraph(item,profile,index));
+    return `${intro}\n\n${paragraphs.join('\n\n')}`;
+  }
+
+  function hiddenPatternInsight(analysis, profile, draw) {
+    const notes = [];
+    const lang = currentLanguage();
+    const majorRatio = analysis.total ? analysis.majorCount / analysis.total : 0;
+    if (majorRatio >= .6 && analysis.total >= 3) notes.push(tarotText(
+      `大牌占比达到 ${analysis.majorCount}/${analysis.total}，说明这次不只是日常小波动；你问的事情更像处在一个会重新定义选择、关系或方向的阶段。`,
+      `大牌占比達到 ${analysis.majorCount}/${analysis.total}，說明這次不只是日常小波動；你問的事情更像處在一個會重新定義選擇、關係或方向的階段。`,
+      `Major Arcana make up ${analysis.majorCount}/${analysis.total}, so this looks larger than a routine fluctuation; the issue may be reshaping a choice, relationship or direction.`
+    ));
+    if (analysis.reversedCount >= Math.ceil(analysis.total * .6)) notes.push(tarotText(
+      `逆位比例偏高，很多能量目前更像在内部消化、延迟或反复。这样的牌组常见于“心里有很多事，但现实推进没有同样快”的阶段。`,
+      `逆位比例偏高，很多能量目前更像在內部消化、延遲或反覆。這樣的牌組常見於「心裡有很多事，但現實推進沒有同樣快」的階段。`,
+      `Reversals are relatively concentrated, suggesting that much of the energy is being processed internally, delayed or repeated; inner activity may be moving faster than outer progress.`
+    ));
+    if (analysis.reversedCount === 0 && analysis.total >= 3) notes.push(tarotText(
+      `全部正位让牌面表达得比较直接，事情的主要矛盾通常比较容易被看见；但这也意味着不能只停在“知道问题”，需要真的采取对应动作。`,
+      `全部正位讓牌面表達得比較直接，事情的主要矛盾通常比較容易被看見；但這也意味著不能只停在「知道問題」，需要真的採取對應動作。`,
+      `With all cards upright, the spread speaks more directly and the main tensions are easier to see; the challenge is to act on what is visible rather than only understand it.`
+    ));
+    if (analysis.dominantSuits?.length === 1) {
+      const suit = analysis.dominantSuits[0];
+      const suitName = localized(suitMeta[suit].names);
+      const element = localized(suitMeta[suit].elementNames);
+      notes.push(tarotText(
+        `「${suitName}」明显集中，等于整组牌反复用「${element}元素」说话。它会把其他牌的意义也拉向同一个核心课题，所以这不是偶然出现的一张，而是整组牌的重心。`,
+        `「${suitName}」明顯集中，等於整組牌反覆用「${element}元素」說話。它會把其他牌的意義也拉向同一個核心課題，所以這不是偶然出現的一張，而是整組牌的重心。`,
+        `${suitName} is clearly concentrated, so the spread keeps speaking through the ${element} element. That emphasis pulls the other cards toward the same central issue and makes it a structural theme rather than a coincidence.`
+      ));
+    }
+    if (analysis.orientationFlow === 'clearing' && analysis.total >= 3) notes.push(tarotText(
+      '从前段到后段，逆位在减少，说明事情有“先卡、后松”的结构；真正的重点是后半段出现的做法有没有被执行。',
+      '從前段到後段，逆位在減少，說明事情有「先卡、後鬆」的結構；真正的重點是後半段出現的做法有沒有被執行。',
+      'Reversals decrease toward the later positions, giving the spread a blocked-then-clearing structure; what matters is whether the later response is actually implemented.'
+    ));
+    if (analysis.orientationFlow === 'tightening' && analysis.total >= 3) notes.push(tarotText(
+      '后段逆位增加，表示越往后越需要调整；前面的好讯号不能直接外推成结果，因为真正考验反而出现在后半段。',
+      '後段逆位增加，表示越往後越需要調整；前面的好訊號不能直接外推成結果，因為真正考驗反而出現在後半段。',
+      'Reversals increase later in the spread, so the need for adjustment grows over time; early positive signals should not be projected straight into the outcome.'
+    ));
+    return notes.join('\n\n');
+  }
+
+  function buildStructureV3(analysis, profile = analyseQuestion(), draw = state.currentDraw) {
+    const base = buildStructure(analysis,profile,draw);
+    const hidden = hiddenPatternInsight(analysis,profile,draw);
+    return [base,hidden].filter(Boolean).join('\n\n');
+  }
+
+  function buildDirectAnswerV3(draw, analysis, profile = analyseQuestion()) {
+    const base = buildDirectAnswerV2(draw,analysis,profile);
+    const depth = answerQuestionDepth(draw,analysis,profile);
+    return [base,depth].filter(Boolean).join('\n\n');
+  }
+
+  function buildStoryV3(draw, analysis, profile = analyseQuestion()) {
+    const base = buildStoryV2(draw,analysis,profile);
+    const deep = buildDeepPositionNarrative(draw,profile);
+    return [base,deep].filter(Boolean).join('\n\n');
+  }
+
+  function actionObservationPlan(draw, profile = analyseQuestion()) {
+    const guide = guidanceItem(draw);
+    const blocker = challengeItem(draw);
+    const guideThemes = keyThemes([guide],2).join(currentLanguage() === 'en' ? ' and ' : '、') || cardName(guide.card);
+    const blockerThemes = blocker ? (keyThemes([blocker],2).join(currentLanguage() === 'en' ? ' and ' : '、') || cardName(blocker.card)) : '';
+    const seed = `${state.currentDrawId}|observation-plan|${profile.intent}|${profile.scenario}`;
+
+    const first = pickLocalized(seed,
+      [
+        `如果你想知道这次读牌之后具体该看什么，我会先设两个观察点：第一，现实里有没有开始出现「${guideThemes}」；第二，原本围绕「${blockerThemes || '主要阻力'}」的旧反应有没有减少。`,
+        `接下来先别急着重复抽牌。给现实一点时间，然后只检查两件事：「${guideThemes}」有没有增加，以及「${blockerThemes || '主要阻力'}」有没有继续重复。`,
+        `最实际的做法，是把牌面变成可验证的指标：看「${guideThemes}」是否越来越具体，同时确认「${blockerThemes || '主要阻力'}」有没有真正松动。`
+      ],
+      [
+        `如果你想知道這次讀牌之後具體該看什麼，我會先設兩個觀察點：第一，現實裡有沒有開始出現「${guideThemes}」；第二，原本圍繞「${blockerThemes || '主要阻力'}」的舊反應有沒有減少。`,
+        `接下來先別急著重複抽牌。給現實一點時間，然後只檢查兩件事：「${guideThemes}」有沒有增加，以及「${blockerThemes || '主要阻力'}」有沒有繼續重複。`,
+        `最實際的做法，是把牌面變成可驗證的指標：看「${guideThemes}」是否越來越具體，同時確認「${blockerThemes || '主要阻力'}」有沒有真正鬆動。`
+      ],
+      [
+        `If you want concrete checkpoints after this reading, watch two things: whether ${guideThemes} starts appearing in real life, and whether the old pattern around ${blockerThemes || 'the main resistance'} decreases.`,
+        `Do not rush to redraw immediately. Give reality time, then check only two things: whether ${guideThemes} increases and whether ${blockerThemes || 'the main resistance'} keeps repeating.`,
+        `The most practical move is to turn the spread into observable markers: see whether ${guideThemes} becomes more concrete while ${blockerThemes || 'the main resistance'} genuinely loosens.`
+      ]);
+
+    const closing = pickLocalized(`${seed}|closing`,
+      [
+        '如果现实的发展和牌面持续不一致，就以现实为准；塔罗的价值是帮助你看清模式，不是要求你为了符合牌而忽略事实。',
+        '这次结果可以先留着，之后用真实发生的事情回来对照。能被现实验证的部分才值得继续保留，其他就让它过去。',
+        '把答案带回生活，而不是把生活硬塞进答案里。只要现实已经给出更清楚的讯号，就不需要为了牌面继续猜。'
+      ],
+      [
+        '如果現實的發展和牌面持續不一致，就以現實為準；塔羅的價值是幫助你看清模式，不是要求你為了符合牌而忽略事實。',
+        '這次結果可以先留著，之後用真實發生的事情回來對照。能被現實驗證的部分才值得繼續保留，其他就讓它過去。',
+        '把答案帶回生活，而不是把生活硬塞進答案裡。只要現實已經給出更清楚的訊號，就不需要為了牌面繼續猜。'
+      ],
+      [
+        `If reality keeps diverging from the spread, trust reality. Tarot is useful for seeing patterns, not for ignoring facts to make life fit the cards.`,
+        `Keep the reading and compare it with what actually happens. Retain what reality verifies and let the rest go.`,
+        `Bring the answer back into life rather than forcing life into the answer. When reality becomes clearer, there is no need to keep guessing just to preserve the reading.`
+      ]);
+    return [first,closing].join('\n\n');
+  }
+
+  function buildFinalAdviceV3(draw, analysis, profile = analyseQuestion()) {
+    const base = buildFinalAdviceV2(draw,analysis,profile);
+    const plan = actionObservationPlan(draw,profile);
+    return [base,plan].filter(Boolean).join('\n\n');
+  }
+
   function tarotHistoryKey() {
     return window.XingchenRecords?.KEYS?.tarotHistory || 'xingchen-tarot-history-v1';
   }
@@ -1319,7 +1698,7 @@
 
           <section class="tarot-reading-block tarot-topic-lens">
             <span class="tarot-reading-label">${ui('topicLens')} · ${escapeHtml(localized(selectedTopic().name))}</span>
-            <p>${escapeHtml(contextualCardReading(item, index, analyseQuestion()))}</p>
+            <p>${escapeHtml(contextualCardReadingV3(item, index, analyseQuestion()))}</p>
           </section>
 
           <section class="tarot-advice-block">
@@ -1486,9 +1865,9 @@
       '牌面：',
       ...cards,
       '',
-      `直接回答：${texts?.directAnswer || buildDirectAnswerV2(state.currentDraw, analysis, analyseQuestion())}`,
+      `直接回答：${texts?.directAnswer || buildDirectAnswerV3(state.currentDraw, analysis, analyseQuestion())}`,
       '',
-      `生活指引：${texts?.finalAdvice || buildFinalAdviceV2(state.currentDraw, analysis, analyseQuestion())}`
+      `生活指引：${texts?.finalAdvice || buildFinalAdviceV3(state.currentDraw, analysis, analyseQuestion())}`
     ].filter(Boolean).join('\n');
 
     // The website keeps the full teacher-style analysis. Bark gets a compact
@@ -1507,10 +1886,10 @@
     const analysis = analyseStructure(state.currentDraw);
     const questionProfile = analyseQuestion();
     const texts = {
-      directAnswer:buildDirectAnswerV2(state.currentDraw, analysis, questionProfile),
-      story:buildStoryV2(state.currentDraw, analysis, questionProfile),
-      structure:buildStructure(analysis, questionProfile, state.currentDraw),
-      finalAdvice:buildFinalAdviceV2(state.currentDraw, analysis, questionProfile)
+      directAnswer:buildDirectAnswerV3(state.currentDraw, analysis, questionProfile),
+      story:buildStoryV3(state.currentDraw, analysis, questionProfile),
+      structure:buildStructureV3(analysis, questionProfile, state.currentDraw),
+      finalAdvice:buildFinalAdviceV3(state.currentDraw, analysis, questionProfile)
     };
 
     byId('signalChips').innerHTML =
