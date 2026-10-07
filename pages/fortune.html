@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
   <meta name="theme-color" content="#25294d" />
   <title>每日运势 | 星辰日记</title>
-  <link rel="stylesheet" href="../css/style.css?v=0.19.8.0" />
-  <link rel="stylesheet" href="../css/mailbox.css?v=0.19.8.0" />
+  <link rel="stylesheet" href="../css/style.css?v=0.19.9.0" />
+  <link rel="stylesheet" href="../css/mailbox.css?v=0.19.9.0" />
 </head>
 <body class="fortune-page">
   <div class="site-shell fortune-shell">
@@ -69,7 +69,17 @@
         <div class="easter-egg" id="easterEgg" hidden></div>
 
         <div class="fortune-poem" id="fortunePoem"></div>
-        <p class="fortune-summary" id="fortuneSummary"></p>
+
+        <section class="fortune-reading-block fortune-reading-lead">
+          <span class="fortune-section-kicker">今日签意</span>
+          <strong class="fortune-summary" id="fortuneSummary"></strong>
+          <p id="fortuneInterpretation"></p>
+        </section>
+
+        <section class="fortune-reading-block fortune-poem-reading">
+          <span class="fortune-section-kicker">签诗解读</span>
+          <p id="fortunePoemMeaning"></p>
+        </section>
 
         <div class="fortune-ratings">
           <div><span>整体</span><b id="overallStars"></b></div>
@@ -78,16 +88,40 @@
           <div><span>财运</span><b id="wealthStars"></b></div>
         </div>
 
-        <div class="fortune-grid">
+        <section class="fortune-signal-card">
+          <div class="fortune-signal-head">
+            <span class="fortune-section-kicker">今日可能出现的讯号</span>
+            <small>如果今天出现这些情况，可以再回来对照这支签；没有出现也不用刻意寻找。</small>
+          </div>
+          <ul id="fortuneSignals"></ul>
+        </section>
+
+        <div class="fortune-grid fortune-deep-grid">
           <section><h2>感情</h2><p id="loveText"></p></section>
           <section><h2>事业 / 学业</h2><p id="careerText"></p></section>
           <section><h2>财运</h2><p id="wealthText"></p></section>
           <section><h2>人际</h2><p id="socialText"></p></section>
         </div>
 
+        <div class="fortune-action-grid">
+          <section class="is-do">
+            <span>今天适合做</span>
+            <strong id="fortuneDoToday"></strong>
+          </section>
+          <section class="is-avoid">
+            <span>今天最好避免</span>
+            <strong id="fortuneAvoidToday"></strong>
+          </section>
+        </div>
+
         <section class="fortune-advice">
           <span>今日提醒</span>
           <strong id="adviceText"></strong>
+        </section>
+
+        <section class="fortune-closing">
+          <span class="fortune-section-kicker">留给今天的一句话</span>
+          <p id="fortuneClosing"></p>
         </section>
 
         <div class="fortune-lucky">
@@ -115,16 +149,16 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="../js/supabase-public-config.js?v=0.19.8.0"></script>
-  <script src="../js/supabase-config.js?v=0.19.8.0"></script>
-  <script src="../js/supabase-client.js?v=0.19.8.0"></script>
-  <script src="../js/supabase-auth.js?v=0.19.8.0"></script>
-  <script src="../js/cloud-sync.js?v=0.19.8.0"></script>
-  <script src="../js/fortune-config.js?v=0.19.8.0"></script>
-  <script src="../js/player-profile.js?v=0.19.8.0"></script>
-  <script src="../js/bark.js?v=0.19.8.0"></script>
-  <script src="../js/fortune.js?v=0.19.8.0"></script>
-  <script src="../js/shooting-stars.js?v=0.19.8.0"></script>
-  <script src="../js/mailbox.js?v=0.19.8.0"></script>
+  <script src="../js/supabase-public-config.js?v=0.19.9.0"></script>
+  <script src="../js/supabase-config.js?v=0.19.9.0"></script>
+  <script src="../js/supabase-client.js?v=0.19.9.0"></script>
+  <script src="../js/supabase-auth.js?v=0.19.9.0"></script>
+  <script src="../js/cloud-sync.js?v=0.19.9.0"></script>
+  <script src="../js/fortune-config.js?v=0.19.9.0"></script>
+  <script src="../js/player-profile.js?v=0.19.9.0"></script>
+  <script src="../js/bark.js?v=0.19.9.0"></script>
+  <script src="../js/fortune.js?v=0.19.9.0"></script>
+  <script src="../js/shooting-stars.js?v=0.19.9.0"></script>
+  <script src="../js/mailbox.js?v=0.19.9.0"></script>
 </body>
 </html>

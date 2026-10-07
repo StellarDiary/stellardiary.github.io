@@ -1,6 +1,9 @@
 (() => {
   const state = { fortunes: [], current: null, drawing: false };
   const byId = (id) => document.getElementById(id);
+  const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  })[char]);
 
   function localDateKey(date = new Date()) {
     const y = date.getFullYear();
@@ -36,15 +39,36 @@
   }
 
   function savedFortune(record) {
-    if (record?.fortune && typeof record.fortune === 'object') return record.fortune;
-    return state.fortunes.find((item) => item.id === record?.id) || null;
+    if (!record) return null;
+    const id = Number(record?.fortune?.id ?? record?.id);
+    const canonical = state.fortunes.find((item) => Number(item.id) === id) || null;
+    // V0.19.9.0: merge old daily snapshots with the current canonical entry so
+    // a sign drawn before the upgrade also receives the richer interpretation
+    // without changing which sign the player drew that day.
+    if (record?.fortune && typeof record.fortune === 'object') {
+      return canonical ? { ...canonical, ...record.fortune,
+        interpretation: record.fortune.interpretation || canonical.interpretation,
+        poemMeaning: record.fortune.poemMeaning || canonical.poemMeaning,
+        signals: Array.isArray(record.fortune.signals) && record.fortune.signals.length ? record.fortune.signals : canonical.signals,
+        loveDeep: record.fortune.loveDeep || canonical.loveDeep,
+        careerDeep: record.fortune.careerDeep || canonical.careerDeep,
+        wealthDeep: record.fortune.wealthDeep || canonical.wealthDeep,
+        socialDeep: record.fortune.socialDeep || canonical.socialDeep,
+        doToday: record.fortune.doToday || canonical.doToday,
+        avoidToday: record.fortune.avoidToday || canonical.avoidToday,
+        closing: record.fortune.closing || canonical.closing,
+        richVersion: Math.max(Number(record.fortune.richVersion) || 0, Number(canonical.richVersion) || 0)
+      } : record.fortune;
+    }
+    return canonical;
   }
 
   function upgradeSavedFortune(history, dateKey, record, fortune) {
-    if (!record || record.fortune || !fortune) return;
+    if (!record || !fortune) return;
+    if (Number(record.snapshotVersion) >= 2 && record.fortune?.richVersion >= 2) return;
     history[dateKey] = {
       ...record,
-      snapshotVersion:1,
+      snapshotVersion:2,
       fortune
     };
     writeHistory(history);
@@ -93,11 +117,18 @@
     byId("fortuneScore").textContent = String(fortune.score);
     byId("fortunePoem").innerHTML = fortune.poem.map((line) => `<span>${line}</span>`).join("");
     byId("fortuneSummary").textContent = fortune.summary;
-    byId("loveText").textContent = fortune.love;
-    byId("careerText").textContent = fortune.career;
-    byId("wealthText").textContent = fortune.wealth;
-    byId("socialText").textContent = fortune.social;
+    byId("fortuneInterpretation").textContent = fortune.interpretation || fortune.summary;
+    byId("fortunePoemMeaning").textContent = fortune.poemMeaning || fortune.summary;
+    const signals = Array.isArray(fortune.signals) && fortune.signals.length ? fortune.signals : [fortune.summary];
+    byId("fortuneSignals").innerHTML = signals.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+    byId("loveText").textContent = fortune.loveDeep || fortune.love;
+    byId("careerText").textContent = fortune.careerDeep || fortune.career;
+    byId("wealthText").textContent = fortune.wealthDeep || fortune.wealth;
+    byId("socialText").textContent = fortune.socialDeep || fortune.social;
+    byId("fortuneDoToday").textContent = fortune.doToday || fortune.advice;
+    byId("fortuneAvoidToday").textContent = fortune.avoidToday || "别急着用一次情绪替今天下结论。";
     byId("adviceText").textContent = fortune.advice;
+    byId("fortuneClosing").textContent = fortune.closing || fortune.advice;
     byId("luckyColor").textContent = fortune.luckyColor;
     byId("luckyNumber").textContent = fortune.luckyNumber;
     byId("luckyTime").textContent = fortune.luckyTime;
@@ -178,7 +209,7 @@
       drawnAt: new Date().toISOString(),
       repeat: repeated,
       repeatText,
-      snapshotVersion:1,
+      snapshotVersion:2,
       fortune
     };
     writeHistory(history);
