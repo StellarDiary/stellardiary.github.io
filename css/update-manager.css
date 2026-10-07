@@ -11,6 +11,7 @@ html.stellar-update-pending,
 html.stellar-update-pending body{overflow:hidden!important;}
 html.stellar-update-pending body>*:not(#stellarUpdateGate):not(script){visibility:hidden!important;}
 #stellarUpdateGate[hidden]{display:none!important;}
+html:not(.stellar-update-pending) #stellarUpdateGate{display:none!important;}
 .stellar-update-gate{
   position:fixed;
   inset:0;

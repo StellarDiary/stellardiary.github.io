@@ -13,6 +13,8 @@
   const STORE_GROUP_PREFIX = 'stellar-prepared-group:';
   const CACHE_PREFIX = 'stellar-static-v';
   const UPDATE_QUERY = '__stellar_update';
+  const STORE_SESSION_CHECK = 'stellar-version-check-session-v1';
+  const SESSION_CHECK_TTL = 5 * 60 * 1000;
 
   const T = {
     'zh-CN':{
@@ -114,6 +116,11 @@
     document.documentElement.classList.remove('stellar-update-pending');
     const gate=$('stellarUpdateGate'); if(gate) gate.hidden=true;
   }
+  function engageGate(){
+    const gate=$('stellarUpdateGate'); if(gate) gate.hidden=false;
+    document.documentElement.classList.add('stellar-update-pending');
+    renderBase();
+  }
   function fail(err){
     console.error('[Stellar Update]',err);
     const box=$('stellarUpdateError'); if(box){ box.hidden=false; box.textContent=tr().error; }
@@ -162,6 +169,13 @@
       setProgress(totalBytes?processed/totalBytes*100:count/list.length*100,$('stellarUpdateStatus')&&$('stellarUpdateStatus').textContent,processed,totalBytes,count,list.length);
     }
   }
+  function workerControlsBuild(version){
+    if(!version || !('serviceWorker' in navigator)) return false;
+    try{
+      const controller=navigator.serviceWorker.controller;
+      return !!(controller && controller.scriptURL.includes('v='+encodeURIComponent(version)));
+    }catch(_){ return false; }
+  }
   async function registerWorker(version){
     if(!('serviceWorker' in navigator)) return false;
     const sw=new URL('service-worker.js',ROOT); sw.searchParams.set('v',version);
@@ -194,20 +208,66 @@
       await Promise.all(keys.filter(k=>k.startsWith(CACHE_PREFIX)&&!keep.has(k)).map(k=>caches.delete(k)));
     }catch(_){}
   }
-  async function boot(){
-    renderBase();
-    window.addEventListener('stellar:language-changed',renderBase);
-    if(location.protocol!=='https:' && location.hostname!=='localhost' && location.hostname!=='127.0.0.1'){
-      releaseGate(); return;
-    }
-    if(!('caches' in window) || !('fetch' in window)){
-      setText($('stellarUpdateDesc'),tr().unsupported); await sleep(500); releaseGate(); return;
-    }
+  async function promotePreparedRoutes(manifest,latest,previousVersion,previousRevisions){
+    if(!previousVersion || previousVersion===latest) return;
     try{
-      const [versionInfo,manifest]=await Promise.all([fetchJSON('version.json'),fetchJSON('asset-manifest.json')]);
+      const currentCache=await caches.open(CACHE_PREFIX+latest);
+      const previousCache=await caches.open(CACHE_PREFIX+previousVersion);
+      const groups=manifest.groups||{};
+      for(const group of Object.keys(groups)){
+        if(group==='shell') continue;
+        let prior='';
+        try{ prior=localStorage.getItem(STORE_GROUP_PREFIX+group)||''; }catch(_){}
+        const prefix=previousVersion+':';
+        if(!prior.startsWith(prefix)) continue;
+        const oldStamp=prior.slice(prefix.length);
+        const newStamp=groupStamp(manifest,group);
+        if(!oldStamp || oldStamp!==newStamp) continue;
+        let complete=true;
+        for(const path of unique(groups[group])){
+          const meta=manifest.assets&&manifest.assets[path];
+          if(!meta || previousRevisions[path]!==meta.revision){ complete=false; break; }
+          const key=requestKey(path);
+          if(await currentCache.match(key,{ignoreSearch:true})) continue;
+          const old=await previousCache.match(key,{ignoreSearch:true});
+          if(!old){ complete=false; break; }
+          await currentCache.put(key,old.clone());
+        }
+        if(complete){
+          try{ localStorage.setItem(STORE_GROUP_PREFIX+group,`${latest}:${newStamp}`); }catch(_){}
+        }
+      }
+    }catch(err){ console.warn('[Stellar Update] prepared route promotion skipped',err); }
+  }
+  function sessionCheckIsFresh(version){
+    if(!version) return false;
+    try{
+      const raw=sessionStorage.getItem(STORE_SESSION_CHECK)||'';
+      const parts=raw.split('|');
+      const stamp=Number(parts[1]||0);
+      return parts[0]===version && stamp>0 && (Date.now()-stamp)<SESSION_CHECK_TTL;
+    }catch(_){ return false; }
+  }
+  function rememberSessionCheck(version){
+    if(!version) return;
+    try{ sessionStorage.setItem(STORE_SESSION_CHECK,`${version}|${Date.now()}`); }catch(_){}
+  }
+  function localInstalledVersion(){
+    try{return localStorage.getItem(STORE_VERSION)||'';}catch(_){return '';}
+  }
+
+  async function runFullUpdate(prefetchedVersionInfo){
+    try{
+      let versionInfo=prefetchedVersionInfo||null;
+      let manifest=null;
+      if(versionInfo){
+        manifest=await fetchJSON('asset-manifest.json');
+      }else{
+        [versionInfo,manifest]=await Promise.all([fetchJSON('version.json'),fetchJSON('asset-manifest.json')]);
+      }
       const latest=String(versionInfo.version||manifest.version||BUILD||'').trim();
       if(!latest) throw new Error('missing version');
-      const installed=(()=>{try{return localStorage.getItem(STORE_VERSION)||''}catch(_){return''}})();
+      const installed=localInstalledVersion();
       const legacyExisting=!installed && hasLegacyFootprint();
       const displayInstalled=installed || (legacyExisting?legacyVersion():'');
       const previousRevisions=safeJSON(STORE_REVISIONS,{});
@@ -223,7 +283,10 @@
       const routeChanged=prepared!==`${latest}:${stamp}`;
 
       if(!versionChanged && !routeChanged){
-        registerWorker(latest); releaseGate(); return;
+        rememberSessionCheck(latest);
+        registerWorker(latest);
+        releaseGate();
+        return;
       }
       const mode=!installed?(legacyExisting?'update':'first'):versionChanged?'update':'route';
       showMode(mode,displayInstalled,latest);
@@ -239,13 +302,65 @@
       }
       try{localStorage.setItem(STORE_VERSION,latest);localStorage.setItem(STORE_GROUP_PREFIX+route,`${latest}:${stamp}`);}catch(_){}
       setJSON(STORE_REVISIONS,Object.fromEntries(Object.entries(manifest.assets||{}).map(([k,v])=>[k,v.revision||''])));
+      if(versionChanged && installed){
+        await promotePreparedRoutes(manifest,latest,installed,previousRevisions);
+      }
       const keepOld=versionChanged?installed:retainedVersion;
       await pruneCaches(latest,keepOld);
-      setProgress(100,tr().done,required.reduce((n,p)=>n+Number(manifest.assets?.[p]?.bytes||0),0),required.reduce((n,p)=>n+Number(manifest.assets?.[p]?.bytes||0),0),required.length,required.length);
+      const totalPrepared=required.reduce((n,p)=>n+Number(manifest.assets?.[p]?.bytes||0),0);
+      setProgress(100,tr().done,totalPrepared,totalPrepared,required.length,required.length);
       setText($('stellarUpdateTitle'),tr().done); setText($('stellarUpdateDesc'),tr().doneDesc);
+      rememberSessionCheck(latest);
       await sleep(mode==='update'?650:450);
       if(mode==='update') location.reload(); else releaseGate();
     }catch(err){ fail(err); }
+  }
+
+  async function silentVersionCheck(){
+    if(!BUILD || sessionCheckIsFresh(BUILD)) return;
+    try{
+      const versionInfo=await fetchJSON('version.json');
+      const latest=String(versionInfo.version||BUILD||'').trim();
+      const installed=localInstalledVersion();
+      if(latest && latest===BUILD && installed===latest){
+        rememberSessionCheck(latest);
+        return;
+      }
+      if(!latest) return;
+      engageGate();
+      await runFullUpdate(versionInfo);
+    }catch(err){
+      // A silent check must never interrupt an already-ready site. The next
+      // page load or session will try again.
+      console.warn('[Stellar Update] silent version check skipped',err);
+    }
+  }
+
+  async function boot(){
+    window.addEventListener('stellar:language-changed',()=>{ if(document.documentElement.classList.contains('stellar-update-pending')) renderBase(); });
+    if(location.protocol!=='https:' && location.hostname!=='localhost' && location.hostname!=='127.0.0.1'){
+      releaseGate(); return;
+    }
+    if(!('caches' in window) || !('fetch' in window)){
+      if(document.documentElement.dataset.stellarFastReady==='1'){
+        releaseGate(); return;
+      }
+      engageGate();
+      setText($('stellarUpdateDesc'),tr().unsupported); await sleep(500); releaseGate(); return;
+    }
+
+    if(document.documentElement.dataset.stellarFastReady==='1'){
+      // The synchronous head preflight already confirmed this exact build and
+      // route were prepared. Keep the updater completely invisible and only
+      // perform a lightweight background version check.
+      releaseGate();
+      if(BUILD && !workerControlsBuild(BUILD)) registerWorker(BUILD);
+      void silentVersionCheck();
+      return;
+    }
+
+    engageGate();
+    await runFullUpdate();
   }
 
   boot();

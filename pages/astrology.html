@@ -1,14 +1,26 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="stellar-update-pending">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
   <meta name="theme-color" content="#18203d" />
   <title>本命星盘 | 星辰日记</title>
-  <link rel="stylesheet" href="../css/style.css?v=0.20.0" />
-  <link rel="stylesheet" href="../css/mailbox.css?v=0.20.0" />
-  <link rel="stylesheet" href="../css/update-manager.css?v=0.20.0" />
-  <style>html.stellar-update-pending body{overflow:hidden!important}html.stellar-update-pending body>*:not(#stellarUpdateGate):not(script){visibility:hidden!important}#stellarUpdateGate{visibility:visible!important}</style>
+  <link rel="stylesheet" href="../css/style.css?v=0.20.1" />
+  <link rel="stylesheet" href="../css/mailbox.css?v=0.20.1" />
+  <link rel="stylesheet" href="../css/update-manager.css?v=0.20.1" />
+  <style>html.stellar-update-pending body{overflow:hidden!important}html.stellar-update-pending body>*:not(#stellarUpdateGate):not(script){visibility:hidden!important}#stellarUpdateGate{display:none!important;visibility:visible!important}html.stellar-update-pending #stellarUpdateGate{display:grid!important}</style>
+  <script>
+    (function(){
+      var build='0.20.1', route='astrology', ready=false;
+      try{
+        var installed=localStorage.getItem('stellar-installed-version')||'';
+        var prepared=localStorage.getItem('stellar-prepared-group:'+route)||'';
+        ready=installed===build && prepared.indexOf(build+':')===0;
+      }catch(_){ ready=false; }
+      document.documentElement.dataset.stellarFastReady=ready?'1':'0';
+      if(!ready) document.documentElement.classList.add('stellar-update-pending');
+    })();
+  </script>
 </head>
 <body class="astrology-page-body">
   <div class="stellar-update-gate" id="stellarUpdateGate" role="dialog" aria-modal="true" aria-live="polite" aria-labelledby="stellarUpdateTitle">
@@ -28,7 +40,7 @@
       <div class="stellar-update-actions"><button class="stellar-update-btn is-primary" id="stellarUpdateRetry" type="button" hidden>重新更新</button></div>
     </section>
   </div>
-  <script src="../js/update-manager.js?v=0.20.0" data-stellar-root="../" data-stellar-route="astrology" data-stellar-build="0.20.0"></script>
+  <script src="../js/update-manager.js?v=0.20.1" data-stellar-root="../" data-stellar-route="astrology" data-stellar-build="0.20.1"></script>
 
   <div class="site-shell astrology-shell">
     <header class="subpage-header astrology-subpage-header">
@@ -323,28 +335,28 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="../js/supabase-public-config.js?v=0.20.0"></script>
-  <script src="../js/supabase-config.js?v=0.20.0"></script>
-  <script src="../js/supabase-client.js?v=0.20.0"></script>
-  <script src="../js/supabase-auth.js?v=0.20.0"></script>
-  <script src="../js/cloud-sync.js?v=0.20.0"></script>
+  <script src="../js/supabase-public-config.js?v=0.20.1"></script>
+  <script src="../js/supabase-config.js?v=0.20.1"></script>
+  <script src="../js/supabase-client.js?v=0.20.1"></script>
+  <script src="../js/supabase-auth.js?v=0.20.1"></script>
+  <script src="../js/cloud-sync.js?v=0.20.1"></script>
   <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
-  <script src="../js/astrology-engine.js?v=0.20.0"></script>
-  <script src="../js/astrology-synthesis.js?v=0.20.0"></script>
-  <script src="../js/astrology-full.js?v=0.20.0"></script>
-  <script src="../js/stellar-interpretation-engine.js?v=0.20.0"></script>
-  <script src="../js/player-profile.js?v=0.20.0"></script>
-  <script src="../js/bark.js?v=0.20.0"></script>
-  <script src="../js/china-location.js?v=0.20.0"></script>
-  <script src="../js/lunar-calendar.js?v=0.20.0"></script>
-  <script src="../js/birth-date-ui.js?v=0.20.0"></script>
-  <script src="../js/local-records.js?v=0.20.0"></script>
-  <script src="../js/backend-config.js?v=0.20.0"></script>
-  <script src="../js/api-client.js?v=0.20.0"></script>
-  <script src="../js/report-store.js?v=0.20.0"></script>
-  <script src="../js/report-payload.js?v=0.20.0"></script>
-  <script src="../js/astrology.js?v=0.20.0"></script>
-  <script src="../js/shooting-stars.js?v=0.20.0"></script>
-  <script src="../js/mailbox.js?v=0.20.0"></script>
+  <script src="../js/astrology-engine.js?v=0.20.1"></script>
+  <script src="../js/astrology-synthesis.js?v=0.20.1"></script>
+  <script src="../js/astrology-full.js?v=0.20.1"></script>
+  <script src="../js/stellar-interpretation-engine.js?v=0.20.1"></script>
+  <script src="../js/player-profile.js?v=0.20.1"></script>
+  <script src="../js/bark.js?v=0.20.1"></script>
+  <script src="../js/china-location.js?v=0.20.1"></script>
+  <script src="../js/lunar-calendar.js?v=0.20.1"></script>
+  <script src="../js/birth-date-ui.js?v=0.20.1"></script>
+  <script src="../js/local-records.js?v=0.20.1"></script>
+  <script src="../js/backend-config.js?v=0.20.1"></script>
+  <script src="../js/api-client.js?v=0.20.1"></script>
+  <script src="../js/report-store.js?v=0.20.1"></script>
+  <script src="../js/report-payload.js?v=0.20.1"></script>
+  <script src="../js/astrology.js?v=0.20.1"></script>
+  <script src="../js/shooting-stars.js?v=0.20.1"></script>
+  <script src="../js/mailbox.js?v=0.20.1"></script>
 </body>
 </html>

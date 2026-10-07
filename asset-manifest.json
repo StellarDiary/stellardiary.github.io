@@ -1,5 +1,5 @@
 {
-  "version": "0.20.0",
+  "version": "0.20.1",
   "strategy": "shell-plus-route",
   "groups": {
     "shell": [
@@ -120,24 +120,24 @@
   },
   "assets": {
     "VERSION.txt": {
-      "revision": "8da6a2ee5c36bb27",
+      "revision": "356c9c9f099da7f9",
       "bytes": 7
     },
     "account.html": {
-      "revision": "5cc58c520eb68958",
-      "bytes": 30096
+      "revision": "ba708a3d9242826d",
+      "bytes": 30686
     },
     "css/mailbox.css": {
-      "revision": "4eb479ececb65a16",
+      "revision": "cfa53cf2cb334144",
       "bytes": 25810
     },
     "css/style.css": {
-      "revision": "6f2f3c3705948e37",
+      "revision": "a4efb5f81191022a",
       "bytes": 449606
     },
     "css/update-manager.css": {
-      "revision": "881202deaa328ef0",
-      "bytes": 4749
+      "revision": "c9da6be1abb8df48",
+      "bytes": 4827
     },
     "data/astrology/chart-interpretations.json": {
       "revision": "7658e3e54194d778",
@@ -744,15 +744,15 @@
       "bytes": 408149
     },
     "index.html": {
-      "revision": "53120a20abcab86a",
-      "bytes": 8444
+      "revision": "8fe8bd9e64ee0839",
+      "bytes": 9031
     },
     "js/account-binding.js": {
       "revision": "29295cd7d993c16b",
       "bytes": 5808
     },
     "js/account-login.js": {
-      "revision": "097d6777b6dccdcb",
+      "revision": "6638ec2422a11473",
       "bytes": 12765
     },
     "js/account-page.js": {
@@ -780,7 +780,7 @@
       "bytes": 37751
     },
     "js/backend-config.js": {
-      "revision": "08c1bd2b7ef83b99",
+      "revision": "502ad793384c36b1",
       "bytes": 2378
     },
     "js/bark.js": {
@@ -796,11 +796,11 @@
       "bytes": 5955
     },
     "js/cloud-sync.js": {
-      "revision": "eb0862bce4a64135",
+      "revision": "129ea063ba2c255c",
       "bytes": 29899
     },
     "js/farm.js": {
-      "revision": "5b7b3c13b727f188",
+      "revision": "93c4243409217359",
       "bytes": 390241
     },
     "js/fortune-config.js": {
@@ -828,7 +828,7 @@
       "bytes": 5294
     },
     "js/mailbox.js": {
-      "revision": "38367099e4e6ddac",
+      "revision": "f4fcbd399a18ce4d",
       "bytes": 59650
     },
     "js/main.js": {
@@ -844,7 +844,7 @@
       "bytes": 21077
     },
     "js/report-payload.js": {
-      "revision": "91a1f7aed93b897f",
+      "revision": "ff6fe9ca58743128",
       "bytes": 11707
     },
     "js/report-store.js": {
@@ -868,7 +868,7 @@
       "bytes": 4900
     },
     "js/supabase-config.js": {
-      "revision": "3bf0a9b2adbb9179",
+      "revision": "78511ba49ddfd843",
       "bytes": 2571
     },
     "js/supabase-public-config.js": {
@@ -884,36 +884,36 @@
       "bytes": 214819
     },
     "js/update-manager.js": {
-      "revision": "e12c24f7d4264f09",
-      "bytes": 16076
+      "revision": "69875c7fa57639c2",
+      "bytes": 20570
     },
     "pages/astrology.html": {
-      "revision": "b7d6f12bef982428",
-      "bytes": 18347
+      "revision": "7039780adbefe7db",
+      "bytes": 18939
     },
     "pages/farm.html": {
-      "revision": "3255964d8c7c38b5",
-      "bytes": 12243
+      "revision": "11d3559b4fe0479f",
+      "bytes": 12830
     },
     "pages/fortune.html": {
-      "revision": "cf4ee1292940590a",
-      "bytes": 9680
+      "revision": "772a690a00858149",
+      "bytes": 10270
     },
     "pages/synastry.html": {
-      "revision": "d2b8f09a6bdfa66e",
-      "bytes": 17697
+      "revision": "b85c4a6ddedb4a44",
+      "bytes": 18288
     },
     "pages/tarot.html": {
-      "revision": "68448828d4c6bf35",
-      "bytes": 12130
+      "revision": "34ac0fd1100a08e0",
+      "bytes": 12718
     },
     "service-worker.js": {
-      "revision": "bcb706c6731e005b",
+      "revision": "e00ba0ed9abe58a8",
       "bytes": 2610
     },
     "version.json": {
-      "revision": "a9c0b85555d45b47",
-      "bytes": 1196
+      "revision": "1e0624fdc8abfe73",
+      "bytes": 1255
     }
   }
 }

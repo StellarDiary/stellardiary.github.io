@@ -1,24 +1,24 @@
 {
-  "version": "0.20.0",
-  "released": "2026-10-07",
+  "version": "0.20.1",
+  "released": "2026-10-08",
   "notes": {
     "zh-CN": [
-      "新增星辰日记资源更新系统，进入网站前会自动检查版本。",
-      "第一次使用会先准备必要资源，并显示下载进度。",
-      "后续更新只处理需要变化的资源，未修改的文件会尽量沿用既有缓存。",
-      "塔罗牌、季节服装、宠物等大型素材改为按页面与使用需求缓存。"
+      "已准备完成的页面再次进入时不再闪现“正在检查”画面。",
+      "版本检查改为后台静默执行，只有发现真正的新版本时才显示更新窗口。",
+      "同一浏览过程中会减少重复版本请求，页面切换更顺畅。",
+      "首次准备、新页面资源准备与更新失败保护机制维持不变。"
     ],
     "zh-TW": [
-      "新增星辰日記資源更新系統，進入網站前會自動檢查版本。",
-      "第一次使用會先準備必要資源，並顯示下載進度。",
-      "後續更新只處理需要變化的資源，未修改的檔案會盡量沿用既有快取。",
-      "塔羅牌、季節服裝、寵物等大型素材改為按頁面與使用需求快取。"
+      "已準備完成的頁面再次進入時不再閃現「正在檢查」畫面。",
+      "版本檢查改為背景靜默執行，只有發現真正的新版本時才顯示更新視窗。",
+      "同一瀏覽過程中會減少重複版本請求，頁面切換更順暢。",
+      "首次準備、新頁面資源準備與更新失敗保護機制維持不變。"
     ],
     "en": [
-      "Added the Stellar Diary resource update system with automatic version checks before entry.",
-      "First-time visits prepare required resources with visible progress.",
-      "Future updates reuse unchanged cached files whenever possible.",
-      "Large tarot, seasonal outfit, and pet assets are cached by page and on demand."
+      "Prepared pages now open without flashing the update-check screen.",
+      "Version checks run silently in the background and the updater appears only when a real new version is found.",
+      "Repeated version requests are reduced while navigating during the same browsing session.",
+      "First setup, first-time page preparation, and update-failure protection remain unchanged."
     ]
   }
 }
