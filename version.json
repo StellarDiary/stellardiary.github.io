@@ -1,0 +1,24 @@
+{
+  "version": "0.20.0",
+  "released": "2026-10-07",
+  "notes": {
+    "zh-CN": [
+      "新增星辰日记资源更新系统，进入网站前会自动检查版本。",
+      "第一次使用会先准备必要资源，并显示下载进度。",
+      "后续更新只处理需要变化的资源，未修改的文件会尽量沿用既有缓存。",
+      "塔罗牌、季节服装、宠物等大型素材改为按页面与使用需求缓存。"
+    ],
+    "zh-TW": [
+      "新增星辰日記資源更新系統，進入網站前會自動檢查版本。",
+      "第一次使用會先準備必要資源，並顯示下載進度。",
+      "後續更新只處理需要變化的資源，未修改的檔案會盡量沿用既有快取。",
+      "塔羅牌、季節服裝、寵物等大型素材改為按頁面與使用需求快取。"
+    ],
+    "en": [
+      "Added the Stellar Diary resource update system with automatic version checks before entry.",
+      "First-time visits prepare required resources with visible progress.",
+      "Future updates reuse unchanged cached files whenever possible.",
+      "Large tarot, seasonal outfit, and pet assets are cached by page and on demand."
+    ]
+  }
+}

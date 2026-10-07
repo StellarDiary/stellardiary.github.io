@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="stellar-update-pending">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
@@ -101,15 +101,36 @@
     @media(max-width:480px){.page{width:min(100% - 18px,860px)}.topbar{margin-bottom:23px}.brand{font-size:18px}h1{font-size:36px}.lead{font-size:14px}.member-card{border-radius:24px}.panel{padding:18px;border-radius:20px}.action-row{padding:14px}.sync-overview{align-items:flex-start;flex-direction:column}.sync-btn{width:100%}.otp-row{grid-template-columns:1fr}.otp-row .primary-btn{width:100%}.verify-methods{grid-template-columns:1fr}.verify-or{padding:4px 0}.verify-or:before,.verify-or:after{display:none}.otp-box{width:calc((100% - 35px)/8);max-width:40px;min-width:0}.restore-counts{grid-template-columns:repeat(2,1fr)}.tech-row{grid-template-columns:1fr;gap:5px}.data-tile{min-height:94px}.member-card:after{opacity:.7}}
 
     /* V0.15.1 — official site UI icon atlas */
-    .account-ui-icon{display:inline-block;flex:0 0 auto;width:28px;height:28px;background-image:url("images/ui/stellar-ui-icon-sheet-02.png?v=0.19.9.0");background-size:600% 400%;background-position:var(--account-icon-x,0%) var(--account-icon-y,0%);background-repeat:no-repeat;filter:drop-shadow(0 1px 2px rgba(0,0,0,.16))}
+    .account-ui-icon{display:inline-block;flex:0 0 auto;width:28px;height:28px;background-image:url("images/ui/stellar-ui-icon-sheet-02.png?v=0.20.0");background-size:600% 400%;background-position:var(--account-icon-x,0%) var(--account-icon-y,0%);background-repeat:no-repeat;filter:drop-shadow(0 1px 2px rgba(0,0,0,.16))}
     .account-ui-icon[data-account-icon="mail"]{--account-icon-x:80%;--account-icon-y:0%}.account-ui-icon[data-account-icon="home"]{--account-icon-x:100%;--account-icon-y:0%}.account-ui-icon[data-account-icon="right"]{--account-icon-x:60%;--account-icon-y:33.333333%}.account-ui-icon[data-account-icon="close"]{--account-icon-x:80%;--account-icon-y:33.333333%}.account-ui-icon[data-account-icon="account"]{--account-icon-x:0%;--account-icon-y:100%}.account-ui-icon[data-account-icon="logout"]{--account-icon-x:20%;--account-icon-y:100%}.account-ui-icon[data-account-icon="link"]{--account-icon-x:40%;--account-icon-y:100%}.account-ui-icon[data-account-icon="security"]{--account-icon-x:100%;--account-icon-y:100%}
     .account-icon-before-home{display:inline-flex;align-items:center;justify-content:center;gap:0}.account-icon-before-home:before{content:none!important;display:none!important}
-    .back-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px}.back-btn:before{content:"";display:inline-block;width:19px;height:19px;background-image:url("images/ui/stellar-ui-icon-sheet-02.png?v=0.19.9.0");background-size:600% 400%;background-position:40% 33.333333%;background-repeat:no-repeat}
-    .action-row .account-leading-icon{width:34px;height:34px;margin-right:2px}.action-row>span.action-copy{flex:1;min-width:0}.action-row .action-arrow.account-ui-icon{width:24px;height:24px;font-size:0;color:transparent}.close-bind{display:grid;place-items:center;width:36px;height:36px;padding:0}.close-bind .account-ui-icon{width:26px;height:26px}.verify-icon.account-ui-icon{display:inline-block;width:34px;height:34px;margin-bottom:10px;border-radius:0;background-color:transparent}.sync-btn{display:inline-flex;align-items:center;gap:6px}.sync-btn:before{content:"";width:19px;height:19px;display:inline-block;background-image:url("images/farm/farm-ui-icon-sheet-01.png?v=0.19.9.0");background-size:800% 600%;background-position:28.571429% 0%;background-repeat:no-repeat}
+    .back-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px}.back-btn:before{content:"";display:inline-block;width:19px;height:19px;background-image:url("images/ui/stellar-ui-icon-sheet-02.png?v=0.20.0");background-size:600% 400%;background-position:40% 33.333333%;background-repeat:no-repeat}
+    .action-row .account-leading-icon{width:34px;height:34px;margin-right:2px}.action-row>span.action-copy{flex:1;min-width:0}.action-row .action-arrow.account-ui-icon{width:24px;height:24px;font-size:0;color:transparent}.close-bind{display:grid;place-items:center;width:36px;height:36px;padding:0}.close-bind .account-ui-icon{width:26px;height:26px}.verify-icon.account-ui-icon{display:inline-block;width:34px;height:34px;margin-bottom:10px;border-radius:0;background-color:transparent}.sync-btn{display:inline-flex;align-items:center;gap:6px}.sync-btn:before{content:"";width:19px;height:19px;display:inline-block;background-image:url("images/farm/farm-ui-icon-sheet-01.png?v=0.20.0");background-size:800% 600%;background-position:28.571429% 0%;background-repeat:no-repeat}
   </style>
-  <link rel="stylesheet" href="css/mailbox.css?v=0.19.9.0" />
+  <link rel="stylesheet" href="css/mailbox.css?v=0.20.0" />
+  <link rel="stylesheet" href="css/update-manager.css?v=0.20.0" />
+  <style>html.stellar-update-pending body{overflow:hidden!important}html.stellar-update-pending body>*:not(#stellarUpdateGate):not(script){visibility:hidden!important}#stellarUpdateGate{visibility:visible!important}</style>
 </head>
 <body>
+  <div class="stellar-update-gate" id="stellarUpdateGate" role="dialog" aria-modal="true" aria-live="polite" aria-labelledby="stellarUpdateTitle">
+    <section class="stellar-update-card">
+      <div class="stellar-update-brand"><span class="stellar-update-mark" aria-hidden="true">✦</span><div class="stellar-update-brand-copy"><strong id="stellarUpdateBrand">星辰日记</strong><small id="stellarUpdateSub">YOUR STARS, YOUR STORY</small></div></div>
+      <p class="stellar-update-kicker" id="stellarUpdateKicker"></p>
+      <h1 class="stellar-update-title" id="stellarUpdateTitle">正在检查星辰日记</h1>
+      <p class="stellar-update-desc" id="stellarUpdateDesc">正在确认是否有新的网站内容与资源。</p>
+      <div class="stellar-update-version" id="stellarUpdateVersion"></div>
+      <div class="stellar-update-notes" id="stellarUpdateNotes" hidden><strong id="stellarUpdateNotesTitle">本次更新</strong><ul id="stellarUpdateNotesList"></ul></div>
+      <div class="stellar-update-progress-wrap">
+        <div class="stellar-update-progress-head"><span class="stellar-update-status" id="stellarUpdateStatus">正在准备资源…</span><strong class="stellar-update-percent" id="stellarUpdatePercent">0%</strong></div>
+        <div class="stellar-update-track" aria-hidden="true"><div class="stellar-update-bar" id="stellarUpdateBar"></div></div>
+        <div class="stellar-update-detail"><span id="stellarUpdateCount">0 / 0 项资源</span><span id="stellarUpdateBytes">已处理 0 B / 0 B</span></div>
+      </div>
+      <div class="stellar-update-error" id="stellarUpdateError" hidden></div>
+      <div class="stellar-update-actions"><button class="stellar-update-btn is-primary" id="stellarUpdateRetry" type="button" hidden>重新更新</button></div>
+    </section>
+  </div>
+  <script src="js/update-manager.js?v=0.20.0" data-stellar-root="" data-stellar-route="account" data-stellar-build="0.20.0"></script>
+
   <main class="page">
     <div class="topbar">
       <a class="brand" href="index.html"><span class="brand-star">✦</span><span id="brandText">星辰日记</span></a>
@@ -283,14 +304,14 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-public-config.js?v=0.19.9.0"></script>
-  <script src="js/supabase-config.js?v=0.19.9.0"></script>
-  <script src="js/supabase-client.js?v=0.19.9.0"></script>
-  <script src="js/supabase-auth.js?v=0.19.9.0"></script>
-  <script src="js/account-binding.js?v=0.19.9.0"></script>
-  <script src="js/account-login.js?v=0.19.9.0"></script>
-  <script src="js/cloud-sync.js?v=0.19.9.0"></script>
-  <script src="js/account-page.js?v=0.19.9.0"></script>
-  <script src="js/mailbox.js?v=0.19.9.0"></script>
+  <script src="js/supabase-public-config.js?v=0.20.0"></script>
+  <script src="js/supabase-config.js?v=0.20.0"></script>
+  <script src="js/supabase-client.js?v=0.20.0"></script>
+  <script src="js/supabase-auth.js?v=0.20.0"></script>
+  <script src="js/account-binding.js?v=0.20.0"></script>
+  <script src="js/account-login.js?v=0.20.0"></script>
+  <script src="js/cloud-sync.js?v=0.20.0"></script>
+  <script src="js/account-page.js?v=0.20.0"></script>
+  <script src="js/mailbox.js?v=0.20.0"></script>
 </body>
 </html>

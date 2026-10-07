@@ -1,16 +1,37 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="stellar-update-pending">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
   <meta name="theme-color" content="#201822" />
   <meta name="description" content="星辰日记塔罗牌占卜：78 张 Rider-Waite-Smith 系塔罗牌，支持单张、本周、本月、感情关系与二选一牌阵，并结合正逆位、牌位、问题与整体牌面结构进行组合解读。" />
   <title>塔罗牌占卜 | 星辰日记</title>
-  <link rel="stylesheet" href="../css/style.css?v=0.19.9.0" />
+  <link rel="stylesheet" href="../css/style.css?v=0.20.0" />
   <link rel="preload" as="image" href="../images/tarot/cards/CardBacks.webp" type="image/webp" />
-  <link rel="stylesheet" href="../css/mailbox.css?v=0.19.9.0" />
+  <link rel="stylesheet" href="../css/mailbox.css?v=0.20.0" />
+  <link rel="stylesheet" href="../css/update-manager.css?v=0.20.0" />
+  <style>html.stellar-update-pending body{overflow:hidden!important}html.stellar-update-pending body>*:not(#stellarUpdateGate):not(script){visibility:hidden!important}#stellarUpdateGate{visibility:visible!important}</style>
 </head>
 <body class="tarot-page-body" id="pageTop">
+  <div class="stellar-update-gate" id="stellarUpdateGate" role="dialog" aria-modal="true" aria-live="polite" aria-labelledby="stellarUpdateTitle">
+    <section class="stellar-update-card">
+      <div class="stellar-update-brand"><span class="stellar-update-mark" aria-hidden="true">✦</span><div class="stellar-update-brand-copy"><strong id="stellarUpdateBrand">星辰日记</strong><small id="stellarUpdateSub">YOUR STARS, YOUR STORY</small></div></div>
+      <p class="stellar-update-kicker" id="stellarUpdateKicker"></p>
+      <h1 class="stellar-update-title" id="stellarUpdateTitle">正在检查星辰日记</h1>
+      <p class="stellar-update-desc" id="stellarUpdateDesc">正在确认是否有新的网站内容与资源。</p>
+      <div class="stellar-update-version" id="stellarUpdateVersion"></div>
+      <div class="stellar-update-notes" id="stellarUpdateNotes" hidden><strong id="stellarUpdateNotesTitle">本次更新</strong><ul id="stellarUpdateNotesList"></ul></div>
+      <div class="stellar-update-progress-wrap">
+        <div class="stellar-update-progress-head"><span class="stellar-update-status" id="stellarUpdateStatus">正在准备资源…</span><strong class="stellar-update-percent" id="stellarUpdatePercent">0%</strong></div>
+        <div class="stellar-update-track" aria-hidden="true"><div class="stellar-update-bar" id="stellarUpdateBar"></div></div>
+        <div class="stellar-update-detail"><span id="stellarUpdateCount">0 / 0 项资源</span><span id="stellarUpdateBytes">已处理 0 B / 0 B</span></div>
+      </div>
+      <div class="stellar-update-error" id="stellarUpdateError" hidden></div>
+      <div class="stellar-update-actions"><button class="stellar-update-btn is-primary" id="stellarUpdateRetry" type="button" hidden>重新更新</button></div>
+    </section>
+  </div>
+  <script src="../js/update-manager.js?v=0.20.0" data-stellar-root="../" data-stellar-route="tarot" data-stellar-build="0.20.0"></script>
+
   <div class="site-shell tarot-shell">
     <header class="subpage-header tarot-subpage-header">
       <a class="brand" href="../index.html">
@@ -185,16 +206,16 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="../js/supabase-public-config.js?v=0.19.9.0"></script>
-  <script src="../js/supabase-config.js?v=0.19.9.0"></script>
-  <script src="../js/supabase-client.js?v=0.19.9.0"></script>
-  <script src="../js/supabase-auth.js?v=0.19.9.0"></script>
-  <script src="../js/cloud-sync.js?v=0.19.9.0"></script>
-  <script src="../js/player-profile.js?v=0.19.9.0"></script>
-  <script src="../js/bark.js?v=0.19.9.0"></script>
-  <script src="../js/local-records.js?v=0.19.9.0"></script>
-  <script src="../js/tarot.js?v=0.19.9.0"></script>
-  <script src="../js/shooting-stars.js?v=0.19.9.0"></script>
-  <script src="../js/mailbox.js?v=0.19.9.0"></script>
+  <script src="../js/supabase-public-config.js?v=0.20.0"></script>
+  <script src="../js/supabase-config.js?v=0.20.0"></script>
+  <script src="../js/supabase-client.js?v=0.20.0"></script>
+  <script src="../js/supabase-auth.js?v=0.20.0"></script>
+  <script src="../js/cloud-sync.js?v=0.20.0"></script>
+  <script src="../js/player-profile.js?v=0.20.0"></script>
+  <script src="../js/bark.js?v=0.20.0"></script>
+  <script src="../js/local-records.js?v=0.20.0"></script>
+  <script src="../js/tarot.js?v=0.20.0"></script>
+  <script src="../js/shooting-stars.js?v=0.20.0"></script>
+  <script src="../js/mailbox.js?v=0.20.0"></script>
 </body>
 </html>

@@ -42,7 +42,7 @@
     if (!record) return null;
     const id = Number(record?.fortune?.id ?? record?.id);
     const canonical = state.fortunes.find((item) => Number(item.id) === id) || null;
-    // V0.19.9.0: merge old daily snapshots with the current canonical entry so
+    // V0.20.0: merge old daily snapshots with the current canonical entry so
     // a sign drawn before the upgrade also receives the richer interpretation
     // without changing which sign the player drew that day.
     if (record?.fortune && typeof record.fortune === 'object') {

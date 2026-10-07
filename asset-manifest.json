@@ -1,0 +1,919 @@
+{
+  "version": "0.20.0",
+  "strategy": "shell-plus-route",
+  "groups": {
+    "shell": [
+      "VERSION.txt",
+      "account.html",
+      "css/mailbox.css",
+      "css/style.css",
+      "css/update-manager.css",
+      "data/astrology/chart-interpretations.json",
+      "data/astrology/cities.json",
+      "data/astrology/compatibility-score.json",
+      "data/astrology/deep-interpretations.json",
+      "data/astrology/interpretations.json",
+      "data/astrology/natal-synthesis.json",
+      "data/astrology/signs.json",
+      "data/astrology/stellar-interpretation-engine.json",
+      "data/astrology/synastry-interpretations.json",
+      "data/backend/backend-config.example.json",
+      "data/backend/report-input-schema.json",
+      "data/fortune/fortunes.json",
+      "data/i18n/en.json",
+      "data/i18n/zh-CN.json",
+      "data/i18n/zh-TW.json",
+      "data/tarot/cards.json",
+      "data/tarot/meanings.json",
+      "data/tarot/spreads.json",
+      "index.html",
+      "js/account-binding.js",
+      "js/account-login.js",
+      "js/account-page.js",
+      "js/api-client.js",
+      "js/astrology-engine.js",
+      "js/astrology-full.js",
+      "js/astrology-synthesis.js",
+      "js/astrology.js",
+      "js/backend-config.js",
+      "js/bark.js",
+      "js/birth-date-ui.js",
+      "js/china-location.js",
+      "js/cloud-sync.js",
+      "js/farm.js",
+      "js/fortune-config.js",
+      "js/fortune.js",
+      "js/home-interactions.js",
+      "js/i18n.js",
+      "js/local-records.js",
+      "js/lunar-calendar.js",
+      "js/mailbox.js",
+      "js/main.js",
+      "js/new-player-guide.js",
+      "js/player-profile.js",
+      "js/report-payload.js",
+      "js/report-store.js",
+      "js/shooting-stars.js",
+      "js/stellar-interpretation-engine.js",
+      "js/supabase-auth.js",
+      "js/supabase-client.js",
+      "js/supabase-config.js",
+      "js/supabase-public-config.js",
+      "js/synastry.js",
+      "js/tarot.js",
+      "js/update-manager.js",
+      "pages/astrology.html",
+      "pages/farm.html",
+      "pages/fortune.html",
+      "pages/synastry.html",
+      "pages/tarot.html",
+      "service-worker.js",
+      "version.json"
+    ],
+    "home": [
+      "images/home/01-daily-fortune.webp",
+      "images/home/02-tarot.webp",
+      "images/home/03-natal-chart.webp",
+      "images/home/04-synastry.webp",
+      "images/home/05-stellar-farm.webp",
+      "images/tutorial/register/zh-CN/step-01.png",
+      "images/tutorial/register/zh-CN/step-02.png",
+      "images/tutorial/register/zh-CN/step-03.png",
+      "images/tutorial/register/zh-CN/step-04.png",
+      "images/tutorial/register/zh-CN/step-05.png",
+      "images/tutorial/register/zh-CN/step-06.png",
+      "images/ui/stellar-ui-icon-sheet-02.png"
+    ],
+    "account": [
+      "images/ui/stellar-ui-icon-sheet-02.png"
+    ],
+    "fortune": [
+      "images/fortune/stellar-fortune-cylinder.webp",
+      "images/ui/stellar-ui-icon-sheet-02.png"
+    ],
+    "tarot": [
+      "images/tarot/cards/CardBacks.webp",
+      "images/ui/stellar-ui-icon-sheet-02.png"
+    ],
+    "astrology": [
+      "images/ui/stellar-ui-icon-sheet-02.png"
+    ],
+    "synastry": [
+      "images/ui/stellar-ui-icon-sheet-02.png"
+    ],
+    "farm": [
+      "images/farm/avatar/default-female.png",
+      "images/farm/avatar/default-male.png",
+      "images/farm/crops-sheet-01.webp",
+      "images/farm/crops-sheet-02.webp",
+      "images/farm/farm-background-mobile.webp",
+      "images/farm/farm-background.webp",
+      "images/farm/farm-event-sheet-01.webp",
+      "images/farm/farm-item-sheet-01.webp",
+      "images/farm/farm-plot.webp",
+      "images/farm/farm-ui-icon-sheet-01.png",
+      "images/farm/farm-weather-sheet-01.webp",
+      "images/farm/item-icon-atlas-01.png",
+      "images/farm/train-station.png",
+      "images/ui/stellar-ui-icon-sheet-02.png"
+    ]
+  },
+  "assets": {
+    "VERSION.txt": {
+      "revision": "8da6a2ee5c36bb27",
+      "bytes": 7
+    },
+    "account.html": {
+      "revision": "5cc58c520eb68958",
+      "bytes": 30096
+    },
+    "css/mailbox.css": {
+      "revision": "4eb479ececb65a16",
+      "bytes": 25810
+    },
+    "css/style.css": {
+      "revision": "6f2f3c3705948e37",
+      "bytes": 449606
+    },
+    "css/update-manager.css": {
+      "revision": "881202deaa328ef0",
+      "bytes": 4749
+    },
+    "data/astrology/chart-interpretations.json": {
+      "revision": "7658e3e54194d778",
+      "bytes": 16129
+    },
+    "data/astrology/cities.json": {
+      "revision": "476c6a8aedbfab2c",
+      "bytes": 30574
+    },
+    "data/astrology/compatibility-score.json": {
+      "revision": "683cad48657a0b97",
+      "bytes": 2998
+    },
+    "data/astrology/deep-interpretations.json": {
+      "revision": "ddf6763ada7b9ec2",
+      "bytes": 57295
+    },
+    "data/astrology/interpretations.json": {
+      "revision": "6acdb0e696bd62aa",
+      "bytes": 27226
+    },
+    "data/astrology/natal-synthesis.json": {
+      "revision": "019d7b4f46e6e852",
+      "bytes": 67782
+    },
+    "data/astrology/signs.json": {
+      "revision": "1454594919cd2911",
+      "bytes": 4272
+    },
+    "data/astrology/stellar-interpretation-engine.json": {
+      "revision": "6439e30a081851f3",
+      "bytes": 3951
+    },
+    "data/astrology/synastry-interpretations.json": {
+      "revision": "28ef990e2c328807",
+      "bytes": 5328
+    },
+    "data/backend/backend-config.example.json": {
+      "revision": "65d509b370c7ae01",
+      "bytes": 373
+    },
+    "data/backend/report-input-schema.json": {
+      "revision": "58b2c6082b2f22b4",
+      "bytes": 7048
+    },
+    "data/fortune/fortunes.json": {
+      "revision": "bb2a4093aaea9409",
+      "bytes": 255747
+    },
+    "data/i18n/en.json": {
+      "revision": "21cecbe2cd0b3343",
+      "bytes": 1114
+    },
+    "data/i18n/zh-CN.json": {
+      "revision": "ec3a6e98db971a32",
+      "bytes": 1110
+    },
+    "data/i18n/zh-TW.json": {
+      "revision": "8c137222ac1aae84",
+      "bytes": 1110
+    },
+    "data/tarot/cards.json": {
+      "revision": "e007bc0bef7ace9f",
+      "bytes": 22369
+    },
+    "data/tarot/meanings.json": {
+      "revision": "6d3019cb9732d1ee",
+      "bytes": 52059
+    },
+    "data/tarot/spreads.json": {
+      "revision": "9d950a2cbd2c0737",
+      "bytes": 9656
+    },
+    "images/farm/avatar/christmas-female.png": {
+      "revision": "e4a8c47fd12c663b",
+      "bytes": 1482308
+    },
+    "images/farm/avatar/christmas-male.png": {
+      "revision": "b2daa7e0be0d050c",
+      "bytes": 807678
+    },
+    "images/farm/avatar/default-female.png": {
+      "revision": "842a3ecb381c8fb9",
+      "bytes": 1261318
+    },
+    "images/farm/avatar/default-male.png": {
+      "revision": "de4c8c2f1f293a4a",
+      "bytes": 1217020
+    },
+    "images/farm/avatar/halloween-female.png": {
+      "revision": "ab06f8e97893b5d3",
+      "bytes": 1390334
+    },
+    "images/farm/avatar/halloween-male.png": {
+      "revision": "5a70b074e349c5f3",
+      "bytes": 1006825
+    },
+    "images/farm/avatar/mid-autumn-female.png": {
+      "revision": "c28a29ed56596b96",
+      "bytes": 1592606
+    },
+    "images/farm/avatar/mid-autumn-male.png": {
+      "revision": "f7ccc93576fee47a",
+      "bytes": 1248871
+    },
+    "images/farm/blindbox-effect-gold-01.png": {
+      "revision": "92b4d7ca46a7c9a7",
+      "bytes": 338253
+    },
+    "images/farm/blindbox-effect-purple-01.png": {
+      "revision": "f9e2cca137452e1a",
+      "bytes": 415677
+    },
+    "images/farm/blindbox-seasonal-sheet-01.png": {
+      "revision": "4c1c779e803a3082",
+      "bytes": 724179
+    },
+    "images/farm/crops-sheet-01.webp": {
+      "revision": "09000c39b5aca057",
+      "bytes": 683088
+    },
+    "images/farm/crops-sheet-02.webp": {
+      "revision": "d07613f28ed60046",
+      "bytes": 786344
+    },
+    "images/farm/farm-background-mobile.webp": {
+      "revision": "803e17d7be7642c9",
+      "bytes": 203084
+    },
+    "images/farm/farm-background.webp": {
+      "revision": "29491266ce271f65",
+      "bytes": 205608
+    },
+    "images/farm/farm-decor-seasonal-atlas-01.png": {
+      "revision": "831e80d90aeabc80",
+      "bytes": 2787107
+    },
+    "images/farm/farm-event-sheet-01.webp": {
+      "revision": "a024293328a15dd7",
+      "bytes": 585988
+    },
+    "images/farm/farm-item-sheet-01.webp": {
+      "revision": "ebbd41de315fb611",
+      "bytes": 601274
+    },
+    "images/farm/farm-plot.webp": {
+      "revision": "e070c151d5529946",
+      "bytes": 43760
+    },
+    "images/farm/farm-ui-icon-sheet-01.png": {
+      "revision": "b68836a1993ac590",
+      "bytes": 864062
+    },
+    "images/farm/farm-weather-sheet-01.webp": {
+      "revision": "3005ebf6d0ba1444",
+      "bytes": 811502
+    },
+    "images/farm/item-icon-atlas-01.png": {
+      "revision": "1c261e349380e2a6",
+      "bytes": 1195783
+    },
+    "images/farm/pet/cream-sheep-icon.png": {
+      "revision": "90d65d8fbf6cfc58",
+      "bytes": 70447
+    },
+    "images/farm/pet/cream-sheep.png": {
+      "revision": "b51a980e1408cbc5",
+      "bytes": 763895
+    },
+    "images/farm/pet/husky-icon.png": {
+      "revision": "ae5e5865fc88fa54",
+      "bytes": 73675
+    },
+    "images/farm/pet/husky.png": {
+      "revision": "80370169aa049436",
+      "bytes": 766363
+    },
+    "images/farm/pet/milk-bunny-icon.png": {
+      "revision": "bb97a1f676af76a4",
+      "bytes": 71755
+    },
+    "images/farm/pet/milk-bunny.png": {
+      "revision": "a84d3abb20b417c0",
+      "bytes": 840297
+    },
+    "images/farm/pet/moon-rabbit-icon.png": {
+      "revision": "494fdd09c62d39b6",
+      "bytes": 58449
+    },
+    "images/farm/pet/moon-rabbit.png": {
+      "revision": "439925887659f9dc",
+      "bytes": 691982
+    },
+    "images/farm/pet/orange-cat-icon.png": {
+      "revision": "e554077d6567725c",
+      "bytes": 71533
+    },
+    "images/farm/pet/orange-cat.png": {
+      "revision": "3c841e91f4602818",
+      "bytes": 803062
+    },
+    "images/farm/train-car-blue.png": {
+      "revision": "66b80eb889624f5e",
+      "bytes": 486423
+    },
+    "images/farm/train-car-green.png": {
+      "revision": "ea403a7c46e8be9f",
+      "bytes": 509045
+    },
+    "images/farm/train-car-wood.png": {
+      "revision": "533775a2a1da2705",
+      "bytes": 502531
+    },
+    "images/farm/train-engine.png": {
+      "revision": "5e2d266a8d300333",
+      "bytes": 570233
+    },
+    "images/farm/train-smoke-sheet.png": {
+      "revision": "a58f4c40e3fb6b9e",
+      "bytes": 272350
+    },
+    "images/farm/train-station.png": {
+      "revision": "bcbe962ec1f71f55",
+      "bytes": 562532
+    },
+    "images/fortune/source/stellar-fortune-cylinder-master.png": {
+      "revision": "34b919e3f52eddff",
+      "bytes": 2032707
+    },
+    "images/fortune/stellar-fortune-cylinder.webp": {
+      "revision": "8c05378067dd167e",
+      "bytes": 129836
+    },
+    "images/home/01-daily-fortune.webp": {
+      "revision": "84d779827f88ce69",
+      "bytes": 178238
+    },
+    "images/home/02-tarot.webp": {
+      "revision": "3d33ddc849747871",
+      "bytes": 161844
+    },
+    "images/home/03-natal-chart.webp": {
+      "revision": "eae3173e146d8f1b",
+      "bytes": 238918
+    },
+    "images/home/04-synastry.webp": {
+      "revision": "745b674f030ecbc5",
+      "bytes": 249372
+    },
+    "images/home/05-stellar-farm.webp": {
+      "revision": "85067af77157e4c9",
+      "bytes": 243272
+    },
+    "images/tarot/cards/00-TheFool.jpg": {
+      "revision": "cbdf6ee2c97623af",
+      "bytes": 52370
+    },
+    "images/tarot/cards/01-TheMagician.jpg": {
+      "revision": "1395e2b12868d3ac",
+      "bytes": 44454
+    },
+    "images/tarot/cards/02-TheHighPriestess.jpg": {
+      "revision": "cf9736e88bc72d36",
+      "bytes": 56939
+    },
+    "images/tarot/cards/03-TheEmpress.jpg": {
+      "revision": "9cab6c6f6d6b08bc",
+      "bytes": 55694
+    },
+    "images/tarot/cards/04-TheEmperor.jpg": {
+      "revision": "7eca5682c38a99a5",
+      "bytes": 52281
+    },
+    "images/tarot/cards/05-TheHierophant.jpg": {
+      "revision": "740d966f62620aa7",
+      "bytes": 49551
+    },
+    "images/tarot/cards/06-TheLovers.jpg": {
+      "revision": "9552d6bbc37e4562",
+      "bytes": 54431
+    },
+    "images/tarot/cards/07-TheChariot.jpg": {
+      "revision": "f302f10f9913458c",
+      "bytes": 50772
+    },
+    "images/tarot/cards/08-Strength.jpg": {
+      "revision": "ffbeff58eb617319",
+      "bytes": 38854
+    },
+    "images/tarot/cards/09-TheHermit.jpg": {
+      "revision": "0a9f7cd117621e6c",
+      "bytes": 34819
+    },
+    "images/tarot/cards/10-WheelOfFortune.jpg": {
+      "revision": "cf141ce97ddf0171",
+      "bytes": 44946
+    },
+    "images/tarot/cards/11-Justice.jpg": {
+      "revision": "5203aeea061f3005",
+      "bytes": 46875
+    },
+    "images/tarot/cards/12-TheHangedMan.jpg": {
+      "revision": "d81e4feaf49fa281",
+      "bytes": 36663
+    },
+    "images/tarot/cards/13-Death.jpg": {
+      "revision": "84976bc6a1ba302c",
+      "bytes": 53813
+    },
+    "images/tarot/cards/14-Temperance.jpg": {
+      "revision": "a317aceb5ed41a7a",
+      "bytes": 51159
+    },
+    "images/tarot/cards/15-TheDevil.jpg": {
+      "revision": "9b684383c6453688",
+      "bytes": 45248
+    },
+    "images/tarot/cards/16-TheTower.jpg": {
+      "revision": "8dfe53f35b048b71",
+      "bytes": 43136
+    },
+    "images/tarot/cards/17-TheStar.jpg": {
+      "revision": "00e17c4419486a4b",
+      "bytes": 46763
+    },
+    "images/tarot/cards/18-TheMoon.jpg": {
+      "revision": "83f0e7a6fcd4d743",
+      "bytes": 46112
+    },
+    "images/tarot/cards/19-TheSun.jpg": {
+      "revision": "82d98a25f906fa88",
+      "bytes": 59616
+    },
+    "images/tarot/cards/20-Judgement.jpg": {
+      "revision": "d28bb5c6757700d6",
+      "bytes": 55682
+    },
+    "images/tarot/cards/21-TheWorld.jpg": {
+      "revision": "971677f16883ed8d",
+      "bytes": 52330
+    },
+    "images/tarot/cards/CardBacks.jpg": {
+      "revision": "e451ce0cc187c072",
+      "bytes": 119894
+    },
+    "images/tarot/cards/CardBacks.webp": {
+      "revision": "af48677709059f31",
+      "bytes": 74320
+    },
+    "images/tarot/cards/Cups01.jpg": {
+      "revision": "403ce9f0c4f0f952",
+      "bytes": 41691
+    },
+    "images/tarot/cards/Cups02.jpg": {
+      "revision": "0ac0de1ef21811d9",
+      "bytes": 41037
+    },
+    "images/tarot/cards/Cups03.jpg": {
+      "revision": "64db2bcf88ec70f4",
+      "bytes": 43925
+    },
+    "images/tarot/cards/Cups04.jpg": {
+      "revision": "beeafc5a7e580943",
+      "bytes": 38830
+    },
+    "images/tarot/cards/Cups05.jpg": {
+      "revision": "b9dd975ed5781449",
+      "bytes": 28678
+    },
+    "images/tarot/cards/Cups06.jpg": {
+      "revision": "a468ce4c2245d0be",
+      "bytes": 53719
+    },
+    "images/tarot/cards/Cups07.jpg": {
+      "revision": "75e53ea22a62ed08",
+      "bytes": 48437
+    },
+    "images/tarot/cards/Cups08.jpg": {
+      "revision": "fc5c83e5538fc305",
+      "bytes": 34163
+    },
+    "images/tarot/cards/Cups09.jpg": {
+      "revision": "f802dfeb0e123a91",
+      "bytes": 45636
+    },
+    "images/tarot/cards/Cups10.jpg": {
+      "revision": "37b8df482cf0e60a",
+      "bytes": 41200
+    },
+    "images/tarot/cards/Cups11.jpg": {
+      "revision": "111374acb71150ef",
+      "bytes": 36256
+    },
+    "images/tarot/cards/Cups12.jpg": {
+      "revision": "3841c8458bf4470c",
+      "bytes": 41935
+    },
+    "images/tarot/cards/Cups13.jpg": {
+      "revision": "7a7d294f1a1f0b15",
+      "bytes": 44518
+    },
+    "images/tarot/cards/Cups14.jpg": {
+      "revision": "380c00eab0f195a5",
+      "bytes": 43698
+    },
+    "images/tarot/cards/Pentacles01.jpg": {
+      "revision": "bec07e0ebc56b647",
+      "bytes": 36894
+    },
+    "images/tarot/cards/Pentacles02.jpg": {
+      "revision": "0497efac5da7ad43",
+      "bytes": 39816
+    },
+    "images/tarot/cards/Pentacles03.jpg": {
+      "revision": "042c975c99942f77",
+      "bytes": 49419
+    },
+    "images/tarot/cards/Pentacles04.jpg": {
+      "revision": "e114e2a1e3a80b34",
+      "bytes": 29443
+    },
+    "images/tarot/cards/Pentacles05.jpg": {
+      "revision": "5b43ce2c44bb244c",
+      "bytes": 58392
+    },
+    "images/tarot/cards/Pentacles06.jpg": {
+      "revision": "16fdad0d81a395a3",
+      "bytes": 40116
+    },
+    "images/tarot/cards/Pentacles07.jpg": {
+      "revision": "fe3c31bd8493fe94",
+      "bytes": 41304
+    },
+    "images/tarot/cards/Pentacles08.jpg": {
+      "revision": "9aff15b6a600347d",
+      "bytes": 37321
+    },
+    "images/tarot/cards/Pentacles09.jpg": {
+      "revision": "c4c2bda13a939684",
+      "bytes": 46386
+    },
+    "images/tarot/cards/Pentacles10.jpg": {
+      "revision": "46ca839be6905774",
+      "bytes": 55894
+    },
+    "images/tarot/cards/Pentacles11.jpg": {
+      "revision": "804544f0d482e92c",
+      "bytes": 34179
+    },
+    "images/tarot/cards/Pentacles12.jpg": {
+      "revision": "5776356bc9250df3",
+      "bytes": 37631
+    },
+    "images/tarot/cards/Pentacles13.jpg": {
+      "revision": "2dac0a3afcb7be4c",
+      "bytes": 51831
+    },
+    "images/tarot/cards/Pentacles14.jpg": {
+      "revision": "00c9fb61726e84b1",
+      "bytes": 48761
+    },
+    "images/tarot/cards/Swords01.jpg": {
+      "revision": "08003f0e9c8f6d00",
+      "bytes": 34556
+    },
+    "images/tarot/cards/Swords02.jpg": {
+      "revision": "7e5ddf353b89533e",
+      "bytes": 33092
+    },
+    "images/tarot/cards/Swords03.jpg": {
+      "revision": "fb3a8ab563cc6546",
+      "bytes": 33506
+    },
+    "images/tarot/cards/Swords04.jpg": {
+      "revision": "6ee38f674263b245",
+      "bytes": 39360
+    },
+    "images/tarot/cards/Swords05.jpg": {
+      "revision": "a0f87a500eb215c3",
+      "bytes": 41155
+    },
+    "images/tarot/cards/Swords06.jpg": {
+      "revision": "60bdb11881df3a30",
+      "bytes": 41139
+    },
+    "images/tarot/cards/Swords07.jpg": {
+      "revision": "9acf62a03058ab6f",
+      "bytes": 38917
+    },
+    "images/tarot/cards/Swords08.jpg": {
+      "revision": "9c0c066cf4ab23ae",
+      "bytes": 47195
+    },
+    "images/tarot/cards/Swords09.jpg": {
+      "revision": "38ce44de6ff69111",
+      "bytes": 40428
+    },
+    "images/tarot/cards/Swords10.jpg": {
+      "revision": "8e1848c5048f8405",
+      "bytes": 40332
+    },
+    "images/tarot/cards/Swords11.jpg": {
+      "revision": "9bc23411bafb7a22",
+      "bytes": 39100
+    },
+    "images/tarot/cards/Swords12.jpg": {
+      "revision": "275596aecae5af45",
+      "bytes": 43819
+    },
+    "images/tarot/cards/Swords13.jpg": {
+      "revision": "7f74862da81813eb",
+      "bytes": 41564
+    },
+    "images/tarot/cards/Swords14.jpg": {
+      "revision": "5e2f2ba6c71ee406",
+      "bytes": 43389
+    },
+    "images/tarot/cards/Wands01.jpg": {
+      "revision": "1def6591aedfa7e7",
+      "bytes": 36387
+    },
+    "images/tarot/cards/Wands02.jpg": {
+      "revision": "f46526768c41425b",
+      "bytes": 40288
+    },
+    "images/tarot/cards/Wands03.jpg": {
+      "revision": "433dd28709a7f9d6",
+      "bytes": 39232
+    },
+    "images/tarot/cards/Wands04.jpg": {
+      "revision": "b8c6a02e570bd6ca",
+      "bytes": 41457
+    },
+    "images/tarot/cards/Wands05.jpg": {
+      "revision": "7a279ded2c52cdbf",
+      "bytes": 41551
+    },
+    "images/tarot/cards/Wands06.jpg": {
+      "revision": "39f0d0f4836f1091",
+      "bytes": 45428
+    },
+    "images/tarot/cards/Wands07.jpg": {
+      "revision": "c6fcaa436f940309",
+      "bytes": 26332
+    },
+    "images/tarot/cards/Wands08.jpg": {
+      "revision": "92ec7a8618057ad0",
+      "bytes": 36633
+    },
+    "images/tarot/cards/Wands09.jpg": {
+      "revision": "4a1ca2738e921122",
+      "bytes": 44639
+    },
+    "images/tarot/cards/Wands10.jpg": {
+      "revision": "c7010d8de3a101e5",
+      "bytes": 41500
+    },
+    "images/tarot/cards/Wands11.jpg": {
+      "revision": "788cf5638762b440",
+      "bytes": 39590
+    },
+    "images/tarot/cards/Wands12.jpg": {
+      "revision": "4b812b4d99be4d78",
+      "bytes": 46606
+    },
+    "images/tarot/cards/Wands13.jpg": {
+      "revision": "63f972a4bfc393f9",
+      "bytes": 49263
+    },
+    "images/tarot/cards/Wands14.jpg": {
+      "revision": "140a7494719222e8",
+      "bytes": 48958
+    },
+    "images/tarot/source/StellarDiary-CardBack-master.webp": {
+      "revision": "dbf3f72543e6f576",
+      "bytes": 602746
+    },
+    "images/tutorial/register/zh-CN/step-01.png": {
+      "revision": "94dbfca73e4cfa7b",
+      "bytes": 41528
+    },
+    "images/tutorial/register/zh-CN/step-02.png": {
+      "revision": "c96a0d99e8a7d5ec",
+      "bytes": 200512
+    },
+    "images/tutorial/register/zh-CN/step-03.png": {
+      "revision": "bd99189b04493386",
+      "bytes": 299088
+    },
+    "images/tutorial/register/zh-CN/step-04.png": {
+      "revision": "5f5eaf4015b32237",
+      "bytes": 66300
+    },
+    "images/tutorial/register/zh-CN/step-05.png": {
+      "revision": "83726f63d11f21ad",
+      "bytes": 86690
+    },
+    "images/tutorial/register/zh-CN/step-06.png": {
+      "revision": "2d8819a87bb64030",
+      "bytes": 35544
+    },
+    "images/ui/stellar-ui-icon-sheet-02.png": {
+      "revision": "9c53305c904747cf",
+      "bytes": 408149
+    },
+    "index.html": {
+      "revision": "53120a20abcab86a",
+      "bytes": 8444
+    },
+    "js/account-binding.js": {
+      "revision": "29295cd7d993c16b",
+      "bytes": 5808
+    },
+    "js/account-login.js": {
+      "revision": "097d6777b6dccdcb",
+      "bytes": 12765
+    },
+    "js/account-page.js": {
+      "revision": "18570215d351aa0a",
+      "bytes": 37619
+    },
+    "js/api-client.js": {
+      "revision": "f1501a147be52620",
+      "bytes": 6688
+    },
+    "js/astrology-engine.js": {
+      "revision": "c935a201943909c9",
+      "bytes": 11973
+    },
+    "js/astrology-full.js": {
+      "revision": "38e401aea7b9b272",
+      "bytes": 59537
+    },
+    "js/astrology-synthesis.js": {
+      "revision": "bdeda320eeebfc87",
+      "bytes": 6761
+    },
+    "js/astrology.js": {
+      "revision": "d5e62dac20474ed1",
+      "bytes": 37751
+    },
+    "js/backend-config.js": {
+      "revision": "08c1bd2b7ef83b99",
+      "bytes": 2378
+    },
+    "js/bark.js": {
+      "revision": "a01b46bb128daf3b",
+      "bytes": 1754
+    },
+    "js/birth-date-ui.js": {
+      "revision": "21204026cbd3a836",
+      "bytes": 20950
+    },
+    "js/china-location.js": {
+      "revision": "975c95b5f5f80d3c",
+      "bytes": 5955
+    },
+    "js/cloud-sync.js": {
+      "revision": "eb0862bce4a64135",
+      "bytes": 29899
+    },
+    "js/farm.js": {
+      "revision": "5b7b3c13b727f188",
+      "bytes": 390241
+    },
+    "js/fortune-config.js": {
+      "revision": "b8058747748ed442",
+      "bytes": 172
+    },
+    "js/fortune.js": {
+      "revision": "3ee5d50439420978",
+      "bytes": 12403
+    },
+    "js/home-interactions.js": {
+      "revision": "39a13004320d23ee",
+      "bytes": 2213
+    },
+    "js/i18n.js": {
+      "revision": "ae2ac21c5c585a28",
+      "bytes": 1305
+    },
+    "js/local-records.js": {
+      "revision": "71319f2cb2a0d56a",
+      "bytes": 1881
+    },
+    "js/lunar-calendar.js": {
+      "revision": "2597869617173ea7",
+      "bytes": 5294
+    },
+    "js/mailbox.js": {
+      "revision": "38367099e4e6ddac",
+      "bytes": 59650
+    },
+    "js/main.js": {
+      "revision": "b0acd0adae0ea217",
+      "bytes": 581
+    },
+    "js/new-player-guide.js": {
+      "revision": "8d873622b9152dab",
+      "bytes": 16145
+    },
+    "js/player-profile.js": {
+      "revision": "d28730f86e88b371",
+      "bytes": 21077
+    },
+    "js/report-payload.js": {
+      "revision": "91a1f7aed93b897f",
+      "bytes": 11707
+    },
+    "js/report-store.js": {
+      "revision": "2680327954258c27",
+      "bytes": 2899
+    },
+    "js/shooting-stars.js": {
+      "revision": "155c12ae6c8e4347",
+      "bytes": 4547
+    },
+    "js/stellar-interpretation-engine.js": {
+      "revision": "133c4a373cda4dbf",
+      "bytes": 55795
+    },
+    "js/supabase-auth.js": {
+      "revision": "78d06991bc798896",
+      "bytes": 10938
+    },
+    "js/supabase-client.js": {
+      "revision": "4a81786f153783f3",
+      "bytes": 4900
+    },
+    "js/supabase-config.js": {
+      "revision": "3bf0a9b2adbb9179",
+      "bytes": 2571
+    },
+    "js/supabase-public-config.js": {
+      "revision": "1a8103805c556b7e",
+      "bytes": 655
+    },
+    "js/synastry.js": {
+      "revision": "c54b81e4e52486ab",
+      "bytes": 42536
+    },
+    "js/tarot.js": {
+      "revision": "c5621fee9e84111e",
+      "bytes": 214819
+    },
+    "js/update-manager.js": {
+      "revision": "e12c24f7d4264f09",
+      "bytes": 16076
+    },
+    "pages/astrology.html": {
+      "revision": "b7d6f12bef982428",
+      "bytes": 18347
+    },
+    "pages/farm.html": {
+      "revision": "3255964d8c7c38b5",
+      "bytes": 12243
+    },
+    "pages/fortune.html": {
+      "revision": "cf4ee1292940590a",
+      "bytes": 9680
+    },
+    "pages/synastry.html": {
+      "revision": "d2b8f09a6bdfa66e",
+      "bytes": 17697
+    },
+    "pages/tarot.html": {
+      "revision": "68448828d4c6bf35",
+      "bytes": 12130
+    },
+    "service-worker.js": {
+      "revision": "bcb706c6731e005b",
+      "bytes": 2610
+    },
+    "version.json": {
+      "revision": "a9c0b85555d45b47",
+      "bytes": 1196
+    }
+  }
+}
