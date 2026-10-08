@@ -7,6 +7,7 @@ window.XingchenStellarInterpretation = (() => {
     deep: null,
     synthesis: null,
     framework: null,
+    placementDepth: null,
     result: null,
     report: null,
     ready: null
@@ -30,7 +31,7 @@ window.XingchenStellarInterpretation = (() => {
       localBadge:'0 API · 本地生成',
       deterministicBadge:'同一命盘 · 逻辑稳定',
       themeTitle:'这张盘最突出的主题',
-      themeHint:'分数代表这张命盘里该主题的相对强调程度，不是好坏评分。',
+      themeHint:'层级代表这个主题在整张命盘里的相对强调程度，不是好坏评分，也不是人格分数。',
       evidence:'主要依据',
       overview:'先说结论',
       identity:'核心人格与外在方式',
@@ -38,7 +39,12 @@ window.XingchenStellarInterpretation = (() => {
       mind:'思考、学习与表达',
       relationship:'感情、吸引与亲密关系',
       drive:'行动、压力与隐藏驱力',
-      career:'事业、价值感与人生方向',
+      career:'事业、工作方式与人生方向',
+      money:'金钱、安全感与自我价值',
+      social:'人际、朋友与群体位置',
+      roots:'家庭、内在根基与私人空间',
+      subconscious:'潜意识、隐藏模式与独处需求',
+      talent:'天赋、可长期发展的能力',
       tension:'命盘里最明显的拉扯',
       strength:'最值得发挥的优势',
       growth:'长期成长方向',
@@ -55,7 +61,9 @@ window.XingchenStellarInterpretation = (() => {
       topPlanet:'重点星体',
       dominantElement:'主导元素',
       dominantMode:'主导模式',
-      reportVersion:'报告引擎 V1.0'
+      aspectPossible:'出生时间未知，这个月亮相位只在当天部分时段可能成立，因此只作为辅助线索。',
+      tierStandout:'很突出', tierStrong:'明显', tierModerate:'中等', tierSupporting:'辅助',
+      reportVersion:'报告引擎 V2.0'
     },
     'zh-TW': {
       eyebrow:'STELLAR INTERPRETATION ENGINE · LOCAL',
@@ -67,7 +75,7 @@ window.XingchenStellarInterpretation = (() => {
       localBadge:'0 API · 本地生成',
       deterministicBadge:'同一命盤 · 邏輯穩定',
       themeTitle:'這張盤最突出的主題',
-      themeHint:'分數代表這張命盤裡該主題的相對強調程度，不是好壞評分。',
+      themeHint:'層級代表這個主題在整張命盤裡的相對強調程度，不是好壞評分，也不是人格分數。',
       evidence:'主要依據',
       overview:'先說結論',
       identity:'核心人格與外在方式',
@@ -75,7 +83,12 @@ window.XingchenStellarInterpretation = (() => {
       mind:'思考、學習與表達',
       relationship:'感情、吸引與親密關係',
       drive:'行動、壓力與隱藏驅力',
-      career:'事業、價值感與人生方向',
+      career:'事業、工作方式與人生方向',
+      money:'金錢、安全感與自我價值',
+      social:'人際、朋友與群體位置',
+      roots:'家庭、內在根基與私人空間',
+      subconscious:'潛意識、隱藏模式與獨處需求',
+      talent:'天賦、可長期發展的能力',
       tension:'命盤裡最明顯的拉扯',
       strength:'最值得發揮的優勢',
       growth:'長期成長方向',
@@ -92,7 +105,9 @@ window.XingchenStellarInterpretation = (() => {
       topPlanet:'重點星體',
       dominantElement:'主導元素',
       dominantMode:'主導模式',
-      reportVersion:'報告引擎 V1.0'
+      aspectPossible:'出生時間未知，這個月亮相位只在當天部分時段可能成立，因此只作為輔助線索。',
+      tierStandout:'很突出', tierStrong:'明顯', tierModerate:'中等', tierSupporting:'輔助',
+      reportVersion:'報告引擎 V2.0'
     },
     'en': {
       eyebrow:'STELLAR INTERPRETATION ENGINE · LOCAL',
@@ -104,7 +119,7 @@ window.XingchenStellarInterpretation = (() => {
       localBadge:'0 API · Local generation',
       deterministicBadge:'Same chart · Stable logic',
       themeTitle:'Strongest themes in this chart',
-      themeHint:'Scores indicate relative emphasis inside this chart, not a good/bad rating.',
+      themeHint:'The tier shows relative emphasis inside this chart. It is not a good/bad rating or a personality score.',
       evidence:'Primary evidence',
       overview:'Bottom line',
       identity:'Core identity & outward style',
@@ -112,7 +127,12 @@ window.XingchenStellarInterpretation = (() => {
       mind:'Thinking, learning & expression',
       relationship:'Love, attraction & intimacy',
       drive:'Action, pressure & hidden drive',
-      career:'Career, values & direction',
+      career:'Career, work style & direction',
+      money:'Money, security & self-worth',
+      social:'Friendship, networks & belonging',
+      roots:'Home, roots & private life',
+      subconscious:'Subconscious patterns & solitude',
+      talent:'Talents with long-term potential',
       tension:'Most visible inner tension',
       strength:'Most usable strength',
       growth:'Long-term growth direction',
@@ -129,7 +149,9 @@ window.XingchenStellarInterpretation = (() => {
       topPlanet:'Key planet',
       dominantElement:'Dominant element',
       dominantMode:'Dominant modality',
-      reportVersion:'Report engine V1.0'
+      aspectPossible:'Birth time is unknown. This Moon aspect may exist only during part of the day, so it is treated as supporting evidence rather than a fixed trait.',
+      tierStandout:'Standout', tierStrong:'Strong', tierModerate:'Moderate', tierSupporting:'Supporting',
+      reportVersion:'Report engine V2.0'
     }
   };
 
@@ -150,8 +172,9 @@ window.XingchenStellarInterpretation = (() => {
       fetch('../data/astrology/chart-interpretations.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('chart interpretations load failed'); return r.json();}),
       fetch('../data/astrology/deep-interpretations.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('deep interpretations load failed'); return r.json();}),
       fetch('../data/astrology/natal-synthesis.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('natal synthesis load failed'); return r.json();}),
-      fetch('../data/astrology/stellar-interpretation-engine.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('stellar framework load failed'); return r.json();})
-    ]).then(([signs,meta,deep,synthesis,framework])=>{
+      fetch('../data/astrology/stellar-interpretation-engine.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('stellar framework load failed'); return r.json();}),
+      fetch('../data/astrology/planet-sign-depth.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('planet-sign depth load failed'); return r.json();})
+    ]).then(([signs,meta,deep,synthesis,framework,placementDepth])=>{
       state.signs = signs.signs || [];
       state.elements = signs.elements || {};
       state.modalities = signs.modalities || {};
@@ -159,6 +182,7 @@ window.XingchenStellarInterpretation = (() => {
       state.deep = deep;
       state.synthesis = synthesis;
       state.framework = framework;
+      state.placementDepth = placementDepth;
       return true;
     }).catch(error=>{
       console.error('[StellarInterpretation]',error);
@@ -177,6 +201,31 @@ window.XingchenStellarInterpretation = (() => {
   function deepHouse(number){ return state.deep?.houses?.[String(number)] || null; }
   function deepPlanet(key){ return state.deep?.planets?.[key] || null; }
   function aspectMeta(key){ return state.meta?.aspects?.[key] || null; }
+  function placementDepth(key,index){
+    const sk=sign(index)?.key;
+    return sk ? state.placementDepth?.placements?.[key]?.[sk] || null : null;
+  }
+  function signRulerKey(index){
+    const sk=sign(index)?.key;
+    return sk ? state.deep?.signs?.[sk]?.ruler || null : null;
+  }
+  function houseRuler(result,houseNumber){
+    if(!result.houses?.cusps?.[houseNumber-1]) return null;
+    const cusp=result.houses.cusps[houseNumber-1];
+    const key=signRulerKey(cusp.index);
+    return key && result.planets?.[key] ? {key,position:result.planets[key],cusp} : null;
+  }
+  function rulerSentence(result,houseNumber,purpose){
+    const r=houseRuler(result,houseNumber); if(!r)return '';
+    const where=r.position.house ? houseLabel(r.position.house) : '';
+    if(lang()==='en') return `The ruler of House ${houseNumber}, ${planetName(r.key)}, falls in ${signName(r.position.index)}${where?` / ${where}`:''}. This routes ${purpose} through ${signTrait(r.position.index,'approach')}${where?` and into ${houseArea(r.position.house)}`:''}.`;
+    return zh(`第${houseNumber}宫宫主星${planetName(r.key)}落在${signName(r.position.index)}${where?`、${where}`:''}，所以「${purpose}」最后往往会透过「${signTrait(r.position.index,'approach')}」来运作${where?`，并落到「${houseArea(r.position.house)}」这个现实领域`:''}。`,`第${houseNumber}宮宮主星${planetName(r.key)}落在${signName(r.position.index)}${where?`、${where}`:''}，所以「${purpose}」最後往往會透過「${signTrait(r.position.index,'approach')}」來運作${where?`，並落到「${houseArea(r.position.house)}」這個現實領域`:''}。`);
+  }
+  function placementParagraph(result,key){
+    const p=result.planets?.[key]; if(!p)return '';
+    const d=placementDepth(key,p.index); if(!d)return '';
+    return [loc(d.core),loc(d.lived),loc(d.shadow),loc(d.growth)].filter(Boolean).join(' ');
+  }
 
   function formatDegree(position){
     if (!position || position.signUncertain) return '';
@@ -249,7 +298,7 @@ window.XingchenStellarInterpretation = (() => {
       if(ANGULAR_HOUSES.has(p.house))scores[key]+=4;
       else if(SUCCEDENT_HOUSES.has(p.house))scores[key]+=1;
       const aspects=(result.aspects||[]).filter(a=>a.body1===key||a.body2===key);
-      aspects.forEach(a=>scores[key]+=a.orb<=1?2:a.orb<=2?1:0.5);
+      aspects.forEach(a=>{const c=a.timeConfidence==='possible'?0.3:1;scores[key]+=(a.orb<=1?2:a.orb<=2?1:0.5)*c;});
       if(p.retrograde)scores[key]+=0.5;
     });
     const ruler=struct.chartRulers?.modern?.key;
@@ -267,14 +316,13 @@ window.XingchenStellarInterpretation = (() => {
     Object.entries(defs).forEach(([theme,def])=>{
       let score=0;
       Object.entries(def.planets||{}).forEach(([key,w])=>{
-        const p=result.planets?.[key];
-        if(!p)return;
+        const p=result.planets?.[key]; if(!p)return;
         const emphasis=0.6 + Math.min(1.5,(importance[key]||0)/12);
         score += w*emphasis;
         if(ANGULAR_HOUSES.has(p.house))score += (def.angular||0);
         const related=(result.aspects||[]).filter(a=>a.body1===key||a.body2===key);
-        related.forEach(a=>{ score += a.orb<=1 ? 1.8 : a.orb<=2 ? 1 : 0.25; });
-        if(p.retrograde) score += 0.35;
+        related.forEach(a=>{ const confidence=a.timeConfidence==='possible'?0.35:1; score += (a.orb<=1?1.8:a.orb<=2?1:0.25)*confidence; });
+        if(p.retrograde)score += 0.35;
       });
       Object.entries(def.houses||{}).forEach(([h,w])=>{
         const count=PLANETS.filter(k=>result.planets?.[k]?.house===Number(h)).length;
@@ -285,19 +333,19 @@ window.XingchenStellarInterpretation = (() => {
       if(def.chartRuler&&ruler)score += def.chartRuler;
       if(def.chartRulerMercury&&ruler==='mercury')score += def.chartRulerMercury;
       if(def.mc&&result.angles?.mc)score += def.mc;
-      if(def.hardAspect)score += (result.aspects||[]).filter(a=>HARD.has(a.key)&&a.orb<=2).length*def.hardAspect;
+      if(def.hardAspect)score += (result.aspects||[]).filter(a=>HARD.has(a.key)&&a.orb<=2&&a.timeConfidence!=='possible').length*def.hardAspect;
       if(def.pattern)score += (struct.patterns||[]).length*def.pattern;
       raw[theme]=score;
     });
     const vals=Object.values(raw);
-    const min=vals.length?Math.min(...vals):0;
-    const max=vals.length?Math.max(...vals):1;
-    const scale=state.framework?.scoreScale || {base:48,max:97};
-    const span=Math.max(1,max-min);
+    const mean=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;
+    const variance=vals.length?vals.reduce((sum,v)=>sum+Math.pow(v-mean,2),0)/vals.length:0;
+    const sd=Math.sqrt(variance);
     const out={};
     Object.entries(raw).forEach(([k,v])=>{
-      const normalized=Math.round(scale.base + ((v-min)/span)*(scale.max-scale.base));
-      out[k]={raw:v,score:Math.min(scale.max,Math.max(scale.base,normalized))};
+      const z=sd>0 ? (v-mean)/sd : 0;
+      const tier=z>=1.15?'standout':z>=0.35?'strong':z>=-0.55?'moderate':'supporting';
+      out[k]={raw:v,z,tier};
     });
     return out;
   }
@@ -354,23 +402,32 @@ window.XingchenStellarInterpretation = (() => {
     const dynamic=state.synthesis?.aspectDynamics?.[a.key];
     if(!pair||!dynamic)return '';
     const tight=exactness(a);
+    const uncertainty=a.timeConfidence==='possible' ? ` ${ui('aspectPossible')}` : '';
     if(lang()==='en'){
-      return `A ${tight==='very'||tight==='tight'?'tight ':''}${loc(aspectMeta(a.key)?.name)} to ${planetName(other)} makes ${loc(pair.theme)} especially noticeable. ${loc(dynamic.core)} ${HARD.has(a.key)?loc(pair.challenge):loc(pair.gift)}`;
+      return `A ${tight==='very'||tight==='tight'?'tight ':''}${loc(aspectMeta(a.key)?.name)} to ${planetName(other)} makes ${loc(pair.theme)} especially noticeable. ${loc(dynamic.core)} ${HARD.has(a.key)?loc(pair.challenge):loc(pair.gift)}${uncertainty}`;
     }
     const exact=tight==='very'||tight==='tight' ? zh('而且这个相位很紧密，','而且這個相位很緊密，') : '';
     const tail=HARD.has(a.key)?loc(pair.challenge):loc(pair.gift);
-    return zh(`同时，${planetName(key)}与${planetName(other)}形成${loc(aspectMeta(a.key)?.name)}，${exact}会把「${loc(pair.theme)}」拉到更前面。${loc(dynamic.core)} ${tail}。`,`同時，${planetName(key)}與${planetName(other)}形成${loc(aspectMeta(a.key)?.name)}，${exact}會把「${loc(pair.theme)}」拉到更前面。${loc(dynamic.core)} ${tail}。`);
+    return zh(`同时，${planetName(key)}与${planetName(other)}形成${loc(aspectMeta(a.key)?.name)}，${exact}会把「${loc(pair.theme)}」拉到更前面。${loc(dynamic.core)} ${tail}。${uncertainty}`,`同時，${planetName(key)}與${planetName(other)}形成${loc(aspectMeta(a.key)?.name)}，${exact}會把「${loc(pair.theme)}」拉到更前面。${loc(dynamic.core)} ${tail}。${uncertainty}`);
   }
 
   function dominantSummary(result){
-    const planets=PLANETS.map(k=>result.planets?.[k]).filter(Boolean);
-    const elementCounts=countBy(planets,p=>sign(p.index)?.element);
-    const modeCounts=countBy(planets,p=>sign(p.index)?.modality);
-    const e=maxKeys(elementCounts);
-    const m=maxKeys(modeCounts);
+    const weights={sun:3,moon:3,mercury:2,venus:2,mars:2,jupiter:1.25,saturn:1.25,uranus:0.65,neptune:0.65,pluto:0.65};
+    const elementCounts={},modeCounts={};
+    PLANETS.forEach(key=>{
+      const p=result.planets?.[key]; if(!p)return;
+      const s=sign(p.index),w=weights[key]||1;
+      if(s?.element)elementCounts[s.element]=(elementCounts[s.element]||0)+w;
+      if(s?.modality)modeCounts[s.modality]=(modeCounts[s.modality]||0)+w;
+    });
+    if(result.ascendant){
+      const s=sign(result.ascendant.index),w=1.5;
+      if(s?.element)elementCounts[s.element]=(elementCounts[s.element]||0)+w;
+      if(s?.modality)modeCounts[s.modality]=(modeCounts[s.modality]||0)+w;
+    }
+    const e=maxKeys(elementCounts),m=maxKeys(modeCounts);
     return {
-      elementKeys:e,
-      modalityKeys:m,
+      elementKeys:e, modalityKeys:m, elementCounts, modalityCounts:modeCounts, weighted:true,
       elementGift:e.map(k=>loc(state.deep?.elements?.[k]?.gift||{})).filter(Boolean),
       elementShadow:e.map(k=>loc(state.deep?.elements?.[k]?.shadow||{})).filter(Boolean),
       modalityGift:m.map(k=>loc(state.deep?.modalities?.[k]?.gift||{})).filter(Boolean),
@@ -382,8 +439,8 @@ window.XingchenStellarInterpretation = (() => {
     const sorted=[...(result.aspects||[])].sort((a,b)=>a.orb-b.orb);
     const personal=new Set(['sun','moon','mercury','venus','mars','jupiter','saturn']);
     const ranked=list=>[...list].sort((a,b)=>{
-      const pa=personal.has(a.body1)||personal.has(a.body2) ? 0 : 3;
-      const pb=personal.has(b.body1)||personal.has(b.body2) ? 0 : 3;
+      const pa=(personal.has(a.body1)||personal.has(a.body2)?0:3) + (a.timeConfidence==='possible'?5:0);
+      const pb=(personal.has(b.body1)||personal.has(b.body2)?0:3) + (b.timeConfidence==='possible'?5:0);
       return (a.orb+pa)-(b.orb+pb);
     });
     return {
@@ -442,7 +499,7 @@ window.XingchenStellarInterpretation = (() => {
         : zh(`${ui('chartRuler')}${planetName(key)}落在${signName(p.index)}${p.house?`、${houseLabel(p.house)}`:''}。这像整张盘的“总出口”：遇到事情时，你最后往往还是会回到「${loc(deepSign(p.index)?.approach||{})}」这套方式来处理。`,`${ui('chartRuler')}${planetName(key)}落在${signName(p.index)}${p.house?`、${houseLabel(p.house)}`:''}。這像整張盤的「總出口」：遇到事情時，你最後往往還是會回到「${loc(deepSign(p.index)?.approach||{})}」這套方式來處理。`);
       p2 += ` ${extra}`;
     }
-    return [p1,p2,aspectNarrative(result,'sun')].filter(Boolean);
+    return [p1,placementParagraph(result,'sun'),p2,aspectNarrative(result,'sun')].filter(Boolean);
   }
 
   function emotionSection(result){
@@ -468,7 +525,7 @@ window.XingchenStellarInterpretation = (() => {
       p1=zh(`月亮${signName(moon.index)}不是“你看起来像什么”，而是你在没有时间思考时，情绪会自动往哪里走。你会比较需要透过「${loc(d?.approach||{})}」来获得安全感；优势是${loc(d?.strength||{})}，但不安时也容易变成${loc(d?.challenge||{})}。${planetHouseSentence(result,'moon')}`,`月亮${signName(moon.index)}不是「你看起來像什麼」，而是你在沒有時間思考時，情緒會自動往哪裡走。你會比較需要透過「${loc(d?.approach||{})}」來獲得安全感；優勢是${loc(d?.strength||{})}，但不安時也容易變成${loc(d?.challenge||{})}。${planetHouseSentence(result,'moon')}`);
       p2=zh(`这也代表你真正需要的安定，不一定等同于你嘴上说“没关系”的部分。月亮的长期整合方向是「${loc(d?.growth||{})}」：先承认真实的情绪需求，再决定要不要回应它，而不是直接用理性或习惯把它盖过去。`,`這也代表你真正需要的安定，不一定等同於你嘴上說「沒關係」的部分。月亮的長期整合方向是「${loc(d?.growth||{})}」：先承認真實的情緒需求，再決定要不要回應它，而不是直接用理性或習慣把它蓋過去。`);
     }
-    return [p1,p2,aspectNarrative(result,'moon')].filter(Boolean);
+    return [p1,placementParagraph(result,'moon'),p2,aspectNarrative(result,'moon')].filter(Boolean);
   }
 
   function mindSection(result){
@@ -483,7 +540,7 @@ window.XingchenStellarInterpretation = (() => {
     }
     const asp=aspectNarrative(result,'mercury');
     if(!p2 && dp)p2=loc(dp.growth||{});
-    return [p1,p2,asp].filter(Boolean);
+    return [p1,placementParagraph(result,'mercury'),p2,asp].filter(Boolean);
   }
 
   function relationshipSection(result){
@@ -506,7 +563,8 @@ window.XingchenStellarInterpretation = (() => {
         : zh(`宫位再把关系拆得更细：第5宫${signName(h5.index)}描述你怎么进入心动与表达喜欢；第7宫${signName(h7.index)}描述真正的一对一关系；第8宫${signName(h8.index)}则关系到深层信任、共享与脆弱感。这三层不一定用同一种方式运作。`,`宮位再把關係拆得更細：第5宮${signName(h5.index)}描述你怎麼進入心動與表達喜歡；第7宮${signName(h7.index)}描述真正的一對一關係；第8宮${signName(h8.index)}則關係到深層信任、共享與脆弱感。這三層不一定用同一種方式運作。`);
     }
     const av=aspectNarrative(result,'venus');
-    return [p1,p2,p3,av].filter(Boolean);
+    const ruler7=result.houses ? rulerSentence(result,7,lang()==='en'?'partnership and one-to-one commitment':zh('伴侣关系与一对一承诺','伴侶關係與一對一承諾')) : '';
+    return [p1,placementParagraph(result,'venus'),placementParagraph(result,'mars'),p2,p3,ruler7,av].filter(Boolean);
   }
 
   function driveSection(result){
@@ -519,7 +577,7 @@ window.XingchenStellarInterpretation = (() => {
       p1=zh(`火星${signName(m.index)}说明你真正要“动起来”时，最自然的方式是「${loc(md?.approach||{})}」。发挥得好时是${loc(md?.strength||{})}；被逼急时则比较容易出现${loc(md?.challenge||{})}。${planetHouseSentence(result,'mars')}`,`火星${signName(m.index)}說明你真正要「動起來」時，最自然的方式是「${loc(md?.approach||{})}」。發揮得好時是${loc(md?.strength||{})}；被逼急時則比較容易出現${loc(md?.challenge||{})}。${planetHouseSentence(result,'mars')}`);
       p2=zh(`土星${signName(s.index)}则像刹车与长期结构：它不一定让你不行动，而是会要求“这样做之后要承担什么”。${planetHouseSentence(result,'saturn')} 因此真正成熟的行动力，不是只看冲得快不快，而是火星的推进与土星的节奏能不能互相配合。`,`土星${signName(s.index)}則像煞車與長期結構：它不一定讓你不行動，而是會要求「這樣做之後要承擔什麼」。${planetHouseSentence(result,'saturn')} 因此真正成熟的行動力，不是只看衝得快不快，而是火星的推進與土星的節奏能不能互相配合。`);
     }
-    return [p1,p2,aspectNarrative(result,'mars')].filter(Boolean);
+    return [p1,placementParagraph(result,'mars'),p2,aspectNarrative(result,'mars')].filter(Boolean);
   }
 
   function careerSection(result,analysis){
@@ -545,7 +603,49 @@ window.XingchenStellarInterpretation = (() => {
         ? ` Because ${planetName(ruler.key)} is the chart ruler, its placement in ${signName(ruler.position.index)}${ruler.position.house?` / ${houseLabel(ruler.position.house)}`:''} also describes where personal agency most often gets routed.`
         : zh(` 另外${planetName(ruler.key)}是命主星，它落在${signName(ruler.position.index)}${ruler.position.house?`、${houseLabel(ruler.position.house)}`:''}，所以你真正会主动投入、反复回到的领域，也会明显影响事业选择。`,` 另外${planetName(ruler.key)}是命主星，它落在${signName(ruler.position.index)}${ruler.position.house?`、${houseLabel(ruler.position.house)}`:''}，所以你真正會主動投入、反覆回到的領域，也會明顯影響事業選擇。`);
     }
-    return [p1,p2].filter(Boolean);
+    const r10=rulerSentence(result,10,lang()==='en'?'public role and professional direction':zh('公众角色与职业方向','公眾角色與職業方向'));
+    const r6=rulerSentence(result,6,lang()==='en'?'daily work, skill and routine':zh('日常工作、技能与工作习惯','日常工作、技能與工作習慣'));
+    const r2=rulerSentence(result,2,lang()==='en'?'income, resources and self-worth':zh('收入、资源与自我价值','收入、資源與自我價值'));
+    return [p1,p2,r10,r6,r2].filter(Boolean);
+  }
+
+  function moneySection(result){
+    if(!result.houses){
+      const v=placementParagraph(result,'venus'),sat=placementParagraph(result,'saturn');
+      return [lang()==='en'?'Without an exact birth time, the 2nd and 8th houses cannot be treated as fixed. Money and security are therefore read through Venus and Saturn rather than pretending to know the financial houses.':zh('出生时间未知，因此第2宫与第8宫不能当成确定依据。这里改以金星与土星来读价值感、享受方式、风险感与安全需求。','出生時間未知，因此第2宮與第8宮不能當成確定依據。這裡改以金星與土星來讀價值感、享受方式、風險感與安全需求。'),v,sat].filter(Boolean);
+    }
+    const h2=result.houses.cusps[1],h8=result.houses.cusps[7];
+    const p1=lang()==='en'?`House 2 begins in ${signName(h2.index)}, so personal resources and self-worth tend to be built ${signTrait(h2.index,'approach')}. House 8 begins in ${signName(h8.index)}, showing that shared money, trust and dependency require ${signTrait(h8.index,'approach')}.`:zh(`第2宫从${signName(h2.index)}开始，说明你建立收入、资源与自我价值时，更习惯「${signTrait(h2.index,'approach')}」；第8宫从${signName(h8.index)}开始，则表示共享资源、债务、信任与深层依赖会要求「${signTrait(h8.index,'approach')}」。`,`第2宮從${signName(h2.index)}開始，說明你建立收入、資源與自我價值時，更習慣「${signTrait(h2.index,'approach')}」；第8宮從${signName(h8.index)}開始，則表示共享資源、債務、信任與深層依賴會要求「${signTrait(h8.index,'approach')}」。`);
+    return [p1,rulerSentence(result,2,lang()==='en'?'earning and personal resources':zh('赚钱、资源累积与价值感','賺錢、資源累積與價值感')),rulerSentence(result,8,lang()==='en'?'shared resources, trust and financial entanglement':zh('共享资源、信任与财务绑定','共享資源、信任與財務綁定')),placementParagraph(result,'venus'),placementParagraph(result,'saturn')].filter(Boolean);
+  }
+
+  function socialSection(result){
+    const p1=result.houses? rulerSentence(result,11,lang()==='en'?'friendship, networks and belonging':zh('朋友、社群与归属感','朋友、社群與歸屬感')) : '';
+    const p2=placementParagraph(result,'jupiter');
+    const p3=placementParagraph(result,'uranus');
+    return [p1,p2,p3].filter(Boolean);
+  }
+
+  function rootsSection(result){
+    if(!result.houses)return [lang()==='en'?'Without a birth time, House 4 cannot be fixed. The Moon is used instead to describe the emotional idea of home and safety.':zh('出生时间未知，第4宫无法确定，因此这里只用月亮描述“什么感觉像家”以及私下真正需要的安全感。','出生時間未知，第4宮無法確定，因此這裡只用月亮描述「什麼感覺像家」以及私下真正需要的安全感。'),placementParagraph(result,'moon')].filter(Boolean);
+    return [rulerSentence(result,4,lang()==='en'?'home, family roots and private security':zh('家庭、内在根基与私人安全感','家庭、內在根基與私人安全感')),placementParagraph(result,'moon')].filter(Boolean);
+  }
+
+  function subconsciousSection(result){
+    const p1=result.houses?rulerSentence(result,12,lang()==='en'?'solitude, unconscious coping and hidden patterns':zh('独处、潜意识应对与隐藏模式','獨處、潛意識應對與隱藏模式')):'';
+    return [p1,placementParagraph(result,'neptune'),placementParagraph(result,'pluto')].filter(Boolean);
+  }
+
+  function talentSection(result,analysis){
+    const top=analysis.topPlanets.slice(0,3).map(([k])=>k);
+    const paragraphs=top.map(k=>placementParagraph(result,k)).filter(Boolean);
+    const soft=analysis.aspects.soft;
+    if(soft){
+      const pairKey=[soft.body1,soft.body2].sort((a,b)=>PLANETS.indexOf(a)-PLANETS.indexOf(b)).join('|');
+      const pair=state.synthesis?.pairThemes?.[pairKey];
+      paragraphs.unshift(lang()==='en'?`A particularly usable channel is ${planetName(soft.body1)} ${loc(aspectMeta(soft.key)?.name)} ${planetName(soft.body2)}. ${loc(pair?.gift||{})}`:zh(`盘里一条特别容易被长期训练成能力的通道，是${planetName(soft.body1)}${loc(aspectMeta(soft.key)?.name)}${planetName(soft.body2)}。${loc(pair?.gift||{})}`,`盤裡一條特別容易被長期訓練成能力的通道，是${planetName(soft.body1)}${loc(aspectMeta(soft.key)?.name)}${planetName(soft.body2)}。${loc(pair?.gift||{})}`));
+    }
+    return paragraphs.slice(0,4);
   }
 
   function tensionSection(result,analysis){
@@ -618,7 +718,7 @@ window.XingchenStellarInterpretation = (() => {
     const struct=structure(result);
     const topPlanets=planetImportance(result,struct);
     const themes=themeScores(result,struct);
-    const themeRanking=Object.entries(themes).sort((a,b)=>b[1].score-a[1].score);
+    const themeRanking=Object.entries(themes).sort((a,b)=>b[1].raw-a[1].raw);
     const dominant=dominantSummary(result);
     const aspects=strongestAspects(result);
     return {struct,topPlanets,themes,themeRanking,dominant,aspects};
@@ -634,6 +734,11 @@ window.XingchenStellarInterpretation = (() => {
       {key:'relationship',title:ui('relationship'),paragraphs:relationshipSection(result,analysis)},
       {key:'drive',title:ui('drive'),paragraphs:driveSection(result,analysis)},
       {key:'career',title:ui('career'),paragraphs:careerSection(result,analysis)},
+      {key:'money',title:ui('money'),paragraphs:moneySection(result,analysis)},
+      {key:'social',title:ui('social'),paragraphs:socialSection(result,analysis)},
+      {key:'roots',title:ui('roots'),paragraphs:rootsSection(result,analysis)},
+      {key:'subconscious',title:ui('subconscious'),paragraphs:subconsciousSection(result,analysis)},
+      {key:'talent',title:ui('talent'),paragraphs:talentSection(result,analysis)},
       {key:'tension',title:ui('tension'),paragraphs:tensionSection(result,analysis)},
       {key:'strength',title:ui('strength'),paragraphs:strengthSection(result,analysis)},
       {key:'growth',title:ui('growth'),paragraphs:growthSection(result,analysis)}
@@ -646,7 +751,8 @@ window.XingchenStellarInterpretation = (() => {
       themeCards:analysis.themeRanking.map(([key,data])=>({
         key,
         label:state.framework?.labels?.[lang()]?.[key] || key,
-        score:data.score,
+        tier:data.tier,
+        relative:data.relative,
         evidence:evidenceForTheme(key,result,analysis.struct)
       })),
       sections,
@@ -664,9 +770,9 @@ window.XingchenStellarInterpretation = (() => {
         <div class="stellar-theme-rank">0${index+1}</div>
         <div class="stellar-theme-head">
           <h4>${esc(card.label)}</h4>
-          <strong>${card.score}</strong>
+          <strong>${esc(ui(card.tier==='standout'?'tierStandout':card.tier==='strong'?'tierStrong':card.tier==='moderate'?'tierModerate':'tierSupporting'))}</strong>
         </div>
-        <div class="stellar-theme-meter"><span style="width:${card.score}%"></span></div>
+        <div class="stellar-theme-meter"><span style="width:${card.tier==='standout'?92:card.tier==='strong'?76:card.tier==='moderate'?58:40}%"></span></div>
         <p>${esc(ui('evidence'))}</p>
         <div class="stellar-theme-evidence">${card.evidence.slice(0,3).map(evidenceChip).join('')}</div>
       </article>`).join('');

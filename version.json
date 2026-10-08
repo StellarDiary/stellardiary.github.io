@@ -1,24 +1,27 @@
 {
-  "version": "0.20.1",
+  "version": "0.21.0",
   "released": "2026-10-08",
   "notes": {
     "zh-CN": [
-      "已准备完成的页面再次进入时不再闪现“正在检查”画面。",
-      "版本检查改为后台静默执行，只有发现真正的新版本时才显示更新窗口。",
-      "同一浏览过程中会减少重复版本请求，页面切换更顺畅。",
-      "首次准备、新页面资源准备与更新失败保护机制维持不变。"
+      "本命星盘深度解读升级到 2.0：新增 120 组行星×星座专属解读。",
+      "新增金钱、人际、家庭根基、潜意识与天赋章节，并加强宫主星链路。",
+      "出生时间未知时，月亮相位会按全天稳定性处理，减少把中午近似相位当成确定人格特征。",
+      "主题强度改用“很突出／明显／中等／辅助”，元素与模式采用个人星体加权。",
+      "同一张命盘的云端身份不再因为网站或报告版本升级而改变。"
     ],
     "zh-TW": [
-      "已準備完成的頁面再次進入時不再閃現「正在檢查」畫面。",
-      "版本檢查改為背景靜默執行，只有發現真正的新版本時才顯示更新視窗。",
-      "同一瀏覽過程中會減少重複版本請求，頁面切換更順暢。",
-      "首次準備、新頁面資源準備與更新失敗保護機制維持不變。"
+      "本命星盤深度解讀升級到 2.0：新增 120 組行星×星座專屬解讀。",
+      "新增金錢、人際、家庭根基、潛意識與天賦章節，並加強宮主星鏈路。",
+      "出生時間未知時，月亮相位會按全天穩定性處理，減少把中午近似相位當成確定人格特徵。",
+      "主題強度改用「很突出／明顯／中等／輔助」，元素與模式採用個人星體加權。",
+      "同一張命盤的雲端身份不再因為網站或報告版本升級而改變。"
     ],
     "en": [
-      "Prepared pages now open without flashing the update-check screen.",
-      "Version checks run silently in the background and the updater appears only when a real new version is found.",
-      "Repeated version requests are reduced while navigating during the same browsing session.",
-      "First setup, first-time page preparation, and update-failure protection remain unchanged."
+      "Natal interpretation 2.0 adds 120 planet-by-sign readings.",
+      "New chapters cover money, social life, roots, subconscious patterns and talents, with stronger house-ruler chains.",
+      "Unknown birth time now checks Moon-aspect stability across the day instead of treating local noon as automatically certain.",
+      "Theme emphasis uses qualitative tiers, while elements and modalities use personal-planet weighting.",
+      "The same natal chart keeps the same cloud identity across app/report upgrades."
     ]
   }
 }

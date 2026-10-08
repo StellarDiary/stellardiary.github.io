@@ -1,5 +1,5 @@
 {
-  "version": "0.20.1",
+  "version": "0.21.0",
   "strategy": "shell-plus-route",
   "groups": {
     "shell": [
@@ -14,6 +14,7 @@
       "data/astrology/deep-interpretations.json",
       "data/astrology/interpretations.json",
       "data/astrology/natal-synthesis.json",
+      "data/astrology/planet-sign-depth.json",
       "data/astrology/signs.json",
       "data/astrology/stellar-interpretation-engine.json",
       "data/astrology/synastry-interpretations.json",
@@ -120,19 +121,19 @@
   },
   "assets": {
     "VERSION.txt": {
-      "revision": "356c9c9f099da7f9",
+      "revision": "363c6aacbb689a2e",
       "bytes": 7
     },
     "account.html": {
-      "revision": "ba708a3d9242826d",
+      "revision": "42426f78d5d49260",
       "bytes": 30686
     },
     "css/mailbox.css": {
-      "revision": "cfa53cf2cb334144",
+      "revision": "1f5c07d8f4270100",
       "bytes": 25810
     },
     "css/style.css": {
-      "revision": "a4efb5f81191022a",
+      "revision": "a556c514af6964db",
       "bytes": 449606
     },
     "css/update-manager.css": {
@@ -168,8 +169,8 @@
       "bytes": 4272
     },
     "data/astrology/stellar-interpretation-engine.json": {
-      "revision": "6439e30a081851f3",
-      "bytes": 3951
+      "revision": "fb67f2a0b9e7b9aa",
+      "bytes": 3896
     },
     "data/astrology/synastry-interpretations.json": {
       "revision": "28ef990e2c328807",
@@ -744,7 +745,7 @@
       "bytes": 408149
     },
     "index.html": {
-      "revision": "8fe8bd9e64ee0839",
+      "revision": "d129dbc15d7aee09",
       "bytes": 9031
     },
     "js/account-binding.js": {
@@ -752,7 +753,7 @@
       "bytes": 5808
     },
     "js/account-login.js": {
-      "revision": "6638ec2422a11473",
+      "revision": "4d6f11f82678076d",
       "bytes": 12765
     },
     "js/account-page.js": {
@@ -764,12 +765,12 @@
       "bytes": 6688
     },
     "js/astrology-engine.js": {
-      "revision": "c935a201943909c9",
-      "bytes": 11973
+      "revision": "458202a890e3b70f",
+      "bytes": 13284
     },
     "js/astrology-full.js": {
-      "revision": "38e401aea7b9b272",
-      "bytes": 59537
+      "revision": "2a53ff3a7a3a4365",
+      "bytes": 60680
     },
     "js/astrology-synthesis.js": {
       "revision": "bdeda320eeebfc87",
@@ -780,7 +781,7 @@
       "bytes": 37751
     },
     "js/backend-config.js": {
-      "revision": "502ad793384c36b1",
+      "revision": "66408a89fb0301a1",
       "bytes": 2378
     },
     "js/bark.js": {
@@ -796,11 +797,11 @@
       "bytes": 5955
     },
     "js/cloud-sync.js": {
-      "revision": "129ea063ba2c255c",
+      "revision": "0c7bfce2eee8663d",
       "bytes": 29899
     },
     "js/farm.js": {
-      "revision": "93c4243409217359",
+      "revision": "45d2eb9d2fc1a683",
       "bytes": 390241
     },
     "js/fortune-config.js": {
@@ -828,7 +829,7 @@
       "bytes": 5294
     },
     "js/mailbox.js": {
-      "revision": "f4fcbd399a18ce4d",
+      "revision": "a5ab89424aba468e",
       "bytes": 59650
     },
     "js/main.js": {
@@ -844,8 +845,8 @@
       "bytes": 21077
     },
     "js/report-payload.js": {
-      "revision": "ff6fe9ca58743128",
-      "bytes": 11707
+      "revision": "c9f32ea76e316850",
+      "bytes": 12186
     },
     "js/report-store.js": {
       "revision": "2680327954258c27",
@@ -856,8 +857,8 @@
       "bytes": 4547
     },
     "js/stellar-interpretation-engine.js": {
-      "revision": "133c4a373cda4dbf",
-      "bytes": 55795
+      "revision": "aed6e2e82a36af0a",
+      "bytes": 66488
     },
     "js/supabase-auth.js": {
       "revision": "78d06991bc798896",
@@ -868,7 +869,7 @@
       "bytes": 4900
     },
     "js/supabase-config.js": {
-      "revision": "78511ba49ddfd843",
+      "revision": "9032ee6a18a361df",
       "bytes": 2571
     },
     "js/supabase-public-config.js": {
@@ -888,32 +889,36 @@
       "bytes": 20570
     },
     "pages/astrology.html": {
-      "revision": "7039780adbefe7db",
+      "revision": "7298143bf35c9d3e",
       "bytes": 18939
     },
     "pages/farm.html": {
-      "revision": "11d3559b4fe0479f",
+      "revision": "e789c10faab8cb54",
       "bytes": 12830
     },
     "pages/fortune.html": {
-      "revision": "772a690a00858149",
+      "revision": "673c58f474710a50",
       "bytes": 10270
     },
     "pages/synastry.html": {
-      "revision": "b85c4a6ddedb4a44",
+      "revision": "e3fc13f4574791d8",
       "bytes": 18288
     },
     "pages/tarot.html": {
-      "revision": "34ac0fd1100a08e0",
+      "revision": "a97b06bb9c29e818",
       "bytes": 12718
     },
     "service-worker.js": {
-      "revision": "e00ba0ed9abe58a8",
+      "revision": "f7823939f999b7a6",
       "bytes": 2610
     },
     "version.json": {
-      "revision": "1e0624fdc8abfe73",
-      "bytes": 1255
+      "revision": "3b0efc2043fa97e0",
+      "bytes": 1716
+    },
+    "data/astrology/planet-sign-depth.json": {
+      "revision": "3a26421e24f06c5e",
+      "bytes": 347805
     }
   }
 }

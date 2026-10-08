@@ -1,5 +1,5 @@
 'use strict';
-const BUILD_VERSION='0.20.1';
+const BUILD_VERSION='0.21.0';
 const CACHE_NAME=`stellar-static-v${BUILD_VERSION}`;
 const CACHE_PREFIX='stellar-static-v';
 const UPDATE_QUERY='__stellar_update';

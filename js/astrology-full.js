@@ -25,7 +25,7 @@ window.XingchenAstrologyFull = (() => {
       majorPatterns:'大型格局', noMajorPatterns:'目前五大主要相位范围内，没有检测到大型格局。', patternBodies:'参与星体', patternFocus:'焦点星体',
       emotionalProfile:'情绪与安全感', thinkingProfile:'思考与沟通', relationshipProfile:'关系与亲密', actionProfile:'行动与压力', directionProfile:'事业与人生方向', growthProfile:'主要成长课题',
       retrograde:'逆行', house:'第 {n} 宫', unknownHouse:'宫位需准确出生时间',
-      unknownTimeHouses:'出生时间未知，因此不计算 ASC、MC 与十二宫。行星和相位仍以当地中午作为近似参考。',
+      unknownTimeHouses:'出生时间未知，因此不计算 ASC、MC 与十二宫。行星以当地中午作为近似；月亮相关相位会额外检查当天前后，只把全天稳定的相位当成主要依据。',
       placidus:'Placidus 宫制', whole:'Whole Sign 整宫制',
       fallback:'由于出生纬度较高，Placidus 在此位置可能失去数学定义，因此自动改用 Whole Sign。',
       orb:'容许度', noAspects:'在目前设定的主要相位容许度内，没有找到主要相位。',
@@ -43,8 +43,8 @@ window.XingchenAstrologyFull = (() => {
       succedentText:'续宫行星较多，资源累积、价值稳定、持续经营与长期成果较重要。',
       cadentText:'果宫行星较多，学习、调整、观察、服务与内在整合的比重较高。',
       balancedHouses:'行星在角宫、续宫与果宫之间分布较平均，没有单一宫位类型绝对主导。',
-      approx:'出生时间未知：行星度数与相位以当地中午近似，快速星体若当天跨星座会另外标示。',
-      possible:'可能为',
+      approx:'出生时间未知：行星度数以当地中午近似；月亮相关相位会检查当天前后，只有全天稳定者作为主要依据，其余会标示为出生时间不确定。',
+      possible:'可能为', timePossible:'出生时间不确定',
       noRetro:'没有主要行星显示逆行。',
       sourceNote:'解读为本项目依据传统西洋本命占星结构重新整理的组合式文案。'
     },
@@ -62,7 +62,7 @@ window.XingchenAstrologyFull = (() => {
       majorPatterns:'大型格局', noMajorPatterns:'目前五大主要相位範圍內，沒有檢測到大型格局。', patternBodies:'參與星體', patternFocus:'焦點星體',
       emotionalProfile:'情緒與安全感', thinkingProfile:'思考與溝通', relationshipProfile:'關係與親密', actionProfile:'行動與壓力', directionProfile:'事業與人生方向', growthProfile:'主要成長課題',
       retrograde:'逆行', house:'第 {n} 宮', unknownHouse:'宮位需準確出生時間',
-      unknownTimeHouses:'出生時間未知，因此不計算 ASC、MC 與十二宮。行星和相位仍以當地中午作為近似參考。',
+      unknownTimeHouses:'出生時間未知，因此不計算 ASC、MC 與十二宮。行星以當地中午作為近似；月亮相關相位會額外檢查當天前後，只把全天穩定的相位當成主要依據。',
       placidus:'Placidus 宮制', whole:'Whole Sign 整宮制',
       fallback:'由於出生緯度較高，Placidus 在此位置可能失去數學定義，因此自動改用 Whole Sign。',
       orb:'容許度', noAspects:'在目前設定的主要相位容許度內，沒有找到主要相位。',
@@ -80,8 +80,8 @@ window.XingchenAstrologyFull = (() => {
       succedentText:'續宮行星較多，資源累積、價值穩定、持續經營與長期成果較重要。',
       cadentText:'果宮行星較多，學習、調整、觀察、服務與內在整合的比重較高。',
       balancedHouses:'行星在角宮、續宮與果宮之間分布較平均，沒有單一宮位類型絕對主導。',
-      approx:'出生時間未知：行星度數與相位以當地中午近似，快速星體若當天跨星座會另外標示。',
-      possible:'可能為',
+      approx:'出生時間未知：行星度數以當地中午近似；月亮相關相位會檢查當天前後，只有全天穩定者作為主要依據，其餘會標示為出生時間不確定。',
+      possible:'可能為', timePossible:'出生時間不確定',
       noRetro:'沒有主要行星顯示逆行。',
       sourceNote:'解讀為本專案依據傳統西洋本命占星結構重新整理的組合式文案。'
     },
@@ -99,7 +99,7 @@ window.XingchenAstrologyFull = (() => {
       majorPatterns:'Major patterns', noMajorPatterns:'No major configuration was detected within the current five-major-aspect network.', patternBodies:'Bodies involved', patternFocus:'Focal body',
       emotionalProfile:'Emotion & security', thinkingProfile:'Thinking & communication', relationshipProfile:'Relationships & intimacy', actionProfile:'Action & pressure', directionProfile:'Career & life direction', growthProfile:'Primary growth theme',
       retrograde:'Retrograde', house:'House {n}', unknownHouse:'House requires an accurate birth time',
-      unknownTimeHouses:'Birth time is unknown, so ASC, MC and houses are not calculated. Planets and aspects use local noon as an approximate reference.',
+      unknownTimeHouses:'Birth time is unknown, so ASC, MC and houses are not calculated. Planets use local noon as an approximation; Moon aspects are checked across the day and only all-day-stable contacts are treated as primary evidence.',
       placidus:'Placidus houses', whole:'Whole Sign houses',
       fallback:'At this high latitude Placidus can become mathematically undefined, so Whole Sign is used automatically.',
       orb:'Orb', noAspects:'No major aspects were found within the current major-aspect orb settings.',
@@ -117,8 +117,8 @@ window.XingchenAstrologyFull = (() => {
       succedentText:'Succedent houses are emphasized: resource-building, stability, value and sustained development matter strongly.',
       cadentText:'Cadent houses are emphasized: learning, adaptation, observation, service and inner integration carry more weight.',
       balancedHouses:'Planets are distributed fairly evenly across angular, succedent and cadent houses, with no single mode strongly dominating.',
-      approx:'Birth time unknown: planetary degrees and aspects use local noon as an approximation; fast bodies that change sign that day are marked.',
-      possible:'Possible',
+      approx:'Birth time unknown: planetary degrees use local noon as an approximation. Moon aspects are checked across the day; only all-day-stable contacts are treated as primary, while the rest are marked birth-time uncertain.',
+      possible:'Possible', timePossible:'Birth-time uncertain',
       noRetro:'No major planets are shown retrograde.',
       sourceNote:'Interpretations are original compositional text based on conventional Western natal astrology structure.'
     }
@@ -564,7 +564,7 @@ window.XingchenAstrologyFull = (() => {
               <b>${p2.glyph}</b>
               <strong>${esc(loc(p2.name))}</strong>
             </span>
-            <span class="astro-aspect-name">${esc(loc(meta.name))}</span>
+            <span class="astro-aspect-name">${esc(loc(meta.name))}${aspect.timeConfidence==='possible' ? ` · ${esc(ui('timePossible'))}` : ''}</span>
             <span class="astro-aspect-orb">${esc(ui('orb'))} ${esc(formatOrb(aspect.orb))}</span>
           </summary>
 
@@ -592,7 +592,7 @@ window.XingchenAstrologyFull = (() => {
             </div>
 
             <small class="astro-aspect-technical">
-              ${aspect.separation.toFixed(2)}° / ${meta.angle}° · ${esc(ui('orb'))} ${esc(formatOrb(aspect.orb))}
+              ${aspect.separation.toFixed(2)}° / ${meta.angle}° · ${esc(ui('orb'))} ${esc(formatOrb(aspect.orb))}${aspect.timeConfidence==='possible' ? ` · ${esc(ui('timePossible'))}` : ''}
             </small>
           </div>
         </details>
@@ -1015,9 +1015,12 @@ window.XingchenAstrologyFull = (() => {
   }
 
   function renderOverview(result) {
-    const planets = XingchenAstrologyEngine.PLANET_ORDER.map(k => result.planets[k]);
-    const elements = countBy(planets,p => signMeta(p.index).element);
-    const modalities = countBy(planets,p => signMeta(p.index).modality);
+    const planetKeys = XingchenAstrologyEngine.PLANET_ORDER;
+    const planets = planetKeys.map(k => result.planets[k]);
+    const weights={sun:3,moon:3,mercury:2,venus:2,mars:2,jupiter:1.25,saturn:1.25,uranus:0.65,neptune:0.65,pluto:0.65};
+    const elements={},modalities={};
+    planetKeys.forEach(k=>{const p=result.planets[k],s=signMeta(p.index),w=weights[k]||1;elements[s.element]=(elements[s.element]||0)+w;modalities[s.modality]=(modalities[s.modality]||0)+w;});
+    if(result.ascendant){const s=signMeta(result.ascendant.index),w=1.5;elements[s.element]=(elements[s.element]||0)+w;modalities[s.modality]=(modalities[s.modality]||0)+w;}
     const signCounts = countBy(planets,p => signMeta(p.index).key);
     const retro = XingchenAstrologyEngine.PLANET_ORDER
       .filter(k => result.planets[k].retrograde);

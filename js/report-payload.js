@@ -1,5 +1,5 @@
 (() => {
-  const APP_VERSION = '0.20.1';
+  const APP_VERSION = '0.21.0';
   const SCHEMA = 'stellar-diary.report-input';
   const SCHEMA_VERSION = '1.0.0';
   const PLANETS = ['sun','moon','mercury','venus','mars','jupiter','saturn','uranus','neptune','pluto'];
@@ -90,37 +90,26 @@
     }));
   }
 
-  function distributions(result, signs) {
+  function distributions(result,signs) {
     const elements = {fire:0,earth:0,air:0,water:0};
     const modalities = {cardinal:0,fixed:0,mutable:0};
     const houseModes = {angular:0,succedent:0,cadent:0};
+    const weights = {sun:3,moon:3,mercury:2,venus:2,mars:2,jupiter:1.25,saturn:1.25,uranus:0.65,neptune:0.65,pluto:0.65};
     const angular = new Set([1,4,7,10]);
     const succedent = new Set([2,5,8,11]);
-    PLANETS.forEach(key => {
-      const p = result.planets?.[key];
-      const s = p ? signs[p.index] : null;
-      if (s?.element in elements) elements[s.element]++;
-      if (s?.modality in modalities) modalities[s.modality]++;
-      if (angular.has(p?.house)) houseModes.angular++;
-      else if (succedent.has(p?.house)) houseModes.succedent++;
-      else if (p?.house) houseModes.cadent++;
+    Object.entries(result.planets || {}).forEach(([key,p]) => {
+      const s=signs?.[p?.index]; if(!s)return;
+      const w=weights[key] || 1;
+      if (s.element in elements) elements[s.element]=cleanNumber(elements[s.element]+w,2);
+      if (s.modality in modalities) modalities[s.modality]=cleanNumber(modalities[s.modality]+w,2);
+      if (p.house) {
+        const hw = ['sun','moon','mercury','venus','mars'].includes(key) ? 1.5 : 1;
+        if (angular.has(p.house)) houseModes.angular=cleanNumber(houseModes.angular+hw,2);
+        else if (succedent.has(p.house)) houseModes.succedent=cleanNumber(houseModes.succedent+hw,2);
+        else houseModes.cadent=cleanNumber(houseModes.cadent+hw,2);
+      }
     });
-    return {elements,modalities,houseModes:result.houses ? houseModes : null};
-  }
-
-  function normalizeHouses(result, signs) {
-    if (!result.houses) return null;
-    return {
-      system:result.houses.system,
-      fallback:Boolean(result.houses.fallback),
-      fallbackReason:result.houses.fallbackReason || null,
-      cusps:(result.houses.cusps || []).map((cusp,index) => ({
-        house:index+1,
-        sign:signRef(cusp.index,signs),
-        degree:cleanNumber(cusp.degree,6),
-        longitude:cleanNumber(cusp.longitude,6)
-      }))
-    };
+    return {elements,modalities,houseModes:result.houses ? houseModes : null,weighted:true};
   }
 
   function normalizeChart(result, signs, deep) {
@@ -150,7 +139,8 @@
       aspects:normalizeAspects(result.aspects || []),
       uncertainty:{
         moonSignUncertain:Boolean(result.moonSignUncertain),
-        uncertainPlanets:plain(result.uncertainPlanets || {})
+        uncertainPlanets:plain(result.uncertainPlanets || {}),
+        possibleTimeAspects:plain(result.possibleTimeAspects || [])
       },
       distributions:distributions(result,signs),
       synthesis
@@ -170,6 +160,7 @@
       meta:{
         app:'stellar-diary',
         appVersion:APP_VERSION,
+        reportVersion:type === 'natal' ? 'natal-interpretation-2.0' : 'synastry-interpretation-1.0',
         protocolVersion:window.XingchenBackendConfig?.protocolVersion || '1.0.0',
         locale:locale(),
         generatedAt:new Date().toISOString(),
@@ -188,9 +179,15 @@
   async function finalize(payload) {
     const copy = plain(payload);
     copy.meta.fingerprint = null;
-    // generatedAt should not change the identity of the same deterministic chart.
+    // Chart identity must survive app/report upgrades. V0.21.0 deliberately removes
+    // presentation/runtime versions from the hash so the same birth chart does not
+    // become a duplicate record after every interpretation update.
     const hashable = plain(copy);
     hashable.meta.generatedAt = null;
+    hashable.meta.appVersion = null;
+    hashable.meta.protocolVersion = null;
+    hashable.meta.reportVersion = null;
+    if (hashable.reportRequest) hashable.reportRequest = null;
     const fingerprint = await window.XingchenApi.hashPayload(hashable);
     copy.meta.fingerprint = fingerprint;
     return copy;

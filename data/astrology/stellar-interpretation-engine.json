@@ -1,10 +1,10 @@
 {
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Stellar Interpretation Engine",
   "method": {
-    "zh-CN": "本地规则式本命盘整合引擎。先读取天文计算结果，再综合核心三要素、命主星、行星落座落宫、元素与模式分布、紧密相位、逆行及大型格局，按主题权重排序后生成长篇报告。它不调用外部 AI，也不会重新计算天体位置。",
-    "zh-TW": "本地規則式本命盤整合引擎。先讀取天文計算結果，再綜合核心三要素、命主星、行星落座落宮、元素與模式分布、緊密相位、逆行及大型格局，按主題權重排序後生成長篇報告。它不呼叫外部 AI，也不會重新計算天體位置。",
-    "en": "A local rule-based natal synthesis engine. It reads the astronomical chart result, combines core placements, chart ruler, signs, houses, elements, modalities, tight aspects, retrogrades and major patterns, then ranks themes before composing a long-form report. It does not call an external AI or recalculate astronomy."
+    "zh-CN": "本地规则式本命盘整合引擎 2.0。以天文计算结果为底层，综合核心三要素、120 组行星×星座专属含义、宫位与宫主星、命主星、紧密相位、出生时间不确定性、加权元素模式及大型格局，再以证据群组生成深度报告。",
+    "zh-TW": "本地規則式本命盤整合引擎 2.0。以天文計算結果為底層，綜合核心三要素、120 組行星×星座專屬含義、宮位與宮主星、命主星、緊密相位、出生時間不確定性、加權元素模式及大型格局，再以證據群組生成深度報告。",
+    "en": "Local rule-based natal synthesis engine 2.0. It combines astronomical chart data with the core three, 120 planet-by-sign interpretations, house rulers, chart ruler, tight aspects, birth-time uncertainty, weighted element/modality balance and major patterns, then composes a report from clusters of evidence."
   },
   "themeWeights": {
     "identity": {
@@ -116,13 +116,6 @@
       "pattern": 2
     }
   },
-  "scoreScale": {
-    "base": 48,
-    "max": 97,
-    "aspectTightBonus": 4,
-    "aspectBonus": 2,
-    "retrogradeBonus": 1
-  },
   "sectionOrder": [
     "identity",
     "emotion",
@@ -160,5 +153,11 @@
       "career": "Career & Direction",
       "growth": "Growth & Integration"
     }
+  },
+  "themeTiers": {
+    "standout": 0.84,
+    "strong": 0.66,
+    "moderate": 0.46,
+    "supporting": 0
   }
 }

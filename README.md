@@ -1,4 +1,4 @@
-# V0.20.1
+# V0.21.0
 
 ## 资源更新系统快速通行修正｜已准备完成时完全不闪更新画面
 - 已完成当前版本与当前页面资源准备的玩家，再次进入首页、每日运势、塔罗、本命星盘、合盘、农场或账号页时，不再先闪现「正在检查」更新遮罩。
@@ -870,3 +870,12 @@ Anonymous Supabase guest users can now open Stellar Mail, read active mail and v
 - Fixed the static farm-owner scene avatar not receiving `data-avatar-frames`.
 - Six-frame 2x3 seasonal male sprites now use the correct `200% 300%` slicing in the farm scene, preventing the body/head vertical split and apparent jumping.
 - No SQL changes.
+
+
+## V0.21.0 — 本命星盘深度解读 2.0
+- 新增 120 组行星×星座专属解读。
+- 出生时间未知时，月亮相位加入全天稳定性标记。
+- 星盘 fingerprint 与 app/report 版本分离，避免同一命盘因升级重复。
+- 元素／模式改为个人星体加权，降低世代行星过度影响。
+- 深度报告新增金钱、人际、家庭根基、潜意识与天赋章节，并加入 2/4/6/7/8/10/11/12 宫宫主星链路。
+- 主题强度改为定性等级，不再强制每张命盘拉成 48–97 的假精确分数。

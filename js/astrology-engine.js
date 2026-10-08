@@ -359,6 +359,30 @@ window.XingchenAstrologyEngine = (() => {
     const noon = positionForInstant(noonUtc, city.lat, city.lon, false);
     const startPlanets = planetaryPositions(startUtc);
     const endPlanets = planetaryPositions(endUtc);
+    const startAspects = calculateAspects(startPlanets);
+    const endAspects = calculateAspects(endPlanets);
+
+    // V0.21.0 — when birth time is unknown, a noon Moon aspect is not automatically
+    // treated as certain. Keep it, but mark whether the same aspect survives the full day.
+    // This lets the interpretation layer down-weight time-sensitive Moon contacts.
+    const aspectId = a => `${[a.body1,a.body2].sort().join('|')}:${a.key}`;
+    const startAspectIds = new Set(startAspects.map(aspectId));
+    const endAspectIds = new Set(endAspects.map(aspectId));
+    noon.aspects = noon.aspects.map(a => {
+      const involvesMoon = a.body1 === 'moon' || a.body2 === 'moon';
+      if (!involvesMoon) return {...a,timeConfidence:'stable'};
+      const id = aspectId(a);
+      const stable = startAspectIds.has(id) && endAspectIds.has(id);
+      return {...a,timeConfidence:stable ? 'stable' : 'possible'};
+    });
+
+    const possibleTimeAspects = [];
+    [...startAspects,...endAspects].forEach(a => {
+      if (a.body1 !== 'moon' && a.body2 !== 'moon') return;
+      const id=aspectId(a);
+      if (noon.aspects.some(n=>aspectId(n)===id)) return;
+      if (!possibleTimeAspects.some(n=>aspectId(n)===id)) possibleTimeAspects.push({...a,timeConfidence:'possible'});
+    });
 
     const uncertainPlanets = {};
     PLANET_ORDER.forEach(key => {
@@ -385,7 +409,8 @@ window.XingchenAstrologyEngine = (() => {
       ascendant:null,
       angles:null,
       houses:null,
-      aspects:noon.aspects
+      aspects:noon.aspects,
+      possibleTimeAspects
     };
   }
 
